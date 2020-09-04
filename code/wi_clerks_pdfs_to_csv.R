@@ -18,15 +18,13 @@ line1 <- str_extract_all(text, "(TOWN OF|CITY OF|VILLAGE OF ).*") %>% unlist()
 # split entries
 entries <- text %>% str_split("(TOWN OF|CITY OF|VILLAGE OF )") %>% unlist()
 
-# drop first 
-entries %<>% .[2:length(entries)]
-
-# drop any less than 100 characters
+# drop any entries less than 100 characters
 entries  %<>% .[nchar(entries) > 100]
 
 # split all lines per entry
 lines <- str_split(entries, "\n") 
 
+# put info into a dataframe
 d <- tibble(Municipality = str_c(line1 %>% str_remove(" -.*| [0-9].*"),# first line before HINDI
                                  map_chr(lines, ~{.[[2]]}), # second line 
                                  sep = " "), 
@@ -49,4 +47,5 @@ d <- tibble(Municipality = str_c(line1 %>% str_remove(" -.*| [0-9].*"),# first l
 # remove extra white space from all columns
 d %<>% mutate_all(str_squish)
 
+# save in data folder
 write_csv(d, path = here::here("data", "WI_Municipal_Clerks.csv"))
