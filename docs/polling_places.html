@@ -261,6 +261,201 @@ window.initializeCodeFolding = function(show) {
 
 }
 </script>
+<script>$(document).ready(function(){
+    if (typeof $('[data-toggle="tooltip"]').tooltip === 'function') {
+        $('[data-toggle="tooltip"]').tooltip();
+    }
+    if ($('[data-toggle="popover"]').popover === 'function') {
+        $('[data-toggle="popover"]').popover();
+    }
+});
+</script>
+<style type="text/css">
+.lightable-minimal {
+border-collapse: separate;
+border-spacing: 16px 1px;
+width: 100%;
+margin-bottom: 10px;
+}
+.lightable-minimal td {
+margin-left: 5px;
+margin-right: 5px;
+}
+.lightable-minimal th {
+margin-left: 5px;
+margin-right: 5px;
+}
+.lightable-minimal thead tr:last-child th {
+border-bottom: 2px solid #00000050;
+empty-cells: hide;
+}
+.lightable-minimal tbody tr:first-child td {
+padding-top: 0.5em;
+}
+.lightable-minimal.lightable-hover tbody tr:hover {
+background-color: #f5f5f5;
+}
+.lightable-minimal.lightable-striped tbody tr:nth-child(even) {
+background-color: #f5f5f5;
+}
+.lightable-classic {
+border-top: 0.16em solid #111111;
+width: 100%;
+margin-bottom: 10px;
+margin: 10px 5px;
+}
+.lightable-classic caption {
+color: #222222;
+}
+.lightable-classic td {
+padding-left: 5px;
+padding-right: 5px;
+color: #222222;
+}
+.lightable-classic th {
+padding-left: 5px;
+padding-right: 5px;
+font-weight: normal;
+color: #222222;
+}
+.lightable-classic thead tr:last-child th {
+border-bottom: 0.10em solid #111111;
+}
+.lightable-classic tbody tr:last-child td {
+border-bottom: 0.14em solid #111111;
+}
+.lightable-classic.lightable-hover tbody tr:hover {
+background-color: #F9EEC1;
+}
+.lightable-classic.lightable-striped tbody tr:nth-child(even) {
+background-color: #f5f5f5;
+}
+.lightable-classic-2 {
+border-top: 3px double #111111;
+width: 100%;
+margin-bottom: 10px;
+}
+.lightable-classic-2 caption {
+color: #222222;
+}
+.lightable-classic-2 td {
+padding-left: 5px;
+padding-right: 5px;
+color: #222222;
+}
+.lightable-classic-2 th {
+padding-left: 5px;
+padding-right: 5px;
+font-weight: normal;
+color: #222222;
+}
+.lightable-classic-2 tbody tr:last-child td {
+border-bottom: 3px double #111111;
+}
+.lightable-classic-2 thead tr:last-child th {
+border-bottom: 1px solid #111111;
+}
+.lightable-classic-2.lightable-hover tbody tr:hover {
+background-color: #F9EEC1;
+}
+.lightable-classic-2.lightable-striped tbody tr:nth-child(even) {
+background-color: #f5f5f5;
+}
+.lightable-material {
+min-width: 100%;
+white-space: nowrap;
+table-layout: fixed;
+font-family: Roboto, sans-serif;
+border: 1px solid #EEE;
+border-collapse: collapse;
+margin-bottom: 10px;
+}
+.lightable-material th {
+height: 56px;
+padding-left: 16px;
+padding-right: 16px;
+}
+.lightable-material td {
+height: 52px;
+padding-left: 16px;
+padding-right: 16px;
+border-top: 1px solid #eeeeee;
+}
+.lightable-material.lightable-hover tbody tr:hover {
+background-color: #f5f5f5;
+}
+.lightable-material.lightable-striped tbody tr:nth-child(even) {
+background-color: #f5f5f5;
+}
+.lightable-material.lightable-striped tbody td {
+border: 0;
+}
+.lightable-material.lightable-striped thead tr:last-child th {
+border-bottom: 1px solid #ddd;
+}
+.lightable-material-dark {
+min-width: 100%;
+white-space: nowrap;
+table-layout: fixed;
+font-family: Roboto, sans-serif;
+border: 1px solid #FFFFFF12;
+border-collapse: collapse;
+margin-bottom: 10px;
+background-color: #363640;
+}
+.lightable-material-dark th {
+height: 56px;
+padding-left: 16px;
+padding-right: 16px;
+color: #FFFFFF60;
+}
+.lightable-material-dark td {
+height: 52px;
+padding-left: 16px;
+padding-right: 16px;
+color: #FFFFFF;
+border-top: 1px solid #FFFFFF12;
+}
+.lightable-material-dark.lightable-hover tbody tr:hover {
+background-color: #FFFFFF12;
+}
+.lightable-material-dark.lightable-striped tbody tr:nth-child(even) {
+background-color: #FFFFFF12;
+}
+.lightable-material-dark.lightable-striped tbody td {
+border: 0;
+}
+.lightable-material-dark.lightable-striped thead tr:last-child th {
+border-bottom: 1px solid #FFFFFF12;
+}
+.lightable-paper {
+width: 100%;
+margin-bottom: 10px;
+color: #444;
+}
+.lightable-paper thead tr:last-child th {
+color: #666;
+vertical-align: bottom;
+border-bottom: 1px solid #00000020;
+line-height: 1.15em;
+padding: 10px 5px;
+}
+.lightable-paper td {
+vertical-align: middle;
+border-bottom: 1px solid #00000010;
+line-height: 1.15em;
+padding: 7px 5px;
+}
+.lightable-paper.lightable-hover tbody tr:hover {
+background-color: #F9EEC1;
+}
+.lightable-paper.lightable-striped tbody tr:nth-child(even) {
+background-color: #00000008;
+}
+.lightable-paper.lightable-striped tbody td {
+border: 0;
+}
+</style>
 
 
 <style type="text/css">code{white-space: pre;}</style>
@@ -521,21 +716,100 @@ summary {
 <h1>Data from the state</h1>
 <p>The state posts an xlsx file of polling locations here: <a href="https://elections.wi.gov/node/6527" class="uri">https://elections.wi.gov/node/6527</a></p>
 <p>To check it’s accuracy, we look up polling locations for addresses in every voting precinct.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">library</span>(httr)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="kw">library</span>(jsonlite)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a><span class="kw">library</span>(tidyverse)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a><span class="kw">library</span>(magrittr)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true"></a><span class="co"># polling locations posted on website for WI primary</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true"></a>official_locations &lt;-<span class="st"> </span>readxl<span class="op">::</span><span class="kw">read_xlsx</span>(here<span class="op">::</span><span class="kw">here</span>(<span class="st">&quot;data&quot;</span>, <span class="st">&quot;PPL 2020 Partisan Primary 2.xlsx&quot;</span>))</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true"></a><span class="co"># one address per precinct</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true"></a>addresses &lt;-<span class="st"> </span><span class="kw">read_csv</span>(here<span class="op">::</span><span class="kw">here</span>(<span class="st">&quot;data&quot;</span>, <span class="st">&quot;wisconsin_example_addresses.csv&quot;</span>))</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true"></a></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true"></a><span class="co"># </span><span class="al">FIXME</span><span class="co"> DELETE THESE LINES FOR FULL DATA</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true"></a>official_locations <span class="op">%&lt;&gt;%</span><span class="st"> </span><span class="kw">head</span>()</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true"></a>addresses <span class="op">%&lt;&gt;%</span><span class="st"> </span><span class="kw">head</span>()</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true"></a><span class="co"># /</span><span class="al">FIXME</span></span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="co"># polling locations posted on website</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a>html &lt;-<span class="st"> </span><span class="kw">read_html</span>(<span class="st">&quot;https://elections.wi.gov/node/6527&quot;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a><span class="st">  </span><span class="kw">html_nodes</span>(<span class="st">&quot;a&quot;</span>) </span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a>files &lt;-<span class="st"> </span><span class="kw">tibble</span>(<span class="dt">file =</span> <span class="kw">html_text</span>(html),</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true"></a>                <span class="dt">link =</span> <span class="kw">html_attr</span>(html, <span class="st">&quot;href&quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true"></a><span class="st">  </span><span class="kw">filter</span>(<span class="kw">str_detect</span>(file, <span class="st">&quot;xls|csv&quot;</span>)) </span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true"></a>                </span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true"></a><span class="kw">kablebox</span>(files)</span></code></pre></div>
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; ">
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+file
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+link
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Polling Place List - 2020 Partisan Primary- UPDATED 3:30pm 8-11-2020.xlsx
+</td>
+<td style="text-align:left;">
+<a href="https://elections.wi.gov/sites/elections.wi.gov/files/2020-08/PPL%202020%20Partisan%20Primary%202.xlsx" class="uri">https://elections.wi.gov/sites/elections.wi.gov/files/2020-08/PPL%202020%20Partisan%20Primary%202.xlsx</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2020 Partisan Primary Referendums 062520.xlsx
+</td>
+<td style="text-align:left;">
+<a href="https://elections.wi.gov/sites/elections.wi.gov/files/2020-06/2020%20Partisan%20Primary%20Referendums%20062520.xlsx" class="uri">https://elections.wi.gov/sites/elections.wi.gov/files/2020-06/2020%20Partisan%20Primary%20Referendums%20062520.xlsx</a>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="co"># UPDATE THIS IF A NEW FILE IS POSTED! </span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a>file &lt;-<span class="st"> &quot;PPL 2020 Partisan Primary 2.xlsx&quot;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a><span class="st">`</span><span class="dt">Date Authenticated*</span><span class="st">`</span> &lt;-<span class="st"> &quot;8-11-2020&quot;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a><span class="st">`</span><span class="dt">Authority Contact Info</span><span class="st">`</span> &lt;-<span class="st"> &quot;(608) 266-8005&quot;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true"></a><span class="kw">tibble</span>(file,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true"></a>       <span class="st">`</span><span class="dt">Date Authenticated*</span><span class="st">`</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true"></a>       <span class="st">`</span><span class="dt">Authority Contact Info</span><span class="st">`</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true"></a><span class="st">  </span><span class="kw">kablebox</span>()</span></code></pre></div>
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; ">
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+file
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Date Authenticated*
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Authority Contact Info
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+PPL 2020 Partisan Primary 2.xlsx
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+<ol start="608" style="list-style-type: decimal">
+<li>266-8005
+</td>
+</tr>
+</tbody>
+</table>
+</div></li>
+</ol>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a>official_locations &lt;-<span class="st"> </span>readxl<span class="op">::</span><span class="kw">read_xlsx</span>(here<span class="op">::</span><span class="kw">here</span>(<span class="st">&quot;data&quot;</span>, file))</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a><span class="co">#########################################################</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a><span class="co"># one address per precinct</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true"></a>addresses &lt;-<span class="st"> </span><span class="kw">read_csv</span>(here<span class="op">::</span><span class="kw">here</span>(<span class="st">&quot;data&quot;</span>, <span class="st">&quot;wisconsin_example_addresses.csv&quot;</span>))</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true"></a>addresses <span class="op">%&lt;&gt;%</span><span class="st"> </span><span class="kw">arrange</span>(county_name)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true"></a><span class="co"># </span><span class="al">FIXME</span><span class="co"> DELETE THESE LINES FOR FULL DATA</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true"></a>official_locations <span class="op">%&lt;&gt;%</span><span class="st"> </span><span class="kw">head</span>()</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true"></a>addresses <span class="op">%&lt;&gt;%</span><span class="st"> </span><span class="kw">head</span>()</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true"></a><span class="co"># /</span><span class="al">FIXME</span></span></code></pre></div>
 </div>
 <div id="data-from-the-state-voter-information-project-google-civics-api" class="section level1">
 <h1>Data from the state –&gt; Voter Information Project –&gt; Google Civic’s API</h1>
@@ -547,275 +821,2008 @@ summary {
 - <code>pollingLocations</code> will not always be returned<br />
 - may great deal more than polling locations<br />
 - may return more than one polling place per input address as a list</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="co"># need to get AND authorize an api key</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a><span class="kw">source</span>(here<span class="op">::</span><span class="kw">here</span>(<span class="st">&quot;api_key.R&quot;</span>))</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a><span class="co"># A function to get poll addresses</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a>get_poll &lt;-<span class="st"> </span><span class="cf">function</span>(voter_address){</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true"></a>  </span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true"></a>  voter_address <span class="op">%&lt;&gt;%</span><span class="st"> </span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true"></a><span class="st">    </span><span class="kw">str_replace_all</span>(<span class="st">&quot; &quot;</span>, <span class="st">&quot;%20&quot;</span>) <span class="op">%&gt;%</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true"></a><span class="st">    </span><span class="kw">str_remove_all</span>(<span class="st">&quot;,&quot;</span>)</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true"></a>  </span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true"></a>  url &lt;-<span class="st"> </span><span class="kw">str_c</span>(<span class="st">&quot;https://civicinfo.googleapis.com/civicinfo/v2/voterinfo?address=&quot;</span>, </span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true"></a>               voter_address, </span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true"></a>               <span class="st">&quot;&amp;returnAllAvailableData=true&amp;key=&quot;</span>, </span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true"></a>               api_key)</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true"></a>  </span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true"></a>  </span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true"></a>  poll &lt;-<span class="st"> </span><span class="kw">GET</span>(url) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true"></a><span class="st">    </span>.<span class="op">$</span>content <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true"></a><span class="st">    </span><span class="kw">rawToChar</span>() <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true"></a><span class="st">    </span><span class="kw">fromJSON</span>() <span class="op">%&gt;%</span></span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true"></a><span class="st">    </span>.<span class="op">$</span>pollingLocations <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># note: there is a lot more than this</span></span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true"></a><span class="st">    </span>.<span class="op">$</span>address <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true"></a><span class="st">    </span>{<span class="kw">ifelse</span>(<span class="kw">is.null</span>(.), <span class="st">&quot;none&quot;</span>, .)}</span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true"></a>  </span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true"></a>  <span class="kw">return</span>(poll)</span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true"></a>}</span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true"></a></span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true"></a><span class="co"># apply function to addresses</span></span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true"></a>addresses <span class="op">%&lt;&gt;%</span><span class="st"> </span></span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">voter_address =</span> <span class="kw">paste</span>(voting_street_address, voting_city, state_code),  </span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true"></a>         <span class="dt">PollingPlaceAddress =</span> <span class="kw">map</span>(voter_address, get_poll)) </span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true"></a></span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true"></a><span class="co"># expand if there is more then one polling place per address</span></span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true"></a>addresses <span class="op">%&lt;&gt;%</span><span class="st"> </span><span class="kw">unnest</span>(PollingPlaceAddress)</span></code></pre></div>
-<div id="api-results-not-in-the-states-xlsx-file" class="section level2">
-<h2>API results not in the state’s xlsx file</h2>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a>addresses <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a><span class="st">  </span><span class="kw">filter</span>(PollingPlaceAddress <span class="op">!=</span><span class="st"> &quot;none&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># filter out API errors</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a><span class="st">  </span><span class="kw">anti_join</span>(official_locations) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># filter out locations already posted</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a><span class="st">  </span><span class="kw">select</span>(precinct_name, precinct_id, PollingPlaceAddress) <span class="op">%&gt;%</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true"></a><span class="st">  </span>knitr<span class="op">::</span><span class="kw">kable</span>()</span></code></pre></div>
-<table>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="co"># make full street address</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a>addresses <span class="op">%&lt;&gt;%</span><span class="st"> </span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">voter_address =</span> <span class="kw">paste</span>(voting_street_address,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true"></a>                               voting_city, </span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true"></a>                               state_code))</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true"></a>addresses<span class="op">$</span>voter_address[<span class="dv">1</span>]</span></code></pre></div>
+<pre><code>## [1] &quot;1888 County Road Z Arkdale WI&quot;</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a><span class="co"># need to get AND authorize an api key</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a><span class="kw">source</span>(here<span class="op">::</span><span class="kw">here</span>(<span class="st">&quot;api_key.R&quot;</span>))</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true"></a><span class="co"># A function to get poll addresses</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true"></a>get_poll &lt;-<span class="st"> </span><span class="cf">function</span>(voter_address){</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true"></a>  </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true"></a>  voter_address <span class="op">%&lt;&gt;%</span><span class="st"> </span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true"></a><span class="st">    </span><span class="kw">str_replace_all</span>(<span class="st">&quot; &quot;</span>, <span class="st">&quot;%20&quot;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true"></a><span class="st">    </span><span class="kw">str_remove_all</span>(<span class="st">&quot;,&quot;</span>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true"></a>  </span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true"></a>  url &lt;-<span class="st"> </span><span class="kw">str_c</span>(<span class="st">&quot;https://civicinfo.googleapis.com/civicinfo/v2/voterinfo?address=&quot;</span>, </span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true"></a>               voter_address, </span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true"></a>               <span class="st">&quot;&amp;returnAllAvailableData=true&amp;key=&quot;</span>, </span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true"></a>               api_key)</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true"></a>  </span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true"></a>  </span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true"></a>  poll &lt;-<span class="st"> </span><span class="kw">GET</span>(url) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true"></a><span class="st">    </span>.<span class="op">$</span>content <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true"></a><span class="st">    </span><span class="kw">rawToChar</span>() <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true"></a><span class="st">    </span><span class="kw">fromJSON</span>() <span class="op">%&gt;%</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true"></a><span class="st">    </span>.<span class="op">$</span>pollingLocations <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># note: there is a lot more than this</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true"></a><span class="st">    </span>.<span class="op">$</span>address <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true"></a><span class="st">    </span>{<span class="kw">ifelse</span>(<span class="kw">is.null</span>(.), <span class="st">&quot;NULL&quot;</span>, .)}</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true"></a>  </span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true"></a>  <span class="kw">return</span>(poll)</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true"></a>}</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true"></a></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true"></a></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true"></a><span class="co"># test </span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true"></a><span class="kw">get_poll</span>(addresses<span class="op">$</span>voter_address[<span class="dv">1</span>])</span></code></pre></div>
+<pre><code>## [1] &quot;NULL&quot;</code></pre>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a><span class="co"># apply function to addresses</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true"></a>api_locations &lt;-<span class="st"> </span>addresses <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true"></a><span class="st">  </span><span class="co"># &quot;NULL&quot; if NULL, &quot;error&quot; if any error</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">PollingPlaceAddress =</span> voter_address <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">map</span>(<span class="kw">possibly</span>(get_poll, <span class="st">&quot;error&quot;</span>))) </span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true"></a><span class="co"># expand if there is more then one polling place per address</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true"></a>api_locations <span class="op">%&lt;&gt;%</span><span class="st"> </span><span class="kw">unnest</span>(PollingPlaceAddress)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true"></a>api_locations <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(voting_street_address, precinct_name, precinct_id, PollingPlaceAddress) <span class="op">%&gt;%</span><span class="st">  </span><span class="kw">kablebox</span>()</span></code></pre></div>
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; ">
+<table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
-<tr class="header">
-<th align="left">precinct_name</th>
-<th align="right">precinct_id</th>
-<th align="left">PollingPlaceAddress</th>
+<tr>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+voting_street_address
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+precinct_name
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+precinct_id
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+PollingPlaceAddress
+</th>
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+1888 County Road Z
+</td>
+<td style="text-align:left;">
+Adams - Town Of Strongs Prairie - Ward 003
+</td>
+<td style="text-align:right;">
+1578843
+</td>
+<td style="text-align:left;">
+NULL
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+150 W State St
+</td>
+<td style="text-align:left;">
+Adams - City Of Adams - Ward 004
+</td>
+<td style="text-align:right;">
+418146
+</td>
+<td style="text-align:left;">
+NULL
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+350 E Liberty St Apt 229
+</td>
+<td style="text-align:left;">
+Adams - City Of Adams - Ward 003
+</td>
+<td style="text-align:right;">
+418260
+</td>
+<td style="text-align:left;">
+NULL
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+1716 9th Ave
+</td>
+<td style="text-align:left;">
+Adams - City Of Wisconsin Dells - Ward 005
+</td>
+<td style="text-align:right;">
+418829
+</td>
+<td style="text-align:left;">
+NULL
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+1443 Evergreen Ave Lot 17
+</td>
+<td style="text-align:left;">
+Adams - Town Of Easton - Ward 002
+</td>
+<td style="text-align:right;">
+415715
+</td>
+<td style="text-align:left;">
+NULL
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+986 S Archers Way
+</td>
+<td style="text-align:left;">
+Adams - Town Of Rome - Ward 003
+</td>
+<td style="text-align:right;">
+416268
+</td>
+<td style="text-align:left;">
+NULL
+</td>
+</tr>
 </tbody>
 </table>
+</div>
+<div id="api-results-not-in-the-states-xlsx-file" class="section level2">
+<h2>API results not in the state’s xlsx file</h2>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true"></a>api_locations <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true"></a><span class="st">  </span><span class="kw">filter</span>(PollingPlaceAddress <span class="op">!=</span><span class="st"> &quot;NULL&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># filter out API errors</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true"></a><span class="st">  </span><span class="kw">anti_join</span>(official_locations) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># filter out locations already posted</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true"></a><span class="st">  </span><span class="kw">select</span>(precinct_name, precinct_id, PollingPlaceAddress) <span class="op">%&gt;%</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true"></a><span class="st">  </span><span class="kw">kablebox</span>()</span></code></pre></div>
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; ">
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+precinct_name
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+precinct_id
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+PollingPlaceAddress
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <div id="cases-where-google-civics-api-did-not-return-the-same-address-when-given-polling-locations" class="section level2">
 <h2>Cases where Google Civic’s API did not return the same address when given polling locations</h2>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a>official_locations <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">PollingPlaceAddress_API =</span> <span class="kw">map</span>(PollingPlaceAddress, get_poll)) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># get polling places for polling places&#39; addresses</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a><span class="st">  </span><span class="kw">filter</span>(PollingPlaceAddress_API <span class="op">!=</span><span class="st"> </span>PollingPlaceAddress) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># mismatches</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true"></a><span class="st">  </span><span class="kw">select</span>(Muni, ReportingUnit, PollingPlaceName, PollingPlaceAddress, PollingPlaceAddress_API) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true"></a><span class="st">  </span>knitr<span class="op">::</span><span class="kw">kable</span>()</span></code></pre></div>
-<table style="width:100%;">
-<colgroup>
-<col width="16%" />
-<col width="9%" />
-<col width="23%" />
-<col width="34%" />
-<col width="16%" />
-</colgroup>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true"></a>official_locations <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">PollingPlaceAddress_API =</span> <span class="kw">map</span>(PollingPlaceAddress, get_poll)) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># get polling places for polling places&#39; addresses</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true"></a><span class="st">  </span><span class="kw">filter</span>(PollingPlaceAddress_API <span class="op">!=</span><span class="st"> </span>PollingPlaceAddress) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># mismatches</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true"></a><span class="st">  </span><span class="kw">select</span>(Muni, ReportingUnit, PollingPlaceName, PollingPlaceAddress, PollingPlaceAddress_API) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true"></a><span class="st">  </span><span class="kw">kablebox</span>()</span></code></pre></div>
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; ">
+<table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
-<tr class="header">
-<th align="left">Muni</th>
-<th align="left">ReportingUnit</th>
-<th align="left">PollingPlaceName</th>
-<th align="left">PollingPlaceAddress</th>
-<th align="left">PollingPlaceAddress_API</th>
+<tr>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Muni
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+ReportingUnit
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+PollingPlaceName
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+PollingPlaceAddress
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+PollingPlaceAddress_API
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">CITY OF ADAMS</td>
-<td align="left">Wards 1-4</td>
-<td align="left">ADAMS CITY HALL</td>
-<td align="left">101 N MAIN ST, ADAMS, WI 53910-9805</td>
-<td align="left">none</td>
+<tr>
+<td style="text-align:left;">
+CITY OF ADAMS
+</td>
+<td style="text-align:left;">
+Wards 1-4
+</td>
+<td style="text-align:left;">
+ADAMS CITY HALL
+</td>
+<td style="text-align:left;">
+101 N MAIN ST, ADAMS, WI 53910-9805
+</td>
+<td style="text-align:left;">
+NULL
+</td>
 </tr>
-<tr class="even">
-<td align="left">CITY OF WISCONSIN DELLS</td>
-<td align="left">Wards 5,9</td>
-<td align="left">WISCONSIN DELLS MUNICIPAL BUILDING</td>
-<td align="left">300 LA CROSSE ST, WISCONSIN DELLS, WI 53965-1568</td>
-<td align="left">none</td>
+<tr>
+<td style="text-align:left;">
+CITY OF WISCONSIN DELLS
+</td>
+<td style="text-align:left;">
+Wards 5,9
+</td>
+<td style="text-align:left;">
+WISCONSIN DELLS MUNICIPAL BUILDING
+</td>
+<td style="text-align:left;">
+300 LA CROSSE ST, WISCONSIN DELLS, WI 53965-1568
+</td>
+<td style="text-align:left;">
+NULL
+</td>
 </tr>
-<tr class="odd">
-<td align="left">TOWN OF Adams</td>
-<td align="left">Wards 1-3</td>
-<td align="left">ADAMS TOWN HALL</td>
-<td align="left">1980 11TH AVE, FRIENDSHIP, WI 53934-9005</td>
-<td align="left">none</td>
+<tr>
+<td style="text-align:left;">
+TOWN OF Adams
+</td>
+<td style="text-align:left;">
+Wards 1-3
+</td>
+<td style="text-align:left;">
+ADAMS TOWN HALL
+</td>
+<td style="text-align:left;">
+1980 11TH AVE, FRIENDSHIP, WI 53934-9005
+</td>
+<td style="text-align:left;">
+NULL
+</td>
 </tr>
-<tr class="even">
-<td align="left">TOWN OF Big Flats</td>
-<td align="left">Wards 1-2</td>
-<td align="left">BIG FLATS TOWN HALL</td>
-<td align="left">1104 COUNTY ROAD C, ARKDALE, WI 54613-9728</td>
-<td align="left">none</td>
+<tr>
+<td style="text-align:left;">
+TOWN OF Big Flats
+</td>
+<td style="text-align:left;">
+Wards 1-2
+</td>
+<td style="text-align:left;">
+BIG FLATS TOWN HALL
+</td>
+<td style="text-align:left;">
+1104 COUNTY ROAD C, ARKDALE, WI 54613-9728
+</td>
+<td style="text-align:left;">
+NULL
+</td>
 </tr>
-<tr class="odd">
-<td align="left">TOWN OF Colburn</td>
-<td align="left">Ward 1</td>
-<td align="left">RICHFIELD TOWN HALL</td>
-<td align="left">1602 COUNTY ROAD G, COLOMA, WI 54930</td>
-<td align="left">none</td>
+<tr>
+<td style="text-align:left;">
+TOWN OF Colburn
+</td>
+<td style="text-align:left;">
+Ward 1
+</td>
+<td style="text-align:left;">
+RICHFIELD TOWN HALL
+</td>
+<td style="text-align:left;">
+1602 COUNTY ROAD G, COLOMA, WI 54930
+</td>
+<td style="text-align:left;">
+NULL
+</td>
 </tr>
-<tr class="even">
-<td align="left">TOWN OF Dell Prairie</td>
-<td align="left">Wards 1-3</td>
-<td align="left">DELL PRAIRIE TOWN HALL</td>
-<td align="left">763 COUNTY ROAD K, WISCONSIN DELLS, WI 53965-8981</td>
-<td align="left">none</td>
+<tr>
+<td style="text-align:left;">
+TOWN OF Dell Prairie
+</td>
+<td style="text-align:left;">
+Wards 1-3
+</td>
+<td style="text-align:left;">
+DELL PRAIRIE TOWN HALL
+</td>
+<td style="text-align:left;">
+763 COUNTY ROAD K, WISCONSIN DELLS, WI 53965-8981
+</td>
+<td style="text-align:left;">
+NULL
+</td>
 </tr>
 </tbody>
 </table>
+</div>
 </div>
 <div id="polling-locations-not-returned-by-google-civics-api" class="section level2">
 <h2>Polling locations not returned by Google Civic’s API</h2>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a>official_locations <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a><span class="st">  </span><span class="kw">anti_join</span>(addresses) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># remove ones matched with API</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a><span class="st">  </span><span class="kw">select</span>(Muni, ReportingUnit, PollingPlaceName, PollingPlaceAddress) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true"></a><span class="st">  </span>knitr<span class="op">::</span><span class="kw">kable</span>()</span></code></pre></div>
-<table>
-<colgroup>
-<col width="19%" />
-<col width="11%" />
-<col width="28%" />
-<col width="40%" />
-</colgroup>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true"></a>official_locations <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true"></a><span class="st">  </span><span class="kw">anti_join</span>(api_locations) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># remove ones matched with API</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true"></a><span class="st">  </span><span class="kw">select</span>(Muni, ReportingUnit, PollingPlaceName, PollingPlaceAddress) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true"></a><span class="st">  </span><span class="kw">kablebox</span>()</span></code></pre></div>
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; ">
+<table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
-<tr class="header">
-<th align="left">Muni</th>
-<th align="left">ReportingUnit</th>
-<th align="left">PollingPlaceName</th>
-<th align="left">PollingPlaceAddress</th>
+<tr>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Muni
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+ReportingUnit
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+PollingPlaceName
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+PollingPlaceAddress
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">CITY OF ADAMS</td>
-<td align="left">Wards 1-4</td>
-<td align="left">ADAMS CITY HALL</td>
-<td align="left">101 N MAIN ST, ADAMS, WI 53910-9805</td>
+<tr>
+<td style="text-align:left;">
+CITY OF ADAMS
+</td>
+<td style="text-align:left;">
+Wards 1-4
+</td>
+<td style="text-align:left;">
+ADAMS CITY HALL
+</td>
+<td style="text-align:left;">
+101 N MAIN ST, ADAMS, WI 53910-9805
+</td>
 </tr>
-<tr class="even">
-<td align="left">CITY OF WISCONSIN DELLS</td>
-<td align="left">Wards 5,9</td>
-<td align="left">WISCONSIN DELLS MUNICIPAL BUILDING</td>
-<td align="left">300 LA CROSSE ST, WISCONSIN DELLS, WI 53965-1568</td>
+<tr>
+<td style="text-align:left;">
+CITY OF WISCONSIN DELLS
+</td>
+<td style="text-align:left;">
+Wards 5,9
+</td>
+<td style="text-align:left;">
+WISCONSIN DELLS MUNICIPAL BUILDING
+</td>
+<td style="text-align:left;">
+300 LA CROSSE ST, WISCONSIN DELLS, WI 53965-1568
+</td>
 </tr>
-<tr class="odd">
-<td align="left">TOWN OF Adams</td>
-<td align="left">Wards 1-3</td>
-<td align="left">ADAMS TOWN HALL</td>
-<td align="left">1980 11TH AVE, FRIENDSHIP, WI 53934-9005</td>
+<tr>
+<td style="text-align:left;">
+TOWN OF Adams
+</td>
+<td style="text-align:left;">
+Wards 1-3
+</td>
+<td style="text-align:left;">
+ADAMS TOWN HALL
+</td>
+<td style="text-align:left;">
+1980 11TH AVE, FRIENDSHIP, WI 53934-9005
+</td>
 </tr>
-<tr class="even">
-<td align="left">TOWN OF Big Flats</td>
-<td align="left">Wards 1-2</td>
-<td align="left">BIG FLATS TOWN HALL</td>
-<td align="left">1104 COUNTY ROAD C, ARKDALE, WI 54613-9728</td>
+<tr>
+<td style="text-align:left;">
+TOWN OF Big Flats
+</td>
+<td style="text-align:left;">
+Wards 1-2
+</td>
+<td style="text-align:left;">
+BIG FLATS TOWN HALL
+</td>
+<td style="text-align:left;">
+1104 COUNTY ROAD C, ARKDALE, WI 54613-9728
+</td>
 </tr>
-<tr class="odd">
-<td align="left">TOWN OF Colburn</td>
-<td align="left">Ward 1</td>
-<td align="left">RICHFIELD TOWN HALL</td>
-<td align="left">1602 COUNTY ROAD G, COLOMA, WI 54930</td>
+<tr>
+<td style="text-align:left;">
+TOWN OF Colburn
+</td>
+<td style="text-align:left;">
+Ward 1
+</td>
+<td style="text-align:left;">
+RICHFIELD TOWN HALL
+</td>
+<td style="text-align:left;">
+1602 COUNTY ROAD G, COLOMA, WI 54930
+</td>
 </tr>
-<tr class="even">
-<td align="left">TOWN OF Dell Prairie</td>
-<td align="left">Wards 1-3</td>
-<td align="left">DELL PRAIRIE TOWN HALL</td>
-<td align="left">763 COUNTY ROAD K, WISCONSIN DELLS, WI 53965-8981</td>
+<tr>
+<td style="text-align:left;">
+TOWN OF Dell Prairie
+</td>
+<td style="text-align:left;">
+Wards 1-3
+</td>
+<td style="text-align:left;">
+DELL PRAIRIE TOWN HALL
+</td>
+<td style="text-align:left;">
+763 COUNTY ROAD K, WISCONSIN DELLS, WI 53965-8981
+</td>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a><span class="co"># for refernce, these may or may not be returned: </span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a><span class="st">&quot;pollingLocations&quot;</span><span class="op">:</span><span class="st"> </span>[</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true"></a>    {</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true"></a>      <span class="st">&quot;id&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true"></a>      <span class="st">&quot;address&quot;</span><span class="op">:</span><span class="st"> </span>{</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true"></a>        <span class="st">&quot;locationName&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true"></a>        <span class="st">&quot;line1&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true"></a>        <span class="st">&quot;line2&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true"></a>        <span class="st">&quot;line3&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true"></a>        <span class="st">&quot;city&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true"></a>        <span class="st">&quot;state&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true"></a>        <span class="st">&quot;zip&quot;</span><span class="op">:</span><span class="st"> </span>string</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true"></a>      },</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true"></a>      <span class="st">&quot;notes&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true"></a>      <span class="st">&quot;pollingHours&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true"></a>      <span class="st">&quot;name&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true"></a>      <span class="st">&quot;voterServices&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true"></a>      <span class="st">&quot;startDate&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true"></a>      <span class="st">&quot;endDate&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true"></a>      <span class="st">&quot;latitude&quot;</span><span class="op">:</span><span class="st"> </span>double,</span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true"></a>      <span class="st">&quot;longitude&quot;</span><span class="op">:</span><span class="st"> </span>double,</span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true"></a>      <span class="st">&quot;sources&quot;</span><span class="op">:</span><span class="st"> </span>[</span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true"></a>        {</span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true"></a>          <span class="st">&quot;name&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true"></a>          <span class="st">&quot;official&quot;</span><span class="op">:</span><span class="st"> </span>boolean</span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true"></a>        }</span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true"></a>      ]</span>
-<span id="cb6-28"><a href="#cb6-28" aria-hidden="true"></a>    }</span>
-<span id="cb6-29"><a href="#cb6-29" aria-hidden="true"></a>  ],</span>
-<span id="cb6-30"><a href="#cb6-30" aria-hidden="true"></a>  <span class="st">&quot;earlyVoteSites&quot;</span><span class="op">:</span><span class="st"> </span>[</span>
-<span id="cb6-31"><a href="#cb6-31" aria-hidden="true"></a>    {</span>
-<span id="cb6-32"><a href="#cb6-32" aria-hidden="true"></a>      <span class="st">&quot;id&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-33"><a href="#cb6-33" aria-hidden="true"></a>      <span class="st">&quot;address&quot;</span><span class="op">:</span><span class="st"> </span>{</span>
-<span id="cb6-34"><a href="#cb6-34" aria-hidden="true"></a>        <span class="st">&quot;locationName&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-35"><a href="#cb6-35" aria-hidden="true"></a>        <span class="st">&quot;line1&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-36"><a href="#cb6-36" aria-hidden="true"></a>        <span class="st">&quot;line2&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-37"><a href="#cb6-37" aria-hidden="true"></a>        <span class="st">&quot;line3&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-38"><a href="#cb6-38" aria-hidden="true"></a>        <span class="st">&quot;city&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-39"><a href="#cb6-39" aria-hidden="true"></a>        <span class="st">&quot;state&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-40"><a href="#cb6-40" aria-hidden="true"></a>        <span class="st">&quot;zip&quot;</span><span class="op">:</span><span class="st"> </span>string</span>
-<span id="cb6-41"><a href="#cb6-41" aria-hidden="true"></a>      },</span>
-<span id="cb6-42"><a href="#cb6-42" aria-hidden="true"></a>      <span class="st">&quot;notes&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-43"><a href="#cb6-43" aria-hidden="true"></a>      <span class="st">&quot;pollingHours&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-44"><a href="#cb6-44" aria-hidden="true"></a>      <span class="st">&quot;name&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-45"><a href="#cb6-45" aria-hidden="true"></a>      <span class="st">&quot;voterServices&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-46"><a href="#cb6-46" aria-hidden="true"></a>      <span class="st">&quot;startDate&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-47"><a href="#cb6-47" aria-hidden="true"></a>      <span class="st">&quot;endDate&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-48"><a href="#cb6-48" aria-hidden="true"></a>      <span class="st">&quot;latitude&quot;</span><span class="op">:</span><span class="st"> </span>double,</span>
-<span id="cb6-49"><a href="#cb6-49" aria-hidden="true"></a>      <span class="st">&quot;longitude&quot;</span><span class="op">:</span><span class="st"> </span>double,</span>
-<span id="cb6-50"><a href="#cb6-50" aria-hidden="true"></a>      <span class="st">&quot;sources&quot;</span><span class="op">:</span><span class="st"> </span>[</span>
-<span id="cb6-51"><a href="#cb6-51" aria-hidden="true"></a>        {</span>
-<span id="cb6-52"><a href="#cb6-52" aria-hidden="true"></a>          <span class="st">&quot;name&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-53"><a href="#cb6-53" aria-hidden="true"></a>          <span class="st">&quot;official&quot;</span><span class="op">:</span><span class="st"> </span>boolean</span>
-<span id="cb6-54"><a href="#cb6-54" aria-hidden="true"></a>        }</span>
-<span id="cb6-55"><a href="#cb6-55" aria-hidden="true"></a>      ]</span>
-<span id="cb6-56"><a href="#cb6-56" aria-hidden="true"></a>    }</span>
-<span id="cb6-57"><a href="#cb6-57" aria-hidden="true"></a>  ],</span>
-<span id="cb6-58"><a href="#cb6-58" aria-hidden="true"></a>  <span class="st">&quot;dropOffLocations&quot;</span><span class="op">:</span><span class="st"> </span>[</span>
-<span id="cb6-59"><a href="#cb6-59" aria-hidden="true"></a>    {</span>
-<span id="cb6-60"><a href="#cb6-60" aria-hidden="true"></a>      <span class="st">&quot;id&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-61"><a href="#cb6-61" aria-hidden="true"></a>      <span class="st">&quot;address&quot;</span><span class="op">:</span><span class="st"> </span>{</span>
-<span id="cb6-62"><a href="#cb6-62" aria-hidden="true"></a>        <span class="st">&quot;locationName&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-63"><a href="#cb6-63" aria-hidden="true"></a>        <span class="st">&quot;line1&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-64"><a href="#cb6-64" aria-hidden="true"></a>        <span class="st">&quot;line2&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-65"><a href="#cb6-65" aria-hidden="true"></a>        <span class="st">&quot;line3&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-66"><a href="#cb6-66" aria-hidden="true"></a>        <span class="st">&quot;city&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-67"><a href="#cb6-67" aria-hidden="true"></a>        <span class="st">&quot;state&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-68"><a href="#cb6-68" aria-hidden="true"></a>        <span class="st">&quot;zip&quot;</span><span class="op">:</span><span class="st"> </span>string</span>
-<span id="cb6-69"><a href="#cb6-69" aria-hidden="true"></a>      },</span>
-<span id="cb6-70"><a href="#cb6-70" aria-hidden="true"></a>      <span class="st">&quot;notes&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-71"><a href="#cb6-71" aria-hidden="true"></a>      <span class="st">&quot;pollingHours&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-72"><a href="#cb6-72" aria-hidden="true"></a>      <span class="st">&quot;name&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-73"><a href="#cb6-73" aria-hidden="true"></a>      <span class="st">&quot;voterServices&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-74"><a href="#cb6-74" aria-hidden="true"></a>      <span class="st">&quot;startDate&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-75"><a href="#cb6-75" aria-hidden="true"></a>      <span class="st">&quot;endDate&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-76"><a href="#cb6-76" aria-hidden="true"></a>      <span class="st">&quot;latitude&quot;</span><span class="op">:</span><span class="st"> </span>double,</span>
-<span id="cb6-77"><a href="#cb6-77" aria-hidden="true"></a>      <span class="st">&quot;longitude&quot;</span><span class="op">:</span><span class="st"> </span>double,</span>
-<span id="cb6-78"><a href="#cb6-78" aria-hidden="true"></a>      <span class="st">&quot;sources&quot;</span><span class="op">:</span><span class="st"> </span>[</span>
-<span id="cb6-79"><a href="#cb6-79" aria-hidden="true"></a>        {</span>
-<span id="cb6-80"><a href="#cb6-80" aria-hidden="true"></a>          <span class="st">&quot;name&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
-<span id="cb6-81"><a href="#cb6-81" aria-hidden="true"></a>          <span class="st">&quot;official&quot;</span><span class="op">:</span><span class="st"> </span>boolean</span>
-<span id="cb6-82"><a href="#cb6-82" aria-hidden="true"></a>        }</span>
-<span id="cb6-83"><a href="#cb6-83" aria-hidden="true"></a>      ]</span>
-<span id="cb6-84"><a href="#cb6-84" aria-hidden="true"></a>    }</span>
-<span id="cb6-85"><a href="#cb6-85" aria-hidden="true"></a>  ],</span></code></pre></div>
 </div>
+</div>
+<div id="combine-results" class="section level2">
+<h2>Combine results</h2>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true"></a><span class="co"># name both official and API results to fit VAN</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true"></a>api_locations <span class="op">%&lt;&gt;%</span><span class="st"> </span><span class="kw">rename</span>(<span class="dt">County =</span> county_name)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true"></a><span class="co"># reformat county</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true"></a>official_locations <span class="op">%&lt;&gt;%</span><span class="st"> </span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">County =</span> <span class="kw">str_to_sentence</span>(County) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">str_remove</span>(<span class="st">&quot; county&quot;</span>) )</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true"></a></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true"></a>locations &lt;-<span class="st"> </span><span class="kw">full_join</span>(api_locations,</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true"></a>                       official_locations)</span></code></pre></div>
+</div>
+</div>
+<div id="format-for-van-upload" class="section level1">
+<h1>Format for VAN upload</h1>
+<p>Note that several names have spaces in them!</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true"></a><span class="co"># name combined official and API results to fit VAN</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true"></a>locations <span class="op">%&lt;&gt;%</span><span class="st"> </span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true"></a><span class="st">  </span><span class="kw">rename</span>(<span class="dt">Address =</span> PollingPlaceAddress,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true"></a>         <span class="st">`</span><span class="dt">Polling Location Contact Info</span><span class="st">`</span> =<span class="st"> </span>Phone,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true"></a>         <span class="dt">City =</span> town,</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true"></a>         <span class="st">`</span><span class="dt">Precinct ID</span><span class="st">`</span> =<span class="st"> </span>precinct_id,</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true"></a>         <span class="st">`</span><span class="dt">Precinct Name</span><span class="st">`</span> =<span class="st"> </span>precinct_name) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">County =</span> <span class="kw">str_to_sentence</span>(County) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true"></a><span class="st">           </span><span class="kw">str_remove</span>(<span class="st">&quot; county&quot;</span>),</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true"></a>         <span class="st">`</span><span class="dt">Zip</span><span class="st">`</span> =<span class="st"> </span><span class="kw">str_extract</span>(Address,<span class="st">&quot;WI [0-9]*&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true"></a><span class="st">           </span><span class="kw">str_remove</span>(<span class="st">&quot;WI &quot;</span>),</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true"></a>         <span class="st">`</span><span class="dt">Date Authenticated*</span><span class="st">`</span> =<span class="st"> `</span><span class="dt">Date Authenticated*</span><span class="st">`</span>,</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true"></a>         <span class="st">`</span><span class="dt">Authority Contact Info</span><span class="st">`</span> =<span class="st"> `</span><span class="dt">Authority Contact Info</span><span class="st">`</span>,</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true"></a>         <span class="st">`</span><span class="dt">Authenticating Authority</span><span class="st">`</span> =<span class="st"> &quot;State Election Official&quot;</span>)</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true"></a></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true"></a><span class="co"># old VAN data</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true"></a>van &lt;-<span class="st"> </span>readxl<span class="op">::</span><span class="kw">read_xlsx</span>(<span class="kw">here</span>(<span class="st">&quot;data&quot;</span>, <span class="st">&quot;VAN Polling Locations.xlsx&quot;</span>))</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true"></a></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true"></a><span class="kw">head</span>(van) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">kablebox</span>()</span></code></pre></div>
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; ">
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+Precinct ID
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Precinct Code
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Precinct Name
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Polling Location
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Location Description
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Address
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+City
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Zip
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+County
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Polling Location Contact Info
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Authenticating Authority
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Date Authenticated*
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Authority Contact Info
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+415870
+</td>
+<td style="text-align:left;">
+00100275001
+</td>
+<td style="text-align:left;">
+Adams - City Of Adams - Ward 001
+</td>
+<td style="text-align:left;">
+Adams City Hall
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+101 N Main St
+</td>
+<td style="text-align:left;">
+Adams
+</td>
+<td style="text-align:left;">
+53910
+</td>
+<td style="text-align:left;">
+Adams
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+7/27/20
+</td>
+<td style="text-align:left;">
+DPW- Fall Partisan Primary
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+417089
+</td>
+<td style="text-align:left;">
+00100275002
+</td>
+<td style="text-align:left;">
+Adams - City Of Adams - Ward 002
+</td>
+<td style="text-align:left;">
+Adams City Hall
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+101 N Main St
+</td>
+<td style="text-align:left;">
+Adams
+</td>
+<td style="text-align:left;">
+53910
+</td>
+<td style="text-align:left;">
+Adams
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+7/27/20
+</td>
+<td style="text-align:left;">
+DPW- Fall Partisan Primary
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+418260
+</td>
+<td style="text-align:left;">
+00100275003
+</td>
+<td style="text-align:left;">
+Adams - City Of Adams - Ward 003
+</td>
+<td style="text-align:left;">
+Adams City Hall
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+101 N Main St
+</td>
+<td style="text-align:left;">
+Adams
+</td>
+<td style="text-align:left;">
+53910
+</td>
+<td style="text-align:left;">
+Adams
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+7/27/20
+</td>
+<td style="text-align:left;">
+DPW- Fall Partisan Primary
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+418146
+</td>
+<td style="text-align:left;">
+00100275004
+</td>
+<td style="text-align:left;">
+Adams - City Of Adams - Ward 004
+</td>
+<td style="text-align:left;">
+Adams City Hall
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+101 N Main St
+</td>
+<td style="text-align:left;">
+Adams
+</td>
+<td style="text-align:left;">
+53910
+</td>
+<td style="text-align:left;">
+Adams
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+7/27/20
+</td>
+<td style="text-align:left;">
+DPW- Fall Partisan Primary
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+418829
+</td>
+<td style="text-align:left;">
+00188150005
+</td>
+<td style="text-align:left;">
+Adams - City Of Wisconsin Dells - Ward 005
+</td>
+<td style="text-align:left;">
+Wisconsin Dells Municipal Building
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+300 La Crosse St
+</td>
+<td style="text-align:left;">
+Wisconsin Dells
+</td>
+<td style="text-align:left;">
+53965
+</td>
+<td style="text-align:left;">
+Adams
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+7/27/20
+</td>
+<td style="text-align:left;">
+DPW- Fall Partisan Primary
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+414321
+</td>
+<td style="text-align:left;">
+00100300001
+</td>
+<td style="text-align:left;">
+Adams - Town Of Adams - Ward 001
+</td>
+<td style="text-align:left;">
+Adams Town Hall
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+1980 11Th Ave
+</td>
+<td style="text-align:left;">
+Friendship
+</td>
+<td style="text-align:left;">
+53934
+</td>
+<td style="text-align:left;">
+Adams
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+7/27/20
+</td>
+<td style="text-align:left;">
+DPW- Fall Partisan Primary
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true"></a>locations <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true"></a><span class="st">  </span><span class="kw">select</span>(<span class="kw">any_of</span>(<span class="kw">names</span>(van))) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true"></a><span class="st">  </span><span class="kw">kablebox</span>()</span></code></pre></div>
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; ">
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+Precinct ID
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Precinct Name
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Address
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+City
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Zip
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+County
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Polling Location Contact Info
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Authenticating Authority
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Date Authenticated*
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Authority Contact Info
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+1578843
+</td>
+<td style="text-align:left;">
+Adams - Town Of Strongs Prairie - Ward 003
+</td>
+<td style="text-align:left;">
+NULL
+</td>
+<td style="text-align:left;">
+TOWN OF STRONGS PRAIRIE
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Adams
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+<ol start="608" style="list-style-type: decimal">
+<li>266-8005
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+418146
+</td>
+<td style="text-align:left;">
+Adams - City Of Adams - Ward 004
+</td>
+<td style="text-align:left;">
+NULL
+</td>
+<td style="text-align:left;">
+CITY OF ADAMS
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Adams
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+<ol start="608" style="list-style-type: decimal">
+<li>266-8005
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+418260
+</td>
+<td style="text-align:left;">
+Adams - City Of Adams - Ward 003
+</td>
+<td style="text-align:left;">
+NULL
+</td>
+<td style="text-align:left;">
+CITY OF ADAMS
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Adams
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+<ol start="608" style="list-style-type: decimal">
+<li>266-8005
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+418829
+</td>
+<td style="text-align:left;">
+Adams - City Of Wisconsin Dells - Ward 005
+</td>
+<td style="text-align:left;">
+NULL
+</td>
+<td style="text-align:left;">
+CITY OF WISCONSIN DELLS
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Adams
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+<ol start="608" style="list-style-type: decimal">
+<li>266-8005
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+415715
+</td>
+<td style="text-align:left;">
+Adams - Town Of Easton - Ward 002
+</td>
+<td style="text-align:left;">
+NULL
+</td>
+<td style="text-align:left;">
+TOWN OF EASTON
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Adams
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+<ol start="608" style="list-style-type: decimal">
+<li>266-8005
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+416268
+</td>
+<td style="text-align:left;">
+Adams - Town Of Rome - Ward 003
+</td>
+<td style="text-align:left;">
+NULL
+</td>
+<td style="text-align:left;">
+TOWN OF ROME
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Adams
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+<ol start="608" style="list-style-type: decimal">
+<li>266-8005
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+101 N MAIN ST, ADAMS, WI 53910-9805
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+53910
+</td>
+<td style="text-align:left;">
+Adams
+</td>
+<td style="text-align:left;">
+608-339-6516
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+<ol start="608" style="list-style-type: decimal">
+<li>266-8005
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+300 LA CROSSE ST, WISCONSIN DELLS, WI 53965-1568
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+53965
+</td>
+<td style="text-align:left;">
+Adams
+</td>
+<td style="text-align:left;">
+608-254-2012
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+<ol start="608" style="list-style-type: decimal">
+<li>266-8005
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+1980 11TH AVE, FRIENDSHIP, WI 53934-9005
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+53934
+</td>
+<td style="text-align:left;">
+Adams
+</td>
+<td style="text-align:left;">
+608-339-9607
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+<ol start="608" style="list-style-type: decimal">
+<li>266-8005
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+1104 COUNTY ROAD C, ARKDALE, WI 54613-9728
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+54613
+</td>
+<td style="text-align:left;">
+Adams
+</td>
+<td style="text-align:left;">
+608-564-7754
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+<ol start="608" style="list-style-type: decimal">
+<li>266-8005
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+1602 COUNTY ROAD G, COLOMA, WI 54930
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+54930
+</td>
+<td style="text-align:left;">
+Adams
+</td>
+<td style="text-align:left;">
+715-228-3752
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+<ol start="608" style="list-style-type: decimal">
+<li>266-8005
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+763 COUNTY ROAD K, WISCONSIN DELLS, WI 53965-8981
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+53965
+</td>
+<td style="text-align:left;">
+Adams
+</td>
+<td style="text-align:left;">
+<ol start="608" style="list-style-type: decimal">
+<li>254-2618
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+<ol start="608" style="list-style-type: decimal">
+<li>266-8005
+</td>
+</tr>
+</tbody>
+</table>
+</div></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true"></a><span class="co"># make sure all required columns not coming from VAN are there</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true"></a><span class="kw">tibble</span>(<span class="dt">VAN_column =</span> <span class="kw">names</span>(van),</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true"></a>       <span class="dt">in_upload_file =</span> <span class="kw">names</span>(van) <span class="op">%in%</span><span class="st"> </span><span class="kw">names</span>(locations)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true"></a><span class="st">  </span><span class="kw">kablebox</span>()</span></code></pre></div>
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; ">
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+VAN_column
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+in_upload_file
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Precinct ID
+</td>
+<td style="text-align:left;">
+TRUE
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Precinct Code
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Precinct Name
+</td>
+<td style="text-align:left;">
+TRUE
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Polling Location
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Location Description
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Address
+</td>
+<td style="text-align:left;">
+TRUE
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+City
+</td>
+<td style="text-align:left;">
+TRUE
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Zip
+</td>
+<td style="text-align:left;">
+TRUE
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+County
+</td>
+<td style="text-align:left;">
+TRUE
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Polling Location Contact Info
+</td>
+<td style="text-align:left;">
+TRUE
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Authenticating Authority
+</td>
+<td style="text-align:left;">
+TRUE
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Date Authenticated*
+</td>
+<td style="text-align:left;">
+TRUE
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Authority Contact Info
+</td>
+<td style="text-align:left;">
+TRUE
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true"></a>upload &lt;-<span class="st"> </span>locations <span class="op">%&gt;%</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true"></a><span class="st">  </span><span class="kw">select</span>(<span class="kw">any_of</span>(<span class="kw">names</span>(van))) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true"></a><span class="st">  </span><span class="kw">left_join</span>(van)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true"></a>upload <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">kablebox</span>()</span></code></pre></div>
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; ">
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+Precinct ID
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Precinct Name
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Address
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+City
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Zip
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+County
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Polling Location Contact Info
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Authenticating Authority
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Date Authenticated*
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Authority Contact Info
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Precinct Code
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Polling Location
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Location Description
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+1578843
+</td>
+<td style="text-align:left;">
+Adams - Town Of Strongs Prairie - Ward 003
+</td>
+<td style="text-align:left;">
+NULL
+</td>
+<td style="text-align:left;">
+TOWN OF STRONGS PRAIRIE
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Adams
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+<ol start="608" style="list-style-type: decimal">
+<li>266-8005
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+418146
+</td>
+<td style="text-align:left;">
+Adams - City Of Adams - Ward 004
+</td>
+<td style="text-align:left;">
+NULL
+</td>
+<td style="text-align:left;">
+CITY OF ADAMS
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Adams
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+<ol start="608" style="list-style-type: decimal">
+<li>266-8005
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+418260
+</td>
+<td style="text-align:left;">
+Adams - City Of Adams - Ward 003
+</td>
+<td style="text-align:left;">
+NULL
+</td>
+<td style="text-align:left;">
+CITY OF ADAMS
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Adams
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+<ol start="608" style="list-style-type: decimal">
+<li>266-8005
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+418829
+</td>
+<td style="text-align:left;">
+Adams - City Of Wisconsin Dells - Ward 005
+</td>
+<td style="text-align:left;">
+NULL
+</td>
+<td style="text-align:left;">
+CITY OF WISCONSIN DELLS
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Adams
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+<ol start="608" style="list-style-type: decimal">
+<li>266-8005
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+415715
+</td>
+<td style="text-align:left;">
+Adams - Town Of Easton - Ward 002
+</td>
+<td style="text-align:left;">
+NULL
+</td>
+<td style="text-align:left;">
+TOWN OF EASTON
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Adams
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+<ol start="608" style="list-style-type: decimal">
+<li>266-8005
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+416268
+</td>
+<td style="text-align:left;">
+Adams - Town Of Rome - Ward 003
+</td>
+<td style="text-align:left;">
+NULL
+</td>
+<td style="text-align:left;">
+TOWN OF ROME
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Adams
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+<ol start="608" style="list-style-type: decimal">
+<li>266-8005
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+101 N MAIN ST, ADAMS, WI 53910-9805
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+53910
+</td>
+<td style="text-align:left;">
+Adams
+</td>
+<td style="text-align:left;">
+608-339-6516
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+<ol start="608" style="list-style-type: decimal">
+<li>266-8005
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+300 LA CROSSE ST, WISCONSIN DELLS, WI 53965-1568
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+53965
+</td>
+<td style="text-align:left;">
+Adams
+</td>
+<td style="text-align:left;">
+608-254-2012
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+<ol start="608" style="list-style-type: decimal">
+<li>266-8005
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+1980 11TH AVE, FRIENDSHIP, WI 53934-9005
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+53934
+</td>
+<td style="text-align:left;">
+Adams
+</td>
+<td style="text-align:left;">
+608-339-9607
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+<ol start="608" style="list-style-type: decimal">
+<li>266-8005
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+1104 COUNTY ROAD C, ARKDALE, WI 54613-9728
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+54613
+</td>
+<td style="text-align:left;">
+Adams
+</td>
+<td style="text-align:left;">
+608-564-7754
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+<ol start="608" style="list-style-type: decimal">
+<li>266-8005
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+1602 COUNTY ROAD G, COLOMA, WI 54930
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+54930
+</td>
+<td style="text-align:left;">
+Adams
+</td>
+<td style="text-align:left;">
+715-228-3752
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+<ol start="608" style="list-style-type: decimal">
+<li>266-8005
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+763 COUNTY ROAD K, WISCONSIN DELLS, WI 53965-8981
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+53965
+</td>
+<td style="text-align:left;">
+Adams
+</td>
+<td style="text-align:left;">
+<ol start="608" style="list-style-type: decimal">
+<li>254-2618
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+<ol start="608" style="list-style-type: decimal">
+<li>266-8005
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+</tbody>
+</table>
+</div></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true"></a><span class="kw">write_csv</span>(upload, <span class="dt">path =</span> <span class="kw">here</span>(<span class="st">&quot;data&quot;</span>, </span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true"></a>                              <span class="kw">paste</span>(<span class="st">&quot;VAN Polling Locations&quot;</span>,</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true"></a>                                    <span class="st">`</span><span class="dt">Date Authenticated*</span><span class="st">`</span>, </span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true"></a>                                    <span class="st">&quot;.csv&quot;</span>)))</span></code></pre></div>
+</div>
+<div id="api-contents" class="section level1">
+<h1>API Contents</h1>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true"></a><span class="co"># for refernce, these may or may not be returned: </span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true"></a><span class="st">&quot;pollingLocations&quot;</span><span class="op">:</span><span class="st"> </span>[</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true"></a>    {</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true"></a>      <span class="st">&quot;id&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true"></a>      <span class="st">&quot;address&quot;</span><span class="op">:</span><span class="st"> </span>{</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true"></a>        <span class="st">&quot;locationName&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true"></a>        <span class="st">&quot;line1&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true"></a>        <span class="st">&quot;line2&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true"></a>        <span class="st">&quot;line3&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true"></a>        <span class="st">&quot;city&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true"></a>        <span class="st">&quot;state&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true"></a>        <span class="st">&quot;zip&quot;</span><span class="op">:</span><span class="st"> </span>string</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true"></a>      },</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true"></a>      <span class="st">&quot;notes&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true"></a>      <span class="st">&quot;pollingHours&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true"></a>      <span class="st">&quot;name&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true"></a>      <span class="st">&quot;voterServices&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true"></a>      <span class="st">&quot;startDate&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true"></a>      <span class="st">&quot;endDate&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true"></a>      <span class="st">&quot;latitude&quot;</span><span class="op">:</span><span class="st"> </span>double,</span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true"></a>      <span class="st">&quot;longitude&quot;</span><span class="op">:</span><span class="st"> </span>double,</span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true"></a>      <span class="st">&quot;sources&quot;</span><span class="op">:</span><span class="st"> </span>[</span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true"></a>        {</span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true"></a>          <span class="st">&quot;name&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true"></a>          <span class="st">&quot;official&quot;</span><span class="op">:</span><span class="st"> </span>boolean</span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true"></a>        }</span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true"></a>      ]</span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true"></a>    }</span>
+<span id="cb18-29"><a href="#cb18-29" aria-hidden="true"></a>  ],</span>
+<span id="cb18-30"><a href="#cb18-30" aria-hidden="true"></a>  <span class="st">&quot;earlyVoteSites&quot;</span><span class="op">:</span><span class="st"> </span>[</span>
+<span id="cb18-31"><a href="#cb18-31" aria-hidden="true"></a>    {</span>
+<span id="cb18-32"><a href="#cb18-32" aria-hidden="true"></a>      <span class="st">&quot;id&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-33"><a href="#cb18-33" aria-hidden="true"></a>      <span class="st">&quot;address&quot;</span><span class="op">:</span><span class="st"> </span>{</span>
+<span id="cb18-34"><a href="#cb18-34" aria-hidden="true"></a>        <span class="st">&quot;locationName&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-35"><a href="#cb18-35" aria-hidden="true"></a>        <span class="st">&quot;line1&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-36"><a href="#cb18-36" aria-hidden="true"></a>        <span class="st">&quot;line2&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-37"><a href="#cb18-37" aria-hidden="true"></a>        <span class="st">&quot;line3&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-38"><a href="#cb18-38" aria-hidden="true"></a>        <span class="st">&quot;city&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-39"><a href="#cb18-39" aria-hidden="true"></a>        <span class="st">&quot;state&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-40"><a href="#cb18-40" aria-hidden="true"></a>        <span class="st">&quot;zip&quot;</span><span class="op">:</span><span class="st"> </span>string</span>
+<span id="cb18-41"><a href="#cb18-41" aria-hidden="true"></a>      },</span>
+<span id="cb18-42"><a href="#cb18-42" aria-hidden="true"></a>      <span class="st">&quot;notes&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-43"><a href="#cb18-43" aria-hidden="true"></a>      <span class="st">&quot;pollingHours&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-44"><a href="#cb18-44" aria-hidden="true"></a>      <span class="st">&quot;name&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-45"><a href="#cb18-45" aria-hidden="true"></a>      <span class="st">&quot;voterServices&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-46"><a href="#cb18-46" aria-hidden="true"></a>      <span class="st">&quot;startDate&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-47"><a href="#cb18-47" aria-hidden="true"></a>      <span class="st">&quot;endDate&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-48"><a href="#cb18-48" aria-hidden="true"></a>      <span class="st">&quot;latitude&quot;</span><span class="op">:</span><span class="st"> </span>double,</span>
+<span id="cb18-49"><a href="#cb18-49" aria-hidden="true"></a>      <span class="st">&quot;longitude&quot;</span><span class="op">:</span><span class="st"> </span>double,</span>
+<span id="cb18-50"><a href="#cb18-50" aria-hidden="true"></a>      <span class="st">&quot;sources&quot;</span><span class="op">:</span><span class="st"> </span>[</span>
+<span id="cb18-51"><a href="#cb18-51" aria-hidden="true"></a>        {</span>
+<span id="cb18-52"><a href="#cb18-52" aria-hidden="true"></a>          <span class="st">&quot;name&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-53"><a href="#cb18-53" aria-hidden="true"></a>          <span class="st">&quot;official&quot;</span><span class="op">:</span><span class="st"> </span>boolean</span>
+<span id="cb18-54"><a href="#cb18-54" aria-hidden="true"></a>        }</span>
+<span id="cb18-55"><a href="#cb18-55" aria-hidden="true"></a>      ]</span>
+<span id="cb18-56"><a href="#cb18-56" aria-hidden="true"></a>    }</span>
+<span id="cb18-57"><a href="#cb18-57" aria-hidden="true"></a>  ],</span>
+<span id="cb18-58"><a href="#cb18-58" aria-hidden="true"></a>  <span class="st">&quot;dropOffLocations&quot;</span><span class="op">:</span><span class="st"> </span>[</span>
+<span id="cb18-59"><a href="#cb18-59" aria-hidden="true"></a>    {</span>
+<span id="cb18-60"><a href="#cb18-60" aria-hidden="true"></a>      <span class="st">&quot;id&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-61"><a href="#cb18-61" aria-hidden="true"></a>      <span class="st">&quot;address&quot;</span><span class="op">:</span><span class="st"> </span>{</span>
+<span id="cb18-62"><a href="#cb18-62" aria-hidden="true"></a>        <span class="st">&quot;locationName&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-63"><a href="#cb18-63" aria-hidden="true"></a>        <span class="st">&quot;line1&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-64"><a href="#cb18-64" aria-hidden="true"></a>        <span class="st">&quot;line2&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-65"><a href="#cb18-65" aria-hidden="true"></a>        <span class="st">&quot;line3&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-66"><a href="#cb18-66" aria-hidden="true"></a>        <span class="st">&quot;city&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-67"><a href="#cb18-67" aria-hidden="true"></a>        <span class="st">&quot;state&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-68"><a href="#cb18-68" aria-hidden="true"></a>        <span class="st">&quot;zip&quot;</span><span class="op">:</span><span class="st"> </span>string</span>
+<span id="cb18-69"><a href="#cb18-69" aria-hidden="true"></a>      },</span>
+<span id="cb18-70"><a href="#cb18-70" aria-hidden="true"></a>      <span class="st">&quot;notes&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-71"><a href="#cb18-71" aria-hidden="true"></a>      <span class="st">&quot;pollingHours&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-72"><a href="#cb18-72" aria-hidden="true"></a>      <span class="st">&quot;name&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-73"><a href="#cb18-73" aria-hidden="true"></a>      <span class="st">&quot;voterServices&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-74"><a href="#cb18-74" aria-hidden="true"></a>      <span class="st">&quot;startDate&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-75"><a href="#cb18-75" aria-hidden="true"></a>      <span class="st">&quot;endDate&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-76"><a href="#cb18-76" aria-hidden="true"></a>      <span class="st">&quot;latitude&quot;</span><span class="op">:</span><span class="st"> </span>double,</span>
+<span id="cb18-77"><a href="#cb18-77" aria-hidden="true"></a>      <span class="st">&quot;longitude&quot;</span><span class="op">:</span><span class="st"> </span>double,</span>
+<span id="cb18-78"><a href="#cb18-78" aria-hidden="true"></a>      <span class="st">&quot;sources&quot;</span><span class="op">:</span><span class="st"> </span>[</span>
+<span id="cb18-79"><a href="#cb18-79" aria-hidden="true"></a>        {</span>
+<span id="cb18-80"><a href="#cb18-80" aria-hidden="true"></a>          <span class="st">&quot;name&quot;</span><span class="op">:</span><span class="st"> </span>string,</span>
+<span id="cb18-81"><a href="#cb18-81" aria-hidden="true"></a>          <span class="st">&quot;official&quot;</span><span class="op">:</span><span class="st"> </span>boolean</span>
+<span id="cb18-82"><a href="#cb18-82" aria-hidden="true"></a>        }</span>
+<span id="cb18-83"><a href="#cb18-83" aria-hidden="true"></a>      ]</span>
+<span id="cb18-84"><a href="#cb18-84" aria-hidden="true"></a>    }</span>
+<span id="cb18-85"><a href="#cb18-85" aria-hidden="true"></a>  ],</span></code></pre></div>
 </div>
 
 

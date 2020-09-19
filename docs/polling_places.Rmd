@@ -32,17 +32,49 @@ The state posts an xlsx file of polling locations here: https://elections.wi.gov
 
 To check it's accuracy, we look up polling locations for addresses in every voting precinct.
 
-```{r}
+```{r, include=FALSE}
 library(httr)
 library(jsonlite)
 library(tidyverse)
 library(magrittr)
+library(here)
+library(knitr)
+library(kableExtra)
+library(rvest)
 
-# polling locations posted on website for WI primary
-official_locations <- readxl::read_xlsx(here::here("data", "PPL 2020 Partisan Primary 2.xlsx"))
+kablebox <- . %>%  knitr::kable() %>% 
+  kable_styling() %>% 
+  scroll_box(height = "400px")
+```
 
+```{r}
+# polling locations posted on website
+html <- read_html("https://elections.wi.gov/node/6527") %>%
+  html_nodes("a") 
+
+files <- tibble(file = html_text(html),
+                link = html_attr(html, "href")) %>% 
+  filter(str_detect(file, "xls|csv")) 
+                
+kablebox(files)
+
+# UPDATE THIS IF A NEW FILE IS POSTED! 
+file <- "PPL 2020 Partisan Primary 2.xlsx"
+`Date Authenticated*` <- "8-11-2020"
+`Authority Contact Info` <- "(608) 266-8005"
+
+tibble(file,
+       `Date Authenticated*`,
+       `Authority Contact Info`) %>% 
+  kablebox()
+
+official_locations <- readxl::read_xlsx(here::here("data", file))
+
+#########################################################
 # one address per precinct
 addresses <- read_csv(here::here("data", "wisconsin_example_addresses.csv"))
+
+addresses %<>% arrange(county_name)
 
 # FIXME DELETE THESE LINES FOR FULL DATA
 official_locations %<>% head()
@@ -65,6 +97,14 @@ Notes about the Google Civic API (see the relevant documentation [here](https://
 
 
 ```{r}
+# make full street address
+addresses %<>% 
+  mutate(voter_address = paste(voting_street_address,
+                               voting_city, 
+                               state_code))
+
+addresses$voter_address[1]
+
 # need to get AND authorize an api key
 source(here::here("api_key.R"))
 
@@ -87,28 +127,34 @@ get_poll <- function(voter_address){
     fromJSON() %>%
     .$pollingLocations %>% # note: there is a lot more than this
     .$address %>% 
-    {ifelse(is.null(.), "none", .)}
+    {ifelse(is.null(.), "NULL", .)}
   
   return(poll)
 }
 
+
+# test 
+get_poll(addresses$voter_address[1])
+
 # apply function to addresses
-addresses %<>% 
-  mutate(voter_address = paste(voting_street_address, voting_city, state_code),  
-         PollingPlaceAddress = map(voter_address, get_poll)) 
+api_locations <- addresses %>% 
+  # "NULL" if NULL, "error" if any error
+  mutate(PollingPlaceAddress = voter_address %>% map(possibly(get_poll, "error"))) 
 
 # expand if there is more then one polling place per address
-addresses %<>% unnest(PollingPlaceAddress)
+api_locations %<>% unnest(PollingPlaceAddress)
+
+api_locations %>% select(voting_street_address, precinct_name, precinct_id, PollingPlaceAddress) %>%  kablebox()
 ```
 
 ## API results not in the state's xlsx file
 
 ```{r}
-addresses %>% 
-  filter(PollingPlaceAddress != "none") %>% # filter out API errors
+api_locations %>% 
+  filter(PollingPlaceAddress != "NULL") %>% # filter out API errors
   anti_join(official_locations) %>% # filter out locations already posted
   select(precinct_name, precinct_id, PollingPlaceAddress) %>%
-  knitr::kable()
+  kablebox()
 ```
 
 ## Cases where Google Civic's API did not return the same address when given polling locations
@@ -118,19 +164,88 @@ official_locations %>%
   mutate(PollingPlaceAddress_API = map(PollingPlaceAddress, get_poll)) %>% # get polling places for polling places' addresses
   filter(PollingPlaceAddress_API != PollingPlaceAddress) %>% # mismatches
   select(Muni, ReportingUnit, PollingPlaceName, PollingPlaceAddress, PollingPlaceAddress_API) %>% 
-  knitr::kable()
+  kablebox()
 ```
 
 ## Polling locations not returned by Google Civic's API
 
 ```{r}
 official_locations %>% 
-  anti_join(addresses) %>% # remove ones matched with API
+  anti_join(api_locations) %>% # remove ones matched with API
   select(Muni, ReportingUnit, PollingPlaceName, PollingPlaceAddress) %>% 
-  knitr::kable()
+  kablebox()
 ```
 
-```{r, eval=FALSE}
+## Combine results
+
+```{r}
+# name both official and API results to fit VAN
+api_locations %<>% rename(County = county_name)
+
+# reformat county
+official_locations %<>% 
+  mutate(County = str_to_sentence(County) %>% str_remove(" county") )
+
+locations <- full_join(api_locations,
+                       official_locations)
+```
+
+# Format for VAN upload 
+
+Note that several names have spaces in them! 
+
+```{r}
+# name combined official and API results to fit VAN
+locations %<>% 
+  rename(Address = PollingPlaceAddress,
+         `Polling Location Contact Info` = Phone,
+         City = town,
+         `Precinct ID` = precinct_id,
+         `Precinct Name` = precinct_name) %>% 
+  mutate(County = str_to_sentence(County) %>% 
+           str_remove(" county"),
+         `Zip` = str_extract(Address,"WI [0-9]*") %>% 
+           str_remove("WI "),
+         `Date Authenticated*` = `Date Authenticated*`,
+         `Authority Contact Info` = `Authority Contact Info`,
+         `Authenticating Authority` = "State Election Official")
+
+# old VAN data
+van <- readxl::read_xlsx(here("data", "VAN Polling Locations.xlsx"))
+
+head(van) %>% kablebox()
+
+locations %>% 
+  select(any_of(names(van))) %>% 
+  kablebox()
+
+# make sure all required columns not coming from VAN are there
+tibble(VAN_column = names(van),
+       in_upload_file = names(van) %in% names(locations)) %>% 
+  kablebox()
+
+upload <- locations %>%
+  select(any_of(names(van))) %>% 
+  left_join(van)
+
+upload %>% kablebox()
+
+write_csv(upload, path = here("data", 
+                              paste("VAN Polling Locations",
+                                    `Date Authenticated*`, 
+                                    ".csv")))
+```
+
+Download 
+
+# Questions: 
+- If Google Civic has locations that the file on the state website does not, what should "Authenticating Authority" be?
+- Authority Contact Info is "DPW- Fall Partisan Primary" in the VAN file. Do we want this to take the new file name or with WECs phone number?
+- Location Description contains in the VAN file contains poll hours, do we want to merge this into the new upload or try to pull it in from Google Civic or both?
+- I assume we are merging in Precinct Code from the VAN file on precinct ID, correct?
+
+# Additional Google Civic API Contents
+```{r, eval=FALSE, code_folding = "show"}
 # for refernce, these may or may not be returned: 
 "pollingLocations": [
     {
