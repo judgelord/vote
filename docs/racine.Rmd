@@ -85,7 +85,10 @@ d <- map_dfr(1:50, get_address)
 kablebox(d %>% filter(address != ""))
 ```
 
+# Download [here](https://raw.githubusercontent.com/judgelord/vote/master/data/racine_addresses.csv)
 
+(Just hit save when it opens in your browser.)
 ```{r}
-write_csv(d, path = here("data", "racine_addresses.csv"))
+write_csv(d %>% filter(address != ""), 
+          path = here("data", "racine_addresses.csv"))
 ```

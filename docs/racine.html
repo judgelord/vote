@@ -738,11 +738,11 @@ summary {
 <span id="cb1-24"><a href="#cb1-24" aria-hidden="true"></a>  address &lt;-<span class="st"> </span><span class="kw">tibble</span>(</span>
 <span id="cb1-25"><a href="#cb1-25" aria-hidden="true"></a>    <span class="dt">address =</span> table<span class="op">$</span>Location[<span class="dv">1</span>],</span>
 <span id="cb1-26"><a href="#cb1-26" aria-hidden="true"></a>    <span class="dt">ward =</span> table<span class="op">$</span><span class="st">`</span><span class="dt">District-Ward</span><span class="st">`</span>[<span class="dv">1</span>],</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true"></a>    <span class="dt">owner =</span> table<span class="op">$</span><span class="st">`</span><span class="dt">District-Ward</span><span class="st">`</span>[<span class="dv">3</span>],</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true"></a>    <span class="dt">owner_address =</span> table<span class="op">$</span><span class="st">`</span><span class="dt">District-Ward</span><span class="st">`</span>[<span class="dv">4</span>],</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true"></a>    <span class="dt">owner_address2 =</span> table<span class="op">$</span><span class="st">`</span><span class="dt">District-Ward</span><span class="st">`</span>[<span class="dv">5</span>],</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true"></a>    <span class="dt">zone =</span> table<span class="op">$</span><span class="st">`</span><span class="dt">District-Ward</span><span class="st">`</span>[<span class="dv">6</span>],</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true"></a>    <span class="dt">units =</span> table<span class="op">$</span><span class="st">`</span><span class="dt">District-Ward</span><span class="st">`</span>[<span class="dv">15</span>],</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true"></a>    <span class="dt">zone =</span> table<span class="op">$</span><span class="st">`</span><span class="dt">District-Ward</span><span class="st">`</span>[<span class="dv">6</span>],</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true"></a>    <span class="dt">units =</span> table<span class="op">$</span><span class="st">`</span><span class="dt">District-Ward</span><span class="st">`</span>[<span class="dv">15</span>],</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true"></a>    <span class="dt">owner =</span> table<span class="op">$</span><span class="st">`</span><span class="dt">District-Ward</span><span class="st">`</span>[<span class="dv">3</span>],</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true"></a>    <span class="dt">owner_address =</span> table<span class="op">$</span><span class="st">`</span><span class="dt">District-Ward</span><span class="st">`</span>[<span class="dv">4</span>],</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true"></a>    <span class="dt">owner_address2 =</span> table<span class="op">$</span><span class="st">`</span><span class="dt">District-Ward</span><span class="st">`</span>[<span class="dv">5</span>],</span>
 <span id="cb1-32"><a href="#cb1-32" aria-hidden="true"></a>    <span class="dt">url =</span> url</span>
 <span id="cb1-33"><a href="#cb1-33" aria-hidden="true"></a>  ) <span class="op">%&gt;%</span><span class="st"> </span></span>
 <span id="cb1-34"><a href="#cb1-34" aria-hidden="true"></a><span class="st">    </span><span class="kw">mutate_all</span>(as.character) <span class="co"># just in case of nulls</span></span>
@@ -1723,6 +1723,12 @@ Living Units: 0
 </tr>
 </tbody>
 </table>
+</div>
+<div id="download-here" class="section level1">
+<h1>Download <a href="https://raw.githubusercontent.com/judgelord/vote/master/data/racine_addresses.csv">here</a></h1>
+<p>(Just hit save when it opens in your browser.)</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="kw">write_csv</span>(d <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(address <span class="op">!=</span><span class="st"> &quot;&quot;</span>), </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a>          <span class="dt">path =</span> <span class="kw">here</span>(<span class="st">&quot;data&quot;</span>, <span class="st">&quot;racine_addresses.csv&quot;</span>))</span></code></pre></div>
 </div>
 
 
