@@ -54,11 +54,11 @@ get_address <- function(account){
   address <- tibble(
     address = "",
     ward = "",
+    zone = "",
+    units = "",
     owner = "",
     owner_address = "",
     owner_address2 = "",
-    zone = "",
-    units = "",
     url = url
   )
   
@@ -80,7 +80,7 @@ get_address <- function(account){
   return(address)
 }
 
-d <- map_dfr(1:50, get_address)
+d <- map_dfr(1:500, get_address)
 
 kablebox(d %>% filter(address != ""))
 ```
