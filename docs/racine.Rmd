@@ -89,6 +89,7 @@ kablebox(d %>% filter(address != ""))
 
 (Just hit save when it opens in your browser.)
 ```{r}
+# save csv
 write_csv(d %>% filter(address != ""), 
           path = here("data", "racine_addresses.csv"))
 ```

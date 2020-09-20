@@ -11684,8 +11684,9 @@ RACINE, WI 53403
 <div id="download-here" class="section level1">
 <h1>Download <a href="https://raw.githubusercontent.com/judgelord/vote/master/data/racine_addresses.csv">here</a></h1>
 <p>(Just hit save when it opens in your browser.)</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="kw">write_csv</span>(d <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(address <span class="op">!=</span><span class="st"> &quot;&quot;</span>), </span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a>          <span class="dt">path =</span> <span class="kw">here</span>(<span class="st">&quot;data&quot;</span>, <span class="st">&quot;racine_addresses.csv&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="co"># save csv</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a><span class="kw">write_csv</span>(d <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(address <span class="op">!=</span><span class="st"> &quot;&quot;</span>), </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a>          <span class="dt">path =</span> <span class="kw">here</span>(<span class="st">&quot;data&quot;</span>, <span class="st">&quot;racine_addresses.csv&quot;</span>))</span></code></pre></div>
 </div>
 
 
