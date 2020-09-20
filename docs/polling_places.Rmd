@@ -364,6 +364,8 @@ official_locations %>%
 ## Save new polling locations 
 ```{r}
 write_csv(upload, path = here("data", upload_file))
+
+upload %>% kablebox()
 ```
 
 

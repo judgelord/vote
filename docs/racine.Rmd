@@ -1,0 +1,91 @@
+---
+title: "City of Racine Addresses"
+subtitle: 
+author:
+output:
+    # pdf_document:
+    #   toc: true
+    #   keep_tex: true
+    html_document:
+      highlight: zenburn
+      #toc: true
+      #toc_float: true
+      code_folding: hide
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, 
+                      cache = TRUE, 
+                      fig.width=8.5, 
+                      split = T,
+                      fig.align = 'center', 
+                      fig.path='figs/',
+                      warning=FALSE, 
+                      message=FALSE)
+
+library(httr)
+library(jsonlite)
+library(tidyverse)
+library(magrittr)
+library(here)
+library(knitr)
+library(kableExtra)
+library(rvest)
+
+kablebox <- . %>%  knitr::kable() %>% 
+  kable_styling() %>% 
+  scroll_box(height = "400px")
+```
+
+
+```{r}
+# a function to get info from the racine website
+get_address <- function(account){
+
+  url <- paste0("https://www.cityofracine.org/Source/Templates/WebPro.aspx?AccountNumber=", account)
+  
+  html <- read_html(url)
+  
+  table <- html_table(html)[[1]] 
+  
+  # initialize with empty data to return for pages lacking the needed table
+  address <- tibble(
+    address = "",
+    ward = "",
+    owner = "",
+    owner_address = "",
+    owner_address2 = "",
+    zone = "",
+    units = "",
+    url = url
+  )
+  
+  # if the table has "District-Ward", it should be right
+  if("District-Ward" %in% names(table)){
+  address <- tibble(
+    address = table$Location[1],
+    ward = table$`District-Ward`[1],
+    zone = table$`District-Ward`[6],
+    units = table$`District-Ward`[15],
+    owner = table$`District-Ward`[3],
+    owner_address = table$`District-Ward`[4],
+    owner_address2 = table$`District-Ward`[5],
+    url = url
+  ) %>% 
+    mutate_all(as.character) # just in case of nulls
+  }
+  
+  return(address)
+}
+
+d <- map_dfr(1:50, get_address)
+
+kablebox(d %>% filter(address != ""))
+```
+
+
+```{r}
+write_csv(d, path = here("data", "racine_addresses.csv"))
+```
