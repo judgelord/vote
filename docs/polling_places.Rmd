@@ -388,17 +388,17 @@ added <- upload %>%
   distinct() 
 
 added %>% kablebox()
+
+deleted %<>% mutate(Issue = "Deleted address")
+added %<>% mutate(Issue ="New address")
+
+poll_address_changes <- full_join(added, deleted)  %>% select(Issue, everything())
 ```
 
 These are added to the [Polling Location Issue Tracker](https://docs.google.com/spreadsheets/d/1GYjifHWJ-N_Z3YEHMVWp58lA5d_emrzvgd4O951UTdU/edit#gid=120487606)
 
 ```{r, eval=FALSE}
 library(googlesheets4)
-deleted %<>% mutate(Issue = "Deleted address")
-added %<>% mutate(Issue ="New address")
-
-poll_address_changes <- full_join(added, deleted)  %>% select(Issue, everything())
-
 #FIXME pull previously flagged issues and put new ones at the top
 
 ss <- googledrive::drive_get("polls") %>%
@@ -417,7 +417,8 @@ These may be "ghost wards" but still may be worth checking.
 ```{r}
 # polling addresses + counties not in VAN? 
 upload %>% 
-  filter(is.na(`Precinct Code`)) %>% 
+  filter(is.na(`Precinct Code`),
+         !Address %in% poll_address_changes$Address) %>% 
   select(County,  PollingPlaceAddress, `Polling Location`) %>% 
   distinct() %>% 
   kablebox()
