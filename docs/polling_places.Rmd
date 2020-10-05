@@ -454,7 +454,7 @@ In new upload, not in old VAN:
 anti_join(upload, van, by = c("County", "Address", "Polling Location")) %>% kablebox()
 ```
 
-## Save new polling location data 
+# Save new polling location data 
 
 ```{r, eval=FALSE}
 write_csv(upload, path = here("data", upload_file))
@@ -479,7 +479,7 @@ upload %>% head() %>% kablebox()
 
 CSV file: `r paste0("https://raw.githubusercontent.com/judgelord/vote/master/data/", upload_file) %>% str_replace_all(" ", "%20")`
 
-[Google Sheet](https://docs.google.com/spreadsheets/d/1cFJX0yGY91bzDpaR9ODwCeSCbzUrkWpRb1m7HwMKOA4/edit?usp=sharing)
+Google Sheet: https://docs.google.com/spreadsheets/d/1cFJX0yGY91bzDpaR9ODwCeSCbzUrkWpRb1m7HwMKOA4
 
 ---
 
