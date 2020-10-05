@@ -40,7 +40,8 @@ kablebox <- . %>%  knitr::kable() %>%
 ```
 
 
-## TL;DR: Download VAN-formatted elections.wi.gov + Google Civic polling locations with the link to the left.
+## TL;DR: Download VAN-formatted elections.wi.gov + Google Civic polling locations [here](https://docs.google.com/spreadsheets/d/1cFJX0yGY91bzDpaR9ODwCeSCbzUrkWpRb1m7HwMKOA4/edit?usp=sharing)
+
 
 This link will update when the WEC file and date in the code chunk below are updated.
 
@@ -54,7 +55,7 @@ file <- "PPL 2020 Partisan Primary 2.xlsx"
 
 `Date Authenticated*` <- "8-11-2020"
 
-upload_file <- paste0("VAN Polling Locations ", `Date Authenticated*`, ".csv")
+upload_file <- paste0("VAN Polling Locations ", `Date Authenticated*`, ".xlsx")
 
 tibble(file,
        `Date Authenticated*`) %>% 
@@ -62,7 +63,18 @@ tibble(file,
 
 official_locations <- readxl::read_xlsx(here::here("data", file))
 
-official_locations %<>% mutate_if(is.character, str_to_upper)
+official_locations %<>% mutate_if(is.character, str_to_upper) %>%
+  mutate(PollingPlaceAddress = PollingPlaceAddress %>% 
+           str_replace(" RD", " ROAD"))
+
+official_locations %<>%
+  group_by(County, PollingPlaceAddress) %>%
+  mutate(ReportingUnit = paste(unique(County), 
+                               unique(Muni), 
+                               unique(ReportingUnit), 
+                               sep = " - ",
+                               collapse = " and ")) %>%
+  ungroup() 
 ```
 
 It should be the most recent xlsx file of polling locations posted here: https://elections.wi.gov/node/6527
@@ -239,7 +251,10 @@ Here are the top few rows of the last VAN upload:
 # old VAN data
 van <- readxl::read_xlsx(here("data", "VAN Polling Locations.xlsx"))
 
-van %<>% mutate_if(is.character, str_to_upper)
+van %<>% 
+  mutate_if(is.character, str_to_upper) %>%
+  mutate(Address = Address %>% 
+           str_replace(" RD", " ROAD"))
 
 van %>% head() %>% kablebox()
 
@@ -280,17 +295,20 @@ tibble(VAN_column = names(van),
   kablebox()
 ```
 
-# Discrepencies between WEC and VAN data
+# Discrepancies between WEC and VAN data
 
 ## Join with old VAN upload data
 
 ```{r}
 upload <- van_new %>%
   filter(Address != "NULL") %>% 
-  select(any_of(names(van)), Muni, PollingPlaceAddress) %>% 
+  select(PollingPlaceAddress,
+         #Muni, 
+         ReportingUnit, 
+         any_of(names(van)) ) %>% 
   left_join(van %>% 
               # drop info that we want to replace, never retain 
-              select(-`Polling Location Contact Info`, #FIXME coalesce instead
+              select(-`Polling Location Contact Info`, 
                      -`Authority Contact Info`,
                      -`Date Authenticated*`,
                      -`Authenticating Authority`),
@@ -302,9 +320,9 @@ upload <- van_new %>%
   distinct()
 ```
 
-### Discrepencies in Polling Location Names
+### Discrepancies in Polling Location Names
 
-> We are not matching on polling location name
+> NOTE: We are not matching on the polling location name, so this is just a check for false positives or name changes that may have occurred without an address change.
 
 #### Cases where the state's polling location (x) is not exactly the same as the last VAN upload's polling location (y):
 
@@ -317,23 +335,6 @@ upload %>%
          Address, 
          City, 
          Zip, County) %>% 
-  distinct() %>% 
-  kablebox()
-```
-
-
-```{r, include=FALSE}
-### Cases where City (from the VAN file) does not match Muni (from the State's xlsx)
-
-# where City and Muni strings are not the same
-upload %>% 
-  filter(Muni != City ) %>% 
-  select(`Polling Location` = `Polling Location.x`,
-         Muni,
-         City,
-         Address, 
-         Zip, 
-         County) %>% 
   distinct() %>% 
   kablebox()
 ```
@@ -355,7 +356,7 @@ upload %<>%
                                        `Polling Location.y`)
          ) %>% 
   # select variable names from van
-  select(any_of(names(van)), Muni, PollingPlaceAddress) %>% 
+  select(any_of(names(van)), ReportingUnit,  PollingPlaceAddress) %>% 
   distinct()
 ```
 
@@ -366,10 +367,11 @@ upload %<>%
 These polling places may have been deleted
 ```{r}
 # polling addresses not in VAN? 
-van %>%  filter(!Address %in% upload$Address) %>% 
-  select(County,  Address, `Polling Location`) %>% 
-  distinct() %>% 
-  kablebox()
+deleted <- van %>%  filter(!Address %in% upload$Address) %>% 
+  select(County,  Address, `Polling Location`, `Precinct Name`, `Date Authenticated*`) %>% 
+  distinct() 
+
+deleted %>% kablebox()
 ```
 
 ### WEC polling place addresses not in VAN
@@ -379,17 +381,38 @@ van %>%  filter(!Address %in% upload$Address) %>%
 These may be new polling places
 ```{r}
 # polling addresses not in VAN? 
-upload %>% 
+added <- upload %>% 
   filter(is.na(`Precinct Code`),
          !Address %in% van$Address) %>% 
-  select(County,  PollingPlaceAddress, `Polling Location`) %>% 
-  distinct() %>% 
-  kablebox()
+  select(County, ReportingUnit,  `Precinct Name`,Address, `Polling Location`, `Date Authenticated*`) %>% 
+  distinct() 
+
+added %>% kablebox()
+```
+
+These are added to the [Polling Location Issue Tracker](https://docs.google.com/spreadsheets/d/1GYjifHWJ-N_Z3YEHMVWp58lA5d_emrzvgd4O951UTdU/edit#gid=120487606)
+
+```{r, eval=FALSE}
+library(googlesheets4)
+deleted %<>% mutate(Issue = "Deleted address")
+added %<>% mutate(Issue ="New address")
+
+poll_address_changes <- full_join(added, deleted)  %>% select(Issue, everything())
+
+#FIXME pull previously flagged issues and put new ones at the top
+
+ss <- googledrive::drive_get("polls") %>%
+  gs4_get() 
+
+poll_address_changes %>%
+  sheet_write(ss = ss,
+              sheet = str_c(Sys.Date() %>% as.character(), 
+                            " Issues"))
 ```
 
 #### Cases where the county + address is not matching in VAN 
 
-These may be "ghost wards" but still may be worth checking
+These may be "ghost wards" but still may be worth checking.
 
 ```{r}
 # polling addresses + counties not in VAN? 
@@ -419,15 +442,31 @@ official_locations %>%
 
 ### All locations being updated in any way
 
-(Location Name Changes, New Addresses)
+(including location name changes and new addresses)
 
+In old VAN, not in upload:
 ```{r}
-
+anti_join(van, upload, by = c("County", "Address", "Polling Location")) %>% kablebox()
 ```
 
-## Save new polling locations 
+In new upload, not in old VAN:
 ```{r}
+anti_join(upload, van, by = c("County", "Address", "Polling Location")) %>% kablebox()
+```
+
+## Save new polling location data 
+
+```{r, eval=FALSE}
 write_csv(upload, path = here("data", upload_file))
+
+library(googlesheets4)
+
+ss <- googledrive::drive_get("polls") %>%
+  gs4_get() 
+
+upload %>%
+  sheet_write(ss = ss,
+              sheet = paste("VAN Polling Locations", `Date Authenticated*`))
 ```
 
 Here are the first few rows of the upload:
@@ -436,30 +475,32 @@ upload %>% head() %>% kablebox()
 ```
 
 
-Download VAN-formatted combined elections.wi.gov + Google Civic polling locations [here](https://github.com/judgelord/vote/tree/master/data) (click on "raw" and then save) or go to this link and then save: 
+## VAN-formatted combined elections.wi.gov + Google Civic polling locations:
 
-# Upload to VAN: `r paste0("https://raw.githubusercontent.com/judgelord/vote/master/data/", upload_file) %>% str_replace_all(" ", "%20")`
+CSV file: `r paste0("https://raw.githubusercontent.com/judgelord/vote/master/data/", upload_file) %>% str_replace_all(" ", "%20")`
+
+[Google Sheet](https://docs.google.com/spreadsheets/d/1cFJX0yGY91bzDpaR9ODwCeSCbzUrkWpRb1m7HwMKOA4/edit?usp=sharing)
 
 ---
 
 # Q & A
 - Which fields from the VAN must be replaced exactly? If the state changes how `Polling Location` is described, do we want to replace it or have it fail to match with the `Precinct ID` from the VAN template? There are over 200 polling locations with slightly different names in the file on the state's website and the old VAN data.
 
->Precinct ID, Precinct Code and Precinct Name are ones that should always be the same from VAN. If state's name is slightly different for a polling location, if it's easier to just change it to that, that is fine. If polling location is described differently, just replace to what state has. I think that answers your question, but let me know if it doesn't.
+>Precinct ID, Precinct Code, and Precinct Name are ones that should always be the same from VAN. If the state's name is slightly different for a polling location, if it's easier to just change it to that, that is fine. If the polling location is described differently, just replace it with what the state has. I think that answers your question, but let me know if it doesn't.
 
 - There are over 200 polling location addresses in the State's 8-11-2020 xlsx file that I do not see in the VAN list. I only investigated the first one, 2100 Beaser Ave, Ashland, WI, and I am not clear if Bayfield Ward 12 is now voting there or not. Is there a simple explanation? If they need to be investigated, Can I anything with the data to make these cases easier to investigate? 
 
->These are most likely what we call ghost wards, where no one lives in. So we just exclude them from uploading to VAN since they don't have a VAN Precinct ID
+>These are most likely what we call ghost wards, where no one lives in. So we just exclude them from uploading to VAN since they don't have a VAN Precinct ID.
 
 - The state's `Muni` is not the same as `City` in the VAN data for almost 2000 polling place addresses. For now, `Muni` is not being used in the merge. 
 - If we are trying to align `City` and `Muni`, `City` in the VAN data does not contain "Town of"/"City of"/"Village of" but both the state's poll locations `Muni` xlsx file and the addresses file do. We are dropping the epithet, correct?
 
->This is probably because in smaller munis the actual address for a place has another muni in it. Example is Town of Adams in Adams County. The actual address for the Town of Adams Town Hall has Friendship as the muni. So I would continue not using muni to match. We don't need to align the actual municipality name with the address municipality name. 
+>This is probably because, in smaller munis, the actual address for a place has another muni in it. An example is the Town of Adams in Adams County. The actual address for the Town of Adams Town Hall has Friendship as the muni. So I would continue not using muni to match. We don't need to align the actual municipality name with the address municipality name. 
 
 - If Google Civic has polling locations that the file on the state website does not, what should `Authenticating Authority` be? It is "Google Civic API" for now. 
 - `Authority Contact Info` is "DPW- Fall Partisan Primary" in the VAN file. Do we want this to take the new file name or WEC's phone number?
 
->This is something that get's applied in bulk after I upload polling locations. So if it's easier for you to just not deal with those that's fine. If it isn't than yeah Google Civic can be the authenticating authority and DPW-November Election as contact info
+>This is something that gets applied in bulk after I upload polling locations. So if it's easier for you to just not deal with those, that's fine. If it isn't, then yeah, Google Civic can be the authenticating authority and DPW-November Election as contact info
 
 - `Location Description` in the VAN file contains poll hours. Do we want to merge this into the new upload or try to pull it in from Google Civic? Or both? Or neither?
 
@@ -472,11 +513,15 @@ Download VAN-formatted combined elections.wi.gov + Google Civic polling location
 
 - If a polling location is removed (i.e., it was in the previous VAN upload), but it is not in the new data, do we keep it in the upload sheet with some kind of a note, or do we just note on this data merge page that locations were removed?
 
-> Don't need it noted in the file to upload, but noted in the data merge page works. 
+> Don't need it noted in the file to upload but noted in the data merge page works. 
 
-# Notes
+# TODO 
 
-1. The Addresses in the VAN data capitalize oddly--"1St" "2Nd" "3Rd" etc.--I made the other addresses match this format, but it is odd and will likely make trouble in other merges. All caps is easier.
+- split out reporting units from the state to see if wards move addresses (not just if there are new or deleted addresses)
+
+# Notes about data for VAN
+
+1. The Addresses in the VAN data capitalize oddly--"1St" "2Nd" "3Rd" etc.--I made all strings all caps.
 
 # Additional Google Civic API Contents
 

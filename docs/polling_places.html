@@ -1859,8 +1859,8 @@ div.tocify {
 </div>
 
 
-<div id="tldr-download-van-formatted-elections.wi.gov-google-civic-polling-locations-with-the-link-to-the-left." class="section level2">
-<h2>TL;DR: Download VAN-formatted elections.wi.gov + Google Civic polling locations with the link to the left.</h2>
+<div id="tldr-download-van-formatted-elections.wi.gov-google-civic-polling-locations-here" class="section level2">
+<h2>TL;DR: Download VAN-formatted elections.wi.gov + Google Civic polling locations <a href="https://docs.google.com/spreadsheets/d/1cFJX0yGY91bzDpaR9ODwCeSCbzUrkWpRb1m7HwMKOA4/edit?usp=sharing">here</a></h2>
 <p>This link will update when the WEC file and date in the code chunk below are updated.</p>
 </div>
 <div id="polling-locations-from-the-state" class="section level1">
@@ -1871,7 +1871,7 @@ div.tocify {
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a><span class="st">`</span><span class="dt">Date Authenticated*</span><span class="st">`</span> &lt;-<span class="st"> &quot;8-11-2020&quot;</span></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true"></a>upload_file &lt;-<span class="st"> </span><span class="kw">paste0</span>(<span class="st">&quot;VAN Polling Locations &quot;</span>, <span class="st">`</span><span class="dt">Date Authenticated*</span><span class="st">`</span>, <span class="st">&quot;.csv&quot;</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true"></a>upload_file &lt;-<span class="st"> </span><span class="kw">paste0</span>(<span class="st">&quot;VAN Polling Locations &quot;</span>, <span class="st">`</span><span class="dt">Date Authenticated*</span><span class="st">`</span>, <span class="st">&quot;.xlsx&quot;</span>)</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true"></a></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true"></a><span class="kw">tibble</span>(file,</span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true"></a>       <span class="st">`</span><span class="dt">Date Authenticated*</span><span class="st">`</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
@@ -1902,7 +1902,18 @@ PPL 2020 Partisan Primary 2.xlsx
 </div>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a>official_locations &lt;-<span class="st"> </span>readxl<span class="op">::</span><span class="kw">read_xlsx</span>(here<span class="op">::</span><span class="kw">here</span>(<span class="st">&quot;data&quot;</span>, file))</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a>official_locations <span class="op">%&lt;&gt;%</span><span class="st"> </span><span class="kw">mutate_if</span>(is.character, str_to_upper)</span></code></pre></div>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a>official_locations <span class="op">%&lt;&gt;%</span><span class="st"> </span><span class="kw">mutate_if</span>(is.character, str_to_upper) <span class="op">%&gt;%</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">PollingPlaceAddress =</span> PollingPlaceAddress <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a><span class="st">           </span><span class="kw">str_replace</span>(<span class="st">&quot; RD&quot;</span>, <span class="st">&quot; ROAD&quot;</span>))</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true"></a>official_locations <span class="op">%&lt;&gt;%</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true"></a><span class="st">  </span><span class="kw">group_by</span>(County, PollingPlaceAddress) <span class="op">%&gt;%</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">ReportingUnit =</span> <span class="kw">paste</span>(<span class="kw">unique</span>(County), </span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true"></a>                               <span class="kw">unique</span>(Muni), </span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true"></a>                               <span class="kw">unique</span>(ReportingUnit), </span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true"></a>                               <span class="dt">sep =</span> <span class="st">&quot; - &quot;</span>,</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true"></a>                               <span class="dt">collapse =</span> <span class="st">&quot; and &quot;</span>)) <span class="op">%&gt;%</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true"></a><span class="st">  </span><span class="kw">ungroup</span>() </span></code></pre></div>
 <p>It should be the most recent xlsx file of polling locations posted here: <a href="https://elections.wi.gov/node/6527" class="uri">https://elections.wi.gov/node/6527</a></p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="co"># polling locations posted on website</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a>html &lt;-<span class="st"> </span><span class="kw">read_html</span>(<span class="st">&quot;https://elections.wi.gov/node/6527&quot;</span>) <span class="op">%&gt;%</span></span>
@@ -2135,7 +2146,7 @@ PollingPlaceAddress_API
 CITY OF ADAMS
 </td>
 <td style="text-align:left;">
-WARDS 1-4
+ADAMS COUNTY - CITY OF ADAMS - WARDS 1-4
 </td>
 <td style="text-align:left;">
 ADAMS CITY HALL
@@ -2152,7 +2163,7 @@ NULL
 CITY OF WISCONSIN DELLS
 </td>
 <td style="text-align:left;">
-WARDS 5,9
+ADAMS COUNTY - CITY OF WISCONSIN DELLS - WARDS 5,9
 </td>
 <td style="text-align:left;">
 WISCONSIN DELLS MUNICIPAL BUILDING
@@ -2169,7 +2180,7 @@ NULL
 TOWN OF ADAMS
 </td>
 <td style="text-align:left;">
-WARDS 1-3
+ADAMS COUNTY - TOWN OF ADAMS - WARDS 1-3
 </td>
 <td style="text-align:left;">
 ADAMS TOWN HALL
@@ -2186,7 +2197,7 @@ NULL
 TOWN OF BIG FLATS
 </td>
 <td style="text-align:left;">
-WARDS 1-2
+ADAMS COUNTY - TOWN OF BIG FLATS - WARDS 1-2
 </td>
 <td style="text-align:left;">
 BIG FLATS TOWN HALL
@@ -2203,7 +2214,7 @@ NULL
 TOWN OF COLBURN
 </td>
 <td style="text-align:left;">
-WARD 1
+ADAMS COUNTY - TOWN OF COLBURN - WARD 1 and ADAMS COUNTY - TOWN OF RICHFIELD - WARD 1
 </td>
 <td style="text-align:left;">
 RICHFIELD TOWN HALL
@@ -2220,7 +2231,7 @@ NULL
 TOWN OF DELL PRAIRIE
 </td>
 <td style="text-align:left;">
-WARDS 1-3
+ADAMS COUNTY - TOWN OF DELL PRAIRIE - WARDS 1-3
 </td>
 <td style="text-align:left;">
 DELL PRAIRIE TOWN HALL
@@ -2270,7 +2281,7 @@ PollingPlaceAddress
 CITY OF ADAMS
 </td>
 <td style="text-align:left;">
-WARDS 1-4
+ADAMS COUNTY - CITY OF ADAMS - WARDS 1-4
 </td>
 <td style="text-align:left;">
 ADAMS CITY HALL
@@ -2284,7 +2295,7 @@ ADAMS CITY HALL
 CITY OF WISCONSIN DELLS
 </td>
 <td style="text-align:left;">
-WARDS 5,9
+ADAMS COUNTY - CITY OF WISCONSIN DELLS - WARDS 5,9
 </td>
 <td style="text-align:left;">
 WISCONSIN DELLS MUNICIPAL BUILDING
@@ -2298,7 +2309,7 @@ WISCONSIN DELLS MUNICIPAL BUILDING
 TOWN OF ADAMS
 </td>
 <td style="text-align:left;">
-WARDS 1-3
+ADAMS COUNTY - TOWN OF ADAMS - WARDS 1-3
 </td>
 <td style="text-align:left;">
 ADAMS TOWN HALL
@@ -2312,7 +2323,7 @@ ADAMS TOWN HALL
 TOWN OF BIG FLATS
 </td>
 <td style="text-align:left;">
-WARDS 1-2
+ADAMS COUNTY - TOWN OF BIG FLATS - WARDS 1-2
 </td>
 <td style="text-align:left;">
 BIG FLATS TOWN HALL
@@ -2326,7 +2337,7 @@ BIG FLATS TOWN HALL
 TOWN OF COLBURN
 </td>
 <td style="text-align:left;">
-WARD 1
+ADAMS COUNTY - TOWN OF COLBURN - WARD 1 and ADAMS COUNTY - TOWN OF RICHFIELD - WARD 1
 </td>
 <td style="text-align:left;">
 RICHFIELD TOWN HALL
@@ -2340,7 +2351,7 @@ RICHFIELD TOWN HALL
 TOWN OF DELL PRAIRIE
 </td>
 <td style="text-align:left;">
-WARDS 1-3
+ADAMS COUNTY - TOWN OF DELL PRAIRIE - WARDS 1-3
 </td>
 <td style="text-align:left;">
 DELL PRAIRIE TOWN HALL
@@ -2380,9 +2391,12 @@ DELL PRAIRIE TOWN HALL
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true"></a><span class="co"># old VAN data</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true"></a>van &lt;-<span class="st"> </span>readxl<span class="op">::</span><span class="kw">read_xlsx</span>(<span class="kw">here</span>(<span class="st">&quot;data&quot;</span>, <span class="st">&quot;VAN Polling Locations.xlsx&quot;</span>))</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true"></a></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true"></a>van <span class="op">%&lt;&gt;%</span><span class="st"> </span><span class="kw">mutate_if</span>(is.character, str_to_upper)</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true"></a></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true"></a>van <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">head</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">kablebox</span>()</span></code></pre></div>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true"></a>van <span class="op">%&lt;&gt;%</span><span class="st"> </span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true"></a><span class="st">  </span><span class="kw">mutate_if</span>(is.character, str_to_upper) <span class="op">%&gt;%</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Address =</span> Address <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true"></a><span class="st">           </span><span class="kw">str_replace</span>(<span class="st">&quot; RD&quot;</span>, <span class="st">&quot; ROAD&quot;</span>))</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true"></a></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true"></a>van <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">head</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">kablebox</span>()</span></code></pre></div>
 <div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; ">
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
@@ -2835,29 +2849,32 @@ FALSE
 </div>
 </div>
 </div>
-<div id="discrepencies-between-wec-and-van-data" class="section level1">
-<h1>Discrepencies between WEC and VAN data</h1>
+<div id="discrepancies-between-wec-and-van-data" class="section level1">
+<h1>Discrepancies between WEC and VAN data</h1>
 <div id="join-with-old-van-upload-data" class="section level2">
 <h2>Join with old VAN upload data</h2>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true"></a>upload &lt;-<span class="st"> </span>van_new <span class="op">%&gt;%</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true"></a><span class="st">  </span><span class="kw">filter</span>(Address <span class="op">!=</span><span class="st"> &quot;NULL&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true"></a><span class="st">  </span><span class="kw">select</span>(<span class="kw">any_of</span>(<span class="kw">names</span>(van)), Muni, PollingPlaceAddress) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true"></a><span class="st">  </span><span class="kw">left_join</span>(van <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true"></a><span class="st">              </span><span class="co"># drop info that we want to replace, never retain </span></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true"></a><span class="st">              </span><span class="kw">select</span>(<span class="op">-</span><span class="st">`</span><span class="dt">Polling Location Contact Info</span><span class="st">`</span>, <span class="co">#FIXME coalesce instead</span></span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true"></a>                     <span class="op">-</span><span class="st">`</span><span class="dt">Authority Contact Info</span><span class="st">`</span>,</span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true"></a>                     <span class="op">-</span><span class="st">`</span><span class="dt">Date Authenticated*</span><span class="st">`</span>,</span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true"></a>                     <span class="op">-</span><span class="st">`</span><span class="dt">Authenticating Authority</span><span class="st">`</span>),</span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true"></a>            <span class="co"># </span><span class="al">NOTE</span><span class="co">: requiring exact match on polling location name, which can cause mismatches</span></span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true"></a>            <span class="dt">by=</span> <span class="kw">c</span>(<span class="st">&quot;County&quot;</span>, </span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true"></a>                  <span class="st">&quot;Address&quot;</span>, </span>
-<span id="cb16-13"><a href="#cb16-13" aria-hidden="true"></a>                  <span class="co">#&quot;City&quot;, </span></span>
-<span id="cb16-14"><a href="#cb16-14" aria-hidden="true"></a>                  <span class="st">&quot;Zip&quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb16-15"><a href="#cb16-15" aria-hidden="true"></a><span class="st">  </span><span class="kw">distinct</span>()</span></code></pre></div>
-<div id="discrepencies-in-polling-location-names" class="section level3">
-<h3>Discrepencies in Polling Location Names</h3>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true"></a><span class="st">  </span><span class="kw">select</span>(PollingPlaceAddress,</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true"></a>         <span class="co">#Muni, </span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true"></a>         ReportingUnit, </span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true"></a>         <span class="kw">any_of</span>(<span class="kw">names</span>(van)) ) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true"></a><span class="st">  </span><span class="kw">left_join</span>(van <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true"></a><span class="st">              </span><span class="co"># drop info that we want to replace, never retain </span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true"></a><span class="st">              </span><span class="kw">select</span>(<span class="op">-</span><span class="st">`</span><span class="dt">Polling Location Contact Info</span><span class="st">`</span>, </span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true"></a>                     <span class="op">-</span><span class="st">`</span><span class="dt">Authority Contact Info</span><span class="st">`</span>,</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true"></a>                     <span class="op">-</span><span class="st">`</span><span class="dt">Date Authenticated*</span><span class="st">`</span>,</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true"></a>                     <span class="op">-</span><span class="st">`</span><span class="dt">Authenticating Authority</span><span class="st">`</span>),</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true"></a>            <span class="co"># </span><span class="al">NOTE</span><span class="co">: requiring exact match on polling location name, which can cause mismatches</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true"></a>            <span class="dt">by=</span> <span class="kw">c</span>(<span class="st">&quot;County&quot;</span>, </span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true"></a>                  <span class="st">&quot;Address&quot;</span>, </span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true"></a>                  <span class="co">#&quot;City&quot;, </span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true"></a>                  <span class="st">&quot;Zip&quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true"></a><span class="st">  </span><span class="kw">distinct</span>()</span></code></pre></div>
+<div id="discrepancies-in-polling-location-names" class="section level3">
+<h3>Discrepancies in Polling Location Names</h3>
 <blockquote>
-<p>We are not matching on polling location name</p>
+<p>NOTE: We are not matching on the polling location name, so this is just a check for false positives or name changes that may have occurred without an address change.</p>
 </blockquote>
 <div id="cases-where-the-states-polling-location-x-is-not-exactly-the-same-as-the-last-van-uploads-polling-location-y" class="section level4">
 <h4>Cases where the state’s polling location (x) is not exactly the same as the last VAN upload’s polling location (y):</h4>
@@ -3304,7 +3321,7 @@ RANGE LINE RECREATION CENTER GYM
 RANGE LINE RECREATION CENTER
 </td>
 <td style="text-align:left;">
-11040 N RANGE LINE RD
+11040 N RANGE LINE ROAD
 </td>
 <td style="text-align:left;">
 MEQUON
@@ -3324,7 +3341,7 @@ RANGE LINE RECREATION CENTER
 RANGE LINE RECREATION CENTER GYM
 </td>
 <td style="text-align:left;">
-11040 N RANGE LINE RD
+11040 N RANGE LINE ROAD
 </td>
 <td style="text-align:left;">
 MEQUON
@@ -3904,7 +3921,7 @@ WAUKESHA VILLAGE FIRE STATION
 WAUKESHA TOWN FIRE STATION
 </td>
 <td style="text-align:left;">
-W250S3567 CENTER RD
+W250S3567 CENTER ROAD
 </td>
 <td style="text-align:left;">
 WAUKESHA
@@ -3924,7 +3941,7 @@ WAUKESHA VILLAGE FIRE STATION
 WAUKESHA TOWN HALL
 </td>
 <td style="text-align:left;">
-W250S3567 CENTER RD
+W250S3567 CENTER ROAD
 </td>
 <td style="text-align:left;">
 WAUKESHA
@@ -3944,7 +3961,7 @@ WAUKESHA VILLAGE HALL
 WAUKESHA TOWN FIRE STATION
 </td>
 <td style="text-align:left;">
-W250S3567 CENTER RD
+W250S3567 CENTER ROAD
 </td>
 <td style="text-align:left;">
 WAUKESHA
@@ -3964,7 +3981,7 @@ WAUKESHA VILLAGE HALL
 WAUKESHA TOWN HALL
 </td>
 <td style="text-align:left;">
-W250S3567 CENTER RD
+W250S3567 CENTER ROAD
 </td>
 <td style="text-align:left;">
 WAUKESHA
@@ -4075,7 +4092,7 @@ WAUSHARA
 <span id="cb18-8"><a href="#cb18-8" aria-hidden="true"></a>                                       <span class="st">`</span><span class="dt">Polling Location.y</span><span class="st">`</span>)</span>
 <span id="cb18-9"><a href="#cb18-9" aria-hidden="true"></a>         ) <span class="op">%&gt;%</span><span class="st"> </span></span>
 <span id="cb18-10"><a href="#cb18-10" aria-hidden="true"></a><span class="st">  </span><span class="co"># select variable names from van</span></span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true"></a><span class="st">  </span><span class="kw">select</span>(<span class="kw">any_of</span>(<span class="kw">names</span>(van)), Muni, PollingPlaceAddress) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true"></a><span class="st">  </span><span class="kw">select</span>(<span class="kw">any_of</span>(<span class="kw">names</span>(van)), ReportingUnit,  PollingPlaceAddress) <span class="op">%&gt;%</span><span class="st"> </span></span>
 <span id="cb18-12"><a href="#cb18-12" aria-hidden="true"></a><span class="st">  </span><span class="kw">distinct</span>()</span></code></pre></div>
 </div>
 </div>
@@ -4085,10 +4102,11 @@ WAUSHARA
 <h4>Cases where the polling location address that is in VAN is not matching in WEC file</h4>
 <p>These polling places may have been deleted</p>
 <div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true"></a><span class="co"># polling addresses not in VAN? </span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true"></a>van <span class="op">%&gt;%</span><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>Address <span class="op">%in%</span><span class="st"> </span>upload<span class="op">$</span>Address) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true"></a><span class="st">  </span><span class="kw">select</span>(County,  Address, <span class="st">`</span><span class="dt">Polling Location</span><span class="st">`</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true"></a><span class="st">  </span><span class="kw">distinct</span>() <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true"></a><span class="st">  </span><span class="kw">kablebox</span>()</span></code></pre></div>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true"></a>deleted &lt;-<span class="st"> </span>van <span class="op">%&gt;%</span><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>Address <span class="op">%in%</span><span class="st"> </span>upload<span class="op">$</span>Address) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true"></a><span class="st">  </span><span class="kw">select</span>(County,  Address, <span class="st">`</span><span class="dt">Polling Location</span><span class="st">`</span>, <span class="st">`</span><span class="dt">Precinct Name</span><span class="st">`</span>, <span class="st">`</span><span class="dt">Date Authenticated*</span><span class="st">`</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true"></a><span class="st">  </span><span class="kw">distinct</span>() </span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true"></a></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true"></a>deleted <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">kablebox</span>()</span></code></pre></div>
 <div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; ">
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
@@ -4102,6 +4120,12 @@ Address
 <th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
 Polling Location
 </th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Precinct Name
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Date Authenticated*
+</th>
 </tr>
 </thead>
 <tbody>
@@ -4111,6 +4135,12 @@ DODGE
 </td>
 <td style="text-align:left;">
 NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+DODGE - CITY OF BEAVER DAM - WARD 016
 </td>
 <td style="text-align:left;">
 NA
@@ -4126,6 +4156,12 @@ MARATHON
 <td style="text-align:left;">
 AGING &amp; DISABILITY RESOURCE CENTER
 </td>
+<td style="text-align:left;">
+MARATHON - CITY OF WAUSAU - WARD 051
+</td>
+<td style="text-align:left;">
+10/12/10
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -4136,6 +4172,12 @@ MILWAUKEE
 </td>
 <td style="text-align:left;">
 FIREHOUSE ENGINE 31
+</td>
+<td style="text-align:left;">
+MILWAUKEE - CITY OF MILWAUKEE - WARD 324
+</td>
+<td style="text-align:left;">
+8/11/20
 </td>
 </tr>
 <tr>
@@ -4148,6 +4190,182 @@ WALWORTH
 <td style="text-align:left;">
 DELAVAN COMMUNITY CENTER
 </td>
+<td style="text-align:left;">
+WALWORTH - TOWN OF DELAVAN - WARD 001
+</td>
+<td style="text-align:left;">
+7/27/20
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+WALWORTH
+</td>
+<td style="text-align:left;">
+1220 SOUTH SHORE DR
+</td>
+<td style="text-align:left;">
+DELAVAN COMMUNITY CENTER
+</td>
+<td style="text-align:left;">
+WALWORTH - TOWN OF DELAVAN - WARD 002
+</td>
+<td style="text-align:left;">
+7/27/20
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+WALWORTH
+</td>
+<td style="text-align:left;">
+1220 SOUTH SHORE DR
+</td>
+<td style="text-align:left;">
+DELAVAN COMMUNITY CENTER
+</td>
+<td style="text-align:left;">
+WALWORTH - TOWN OF DELAVAN - WARD 003
+</td>
+<td style="text-align:left;">
+7/27/20
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+WALWORTH
+</td>
+<td style="text-align:left;">
+1220 SOUTH SHORE DR
+</td>
+<td style="text-align:left;">
+DELAVAN COMMUNITY CENTER
+</td>
+<td style="text-align:left;">
+WALWORTH - TOWN OF DELAVAN - WARD 004
+</td>
+<td style="text-align:left;">
+7/27/20
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+WALWORTH
+</td>
+<td style="text-align:left;">
+1220 SOUTH SHORE DR
+</td>
+<td style="text-align:left;">
+DELAVAN COMMUNITY CENTER
+</td>
+<td style="text-align:left;">
+WALWORTH - TOWN OF DELAVAN - WARD 005
+</td>
+<td style="text-align:left;">
+7/27/20
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+WALWORTH
+</td>
+<td style="text-align:left;">
+1220 SOUTH SHORE DR
+</td>
+<td style="text-align:left;">
+DELAVAN COMMUNITY CENTER
+</td>
+<td style="text-align:left;">
+WALWORTH - TOWN OF DELAVAN - WARD 006
+</td>
+<td style="text-align:left;">
+7/27/20
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+WALWORTH
+</td>
+<td style="text-align:left;">
+1220 SOUTH SHORE DR
+</td>
+<td style="text-align:left;">
+DELAVAN COMMUNITY CENTER
+</td>
+<td style="text-align:left;">
+WALWORTH - TOWN OF DELAVAN - WARD 007
+</td>
+<td style="text-align:left;">
+7/27/20
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+WALWORTH
+</td>
+<td style="text-align:left;">
+1220 SOUTH SHORE DR
+</td>
+<td style="text-align:left;">
+DELAVAN COMMUNITY CENTER
+</td>
+<td style="text-align:left;">
+WALWORTH - TOWN OF DELAVAN - WARD 008
+</td>
+<td style="text-align:left;">
+7/27/20
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+WALWORTH
+</td>
+<td style="text-align:left;">
+1220 SOUTH SHORE DR
+</td>
+<td style="text-align:left;">
+DELAVAN COMMUNITY CENTER
+</td>
+<td style="text-align:left;">
+WALWORTH - TOWN OF DELAVAN - WARD 009
+</td>
+<td style="text-align:left;">
+7/27/20
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+WALWORTH
+</td>
+<td style="text-align:left;">
+1220 SOUTH SHORE DR
+</td>
+<td style="text-align:left;">
+DELAVAN COMMUNITY CENTER
+</td>
+<td style="text-align:left;">
+WALWORTH - TOWN OF DELAVAN - WARD 010
+</td>
+<td style="text-align:left;">
+7/27/20
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+WALWORTH
+</td>
+<td style="text-align:left;">
+1220 SOUTH SHORE DR
+</td>
+<td style="text-align:left;">
+DELAVAN COMMUNITY CENTER
+</td>
+<td style="text-align:left;">
+WALWORTH - TOWN OF DELAVAN - WARD 011
+</td>
+<td style="text-align:left;">
+7/27/20
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -4159,16 +4377,11 @@ W239N5678 MAPLE AVE
 <td style="text-align:left;">
 WIS NATIONAL GUARD ARMORY
 </td>
-</tr>
-<tr>
 <td style="text-align:left;">
-WINNEBAGO
+WAUKESHA - VILLAGE OF SUSSEX - WARD 012
 </td>
 <td style="text-align:left;">
-699 S GREEN BAY RD
-</td>
-<td style="text-align:left;">
-SHOPKO
+10/12/10
 </td>
 </tr>
 </tbody>
@@ -4182,12 +4395,13 @@ SHOPKO
 <h4>Cases where the polling location address is not matching in VAN</h4>
 <p>These may be new polling places</p>
 <div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true"></a><span class="co"># polling addresses not in VAN? </span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true"></a>upload <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true"></a>added &lt;-<span class="st"> </span>upload <span class="op">%&gt;%</span><span class="st"> </span></span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true"></a><span class="st">  </span><span class="kw">filter</span>(<span class="kw">is.na</span>(<span class="st">`</span><span class="dt">Precinct Code</span><span class="st">`</span>),</span>
 <span id="cb20-4"><a href="#cb20-4" aria-hidden="true"></a>         <span class="op">!</span>Address <span class="op">%in%</span><span class="st"> </span>van<span class="op">$</span>Address) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true"></a><span class="st">  </span><span class="kw">select</span>(County,  PollingPlaceAddress, <span class="st">`</span><span class="dt">Polling Location</span><span class="st">`</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true"></a><span class="st">  </span><span class="kw">distinct</span>() <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true"></a><span class="st">  </span><span class="kw">kablebox</span>()</span></code></pre></div>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true"></a><span class="st">  </span><span class="kw">select</span>(County, ReportingUnit,  <span class="st">`</span><span class="dt">Precinct Name</span><span class="st">`</span>,Address, <span class="st">`</span><span class="dt">Polling Location</span><span class="st">`</span>, <span class="st">`</span><span class="dt">Date Authenticated*</span><span class="st">`</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true"></a><span class="st">  </span><span class="kw">distinct</span>() </span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true"></a></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true"></a>added <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">kablebox</span>()</span></code></pre></div>
 <div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; ">
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
@@ -4196,10 +4410,19 @@ SHOPKO
 County
 </th>
 <th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
-PollingPlaceAddress
+ReportingUnit
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Precinct Name
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Address
 </th>
 <th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
 Polling Location
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Date Authenticated*
 </th>
 </tr>
 </thead>
@@ -4209,10 +4432,19 @@ Polling Location
 TREMPEALEAU
 </td>
 <td style="text-align:left;">
-W20774 STATE RD 121, WHITEHALL, WI 54773
+TREMPEALEAU COUNTY - TOWN OF LINCOLN - WARDS 1-2
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+W20774 STATE ROAD 121
 </td>
 <td style="text-align:left;">
 LINCOLN TOWN HALL
+</td>
+<td style="text-align:left;">
+8-11-2020
 </td>
 </tr>
 <tr>
@@ -4220,36 +4452,50 @@ LINCOLN TOWN HALL
 WALWORTH
 </td>
 <td style="text-align:left;">
-5621 TOWN HALL RD, DELAVAN, WI 53115-3712
+WALWORTH COUNTY - TOWN OF DELAVAN - WARDS 1-11
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+5621 TOWN HALL ROAD
 </td>
 <td style="text-align:left;">
 DELAVAN TOWN HALL
 </td>
-</tr>
-<tr>
 <td style="text-align:left;">
-WINNEBAGO
-</td>
-<td style="text-align:left;">
-699 S GREEN BAY ROAD, NEENAH, WI 54956
-</td>
-<td style="text-align:left;">
-SHOPKO
+8-11-2020
 </td>
 </tr>
 </tbody>
 </table>
 </div>
+<p>These are added to the <a href="https://docs.google.com/spreadsheets/d/1GYjifHWJ-N_Z3YEHMVWp58lA5d_emrzvgd4O951UTdU/edit#gid=120487606">Polling Location Issue Tracker</a></p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true"></a><span class="kw">library</span>(googlesheets4)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true"></a>deleted <span class="op">%&lt;&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">Issue =</span> <span class="st">&quot;Deleted address&quot;</span>)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true"></a>added <span class="op">%&lt;&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">Issue =</span><span class="st">&quot;New address&quot;</span>)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true"></a>poll_address_changes &lt;-<span class="st"> </span><span class="kw">full_join</span>(added, deleted)  <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(Issue, <span class="kw">everything</span>())</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true"></a></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true"></a><span class="co">#FIXME pull previously flagged issues and put new ones at the top</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true"></a></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true"></a>ss &lt;-<span class="st"> </span>googledrive<span class="op">::</span><span class="kw">drive_get</span>(<span class="st">&quot;polls&quot;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true"></a><span class="st">  </span><span class="kw">gs4_get</span>() </span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true"></a></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true"></a>poll_address_changes <span class="op">%&gt;%</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true"></a><span class="st">  </span><span class="kw">sheet_write</span>(<span class="dt">ss =</span> ss,</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true"></a>              <span class="dt">sheet =</span> <span class="kw">str_c</span>(<span class="kw">Sys.Date</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.character</span>(), </span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true"></a>                            <span class="st">&quot; Issues&quot;</span>))</span></code></pre></div>
 </div>
 <div id="cases-where-the-county-address-is-not-matching-in-van" class="section level4">
 <h4>Cases where the county + address is not matching in VAN</h4>
-<p>These may be “ghost wards” but still may be worth checking</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true"></a><span class="co"># polling addresses + counties not in VAN? </span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true"></a>upload <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true"></a><span class="st">  </span><span class="kw">filter</span>(<span class="kw">is.na</span>(<span class="st">`</span><span class="dt">Precinct Code</span><span class="st">`</span>)) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true"></a><span class="st">  </span><span class="kw">select</span>(County,  PollingPlaceAddress, <span class="st">`</span><span class="dt">Polling Location</span><span class="st">`</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true"></a><span class="st">  </span><span class="kw">distinct</span>() <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true"></a><span class="st">  </span><span class="kw">kablebox</span>()</span></code></pre></div>
+<p>These may be “ghost wards” but still may be worth checking.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true"></a><span class="co"># polling addresses + counties not in VAN? </span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true"></a>upload <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true"></a><span class="st">  </span><span class="kw">filter</span>(<span class="kw">is.na</span>(<span class="st">`</span><span class="dt">Precinct Code</span><span class="st">`</span>)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true"></a><span class="st">  </span><span class="kw">select</span>(County,  PollingPlaceAddress, <span class="st">`</span><span class="dt">Polling Location</span><span class="st">`</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true"></a><span class="st">  </span><span class="kw">distinct</span>() <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true"></a><span class="st">  </span><span class="kw">kablebox</span>()</span></code></pre></div>
 <div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; ">
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
@@ -4403,7 +4649,7 @@ SHIOCTON VILLAGE HALL
 TREMPEALEAU
 </td>
 <td style="text-align:left;">
-W20774 STATE RD 121, WHITEHALL, WI 54773
+W20774 STATE ROAD 121, WHITEHALL, WI 54773
 </td>
 <td style="text-align:left;">
 LINCOLN TOWN HALL
@@ -4414,7 +4660,7 @@ LINCOLN TOWN HALL
 WALWORTH
 </td>
 <td style="text-align:left;">
-5621 TOWN HALL RD, DELAVAN, WI 53115-3712
+5621 TOWN HALL ROAD, DELAVAN, WI 53115-3712
 </td>
 <td style="text-align:left;">
 DELAVAN TOWN HALL
@@ -4453,26 +4699,15 @@ N35W29288 NORTH SHORE DR, HARTLAND, WI 53029
 LITTLE RED SCHOOL HOUSE
 </td>
 </tr>
-<tr>
-<td style="text-align:left;">
-WINNEBAGO
-</td>
-<td style="text-align:left;">
-699 S GREEN BAY ROAD, NEENAH, WI 54956
-</td>
-<td style="text-align:left;">
-SHOPKO
-</td>
-</tr>
 </tbody>
 </table>
 </div>
 <hr />
 <p>These could be new locations or something else, like how the State says that people in Bayfield Ward 12 are now going into Ashland to vote???</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true"></a><span class="co"># last VAN upload </span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true"></a>van <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true"></a><span class="st">  </span><span class="kw">filter</span>(<span class="kw">str_detect</span>(Address, <span class="st">&quot;BEASER&quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true"></a><span class="st">  </span><span class="kw">select</span>(County, <span class="st">`</span><span class="dt">Precinct Name</span><span class="st">`</span>, Address) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">distinct</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">kablebox</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true"></a><span class="co"># last VAN upload </span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true"></a>van <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true"></a><span class="st">  </span><span class="kw">filter</span>(<span class="kw">str_detect</span>(Address, <span class="st">&quot;BEASER&quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true"></a><span class="st">  </span><span class="kw">select</span>(County, <span class="st">`</span><span class="dt">Precinct Name</span><span class="st">`</span>, Address) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">distinct</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">kablebox</span>()</span></code></pre></div>
 <div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; ">
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
@@ -4613,10 +4848,10 @@ ASHLAND - CITY OF ASHLAND - WARD 011
 </tbody>
 </table>
 </div>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true"></a><span class="co"># Current state data</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true"></a>official_locations <span class="op">%&gt;%</span></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true"></a><span class="st">  </span><span class="kw">filter</span>(<span class="kw">str_detect</span>(PollingPlaceAddress, <span class="st">&quot;BEASER&quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true"></a><span class="st">  </span><span class="kw">select</span>(County,  Muni, ReportingUnit, PollingPlaceAddress) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">kablebox</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true"></a><span class="co"># Current state data</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true"></a>official_locations <span class="op">%&gt;%</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true"></a><span class="st">  </span><span class="kw">filter</span>(<span class="kw">str_detect</span>(PollingPlaceAddress, <span class="st">&quot;BEASER&quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true"></a><span class="st">  </span><span class="kw">select</span>(County,  Muni, ReportingUnit, PollingPlaceAddress) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">kablebox</span>()</span></code></pre></div>
 <div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; ">
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
@@ -4644,7 +4879,7 @@ ASHLAND
 CITY OF ASHLAND
 </td>
 <td style="text-align:left;">
-WARDS 1-11
+ASHLAND COUNTY - CITY OF ASHLAND - WARDS 1-11
 </td>
 <td style="text-align:left;">
 2100 BEASER AVE, ASHLAND, WI 54806
@@ -4658,7 +4893,7 @@ BAYFIELD
 CITY OF ASHLAND
 </td>
 <td style="text-align:left;">
-WARD 12
+BAYFIELD COUNTY - CITY OF ASHLAND - WARD 12
 </td>
 <td style="text-align:left;">
 2100 BEASER AVE, ASHLAND, WI 54806
@@ -4671,14 +4906,9 @@ WARD 12
 </div>
 <div id="all-locations-being-updated-in-any-way" class="section level3">
 <h3>All locations being updated in any way</h3>
-<p>(Location Name Changes, New Addresses)</p>
-</div>
-</div>
-<div id="save-new-polling-locations" class="section level2">
-<h2>Save new polling locations</h2>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true"></a><span class="kw">write_csv</span>(upload, <span class="dt">path =</span> <span class="kw">here</span>(<span class="st">&quot;data&quot;</span>, upload_file))</span></code></pre></div>
-<p>Here are the first few rows of the upload:</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true"></a>upload <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">head</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">kablebox</span>()</span></code></pre></div>
+<p>(including location name changes and new addresses)</p>
+<p>In old VAN, not in upload:</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true"></a><span class="kw">anti_join</span>(van, upload, <span class="dt">by =</span> <span class="kw">c</span>(<span class="st">&quot;County&quot;</span>, <span class="st">&quot;Address&quot;</span>, <span class="st">&quot;Polling Location&quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">kablebox</span>()</span></code></pre></div>
 <div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; ">
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
@@ -4720,7 +4950,4969 @@ Authenticating Authority
 Date Authenticated*
 </th>
 <th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
-Muni
+Authority Contact Info
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+416976
+</td>
+<td style="text-align:left;">
+01153625001
+</td>
+<td style="text-align:left;">
+BUFFALO - TOWN OF MONDOVI - WARD 001
+</td>
+<td style="text-align:left;">
+MONDOVI CITY HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+156 S FRANKLIN ST
+</td>
+<td style="text-align:left;">
+MONDOVI
+</td>
+<td style="text-align:left;">
+54755
+</td>
+<td style="text-align:left;">
+BUFFALO
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+7/27/20
+</td>
+<td style="text-align:left;">
+DPW- FALL PARTISAN PRIMARY
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2021774
+</td>
+<td style="text-align:left;">
+02705900016
+</td>
+<td style="text-align:left;">
+DODGE - CITY OF BEAVER DAM - WARD 016
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+DODGE
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+418852
+</td>
+<td style="text-align:left;">
+07384475051
+</td>
+<td style="text-align:left;">
+MARATHON - CITY OF WAUSAU - WARD 051
+</td>
+<td style="text-align:left;">
+AGING &amp; DISABILITY RESOURCE CENTER
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+1000 LAKE VIEW DR
+</td>
+<td style="text-align:left;">
+WAUSAU
+</td>
+<td style="text-align:left;">
+54403
+</td>
+<td style="text-align:left;">
+MARATHON
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+10/12/10
+</td>
+<td style="text-align:left;">
+BRANDA WEIX
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+413378
+</td>
+<td style="text-align:left;">
+07953000016
+</td>
+<td style="text-align:left;">
+MILWAUKEE - CITY OF MILWAUKEE - WARD 016
+</td>
+<td style="text-align:left;">
+WEBSTER MIDDLE SCHOOL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+6850 N 53RD ST
+</td>
+<td style="text-align:left;">
+MILWAUKEE
+</td>
+<td style="text-align:left;">
+53223
+</td>
+<td style="text-align:left;">
+MILWAUKEE
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+8/11/20
+</td>
+<td style="text-align:left;">
+DPW-2020 FALL PARTISAN PRIMARY
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+412615
+</td>
+<td style="text-align:left;">
+07953000017
+</td>
+<td style="text-align:left;">
+MILWAUKEE - CITY OF MILWAUKEE - WARD 017
+</td>
+<td style="text-align:left;">
+WEBSTER MIDDLE SCHOOL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+6850 N 53RD ST
+</td>
+<td style="text-align:left;">
+MILWAUKEE
+</td>
+<td style="text-align:left;">
+53223
+</td>
+<td style="text-align:left;">
+MILWAUKEE
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+8/11/20
+</td>
+<td style="text-align:left;">
+DPW-2020 FALL PARTISAN PRIMARY
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+413839
+</td>
+<td style="text-align:left;">
+07953000102
+</td>
+<td style="text-align:left;">
+MILWAUKEE - CITY OF MILWAUKEE - WARD 102
+</td>
+<td style="text-align:left;">
+BOYS AND GIRLS CLUB MILWAUKEE
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+3000 N SHERMAN BLVD
+</td>
+<td style="text-align:left;">
+MILWAUKEE
+</td>
+<td style="text-align:left;">
+53210
+</td>
+<td style="text-align:left;">
+MILWAUKEE
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+8/11/20
+</td>
+<td style="text-align:left;">
+DPW-2020 FALL PARTISAN PRIMARY
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+412668
+</td>
+<td style="text-align:left;">
+07953000103
+</td>
+<td style="text-align:left;">
+MILWAUKEE - CITY OF MILWAUKEE - WARD 103
+</td>
+<td style="text-align:left;">
+BOYS AND GIRLS CLUB MILWAUKEE
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+3000 N SHERMAN BLVD
+</td>
+<td style="text-align:left;">
+MILWAUKEE
+</td>
+<td style="text-align:left;">
+53210
+</td>
+<td style="text-align:left;">
+MILWAUKEE
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+8/11/20
+</td>
+<td style="text-align:left;">
+DPW-2020 FALL PARTISAN PRIMARY
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+414546
+</td>
+<td style="text-align:left;">
+07953000104
+</td>
+<td style="text-align:left;">
+MILWAUKEE - CITY OF MILWAUKEE - WARD 104
+</td>
+<td style="text-align:left;">
+BOYS AND GIRLS CLUB MILWAUKEE
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+3000 N SHERMAN BLVD
+</td>
+<td style="text-align:left;">
+MILWAUKEE
+</td>
+<td style="text-align:left;">
+53210
+</td>
+<td style="text-align:left;">
+MILWAUKEE
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+8/11/20
+</td>
+<td style="text-align:left;">
+DPW-2020 FALL PARTISAN PRIMARY
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+416124
+</td>
+<td style="text-align:left;">
+07953000291
+</td>
+<td style="text-align:left;">
+MILWAUKEE - CITY OF MILWAUKEE - WARD 291
+</td>
+<td style="text-align:left;">
+SAINT ANDREW EVANGELICAL CHURCH
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+1132 W OKLAHOMA AVE
+</td>
+<td style="text-align:left;">
+MILWAUKEE
+</td>
+<td style="text-align:left;">
+53215
+</td>
+<td style="text-align:left;">
+MILWAUKEE
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+8/11/20
+</td>
+<td style="text-align:left;">
+DPW-2020 FALL PARTISAN PRIMARY
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1719890
+</td>
+<td style="text-align:left;">
+07953000324
+</td>
+<td style="text-align:left;">
+MILWAUKEE - CITY OF MILWAUKEE - WARD 324
+</td>
+<td style="text-align:left;">
+FIREHOUSE ENGINE 31
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+2400 S 8TH ST
+</td>
+<td style="text-align:left;">
+MILWAUKEE
+</td>
+<td style="text-align:left;">
+53215
+</td>
+<td style="text-align:left;">
+MILWAUKEE
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+8/11/20
+</td>
+<td style="text-align:left;">
+DPW-2020 FALL PARTISAN PRIMARY
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+414732
+</td>
+<td style="text-align:left;">
+10166375001
+</td>
+<td style="text-align:left;">
+RACINE - VILLAGE OF RAYMOND - WARD 001
+</td>
+<td style="text-align:left;">
+RAYMOND TOWN HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+2255 76TH ST
+</td>
+<td style="text-align:left;">
+FRANKSVILLE
+</td>
+<td style="text-align:left;">
+53126
+</td>
+<td style="text-align:left;">
+RACINE
+</td>
+<td style="text-align:left;">
+262-835-4426
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+4/4/20
+</td>
+<td style="text-align:left;">
+DPW-APRIL 2020 ELECTION
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+414807
+</td>
+<td style="text-align:left;">
+10166375002
+</td>
+<td style="text-align:left;">
+RACINE - VILLAGE OF RAYMOND - WARD 002
+</td>
+<td style="text-align:left;">
+RAYMOND TOWN HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+2255 76TH ST
+</td>
+<td style="text-align:left;">
+FRANKSVILLE
+</td>
+<td style="text-align:left;">
+53126
+</td>
+<td style="text-align:left;">
+RACINE
+</td>
+<td style="text-align:left;">
+262-835-4426
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+4/4/20
+</td>
+<td style="text-align:left;">
+DPW-APRIL 2020 ELECTION
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+414878
+</td>
+<td style="text-align:left;">
+10166375003
+</td>
+<td style="text-align:left;">
+RACINE - VILLAGE OF RAYMOND - WARD 003
+</td>
+<td style="text-align:left;">
+RAYMOND TOWN HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+2255 76TH ST
+</td>
+<td style="text-align:left;">
+FRANKSVILLE
+</td>
+<td style="text-align:left;">
+53126
+</td>
+<td style="text-align:left;">
+RACINE
+</td>
+<td style="text-align:left;">
+262-835-4426
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+4/4/20
+</td>
+<td style="text-align:left;">
+DPW-APRIL 2020 ELECTION
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+414160
+</td>
+<td style="text-align:left;">
+10166375004
+</td>
+<td style="text-align:left;">
+RACINE - VILLAGE OF RAYMOND - WARD 004
+</td>
+<td style="text-align:left;">
+RAYMOND TOWN HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+2255 76TH ST
+</td>
+<td style="text-align:left;">
+FRANKSVILLE
+</td>
+<td style="text-align:left;">
+53126
+</td>
+<td style="text-align:left;">
+RACINE
+</td>
+<td style="text-align:left;">
+262-835-4426
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+4/4/20
+</td>
+<td style="text-align:left;">
+DPW-APRIL 2020 ELECTION
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+416599
+</td>
+<td style="text-align:left;">
+10166375005
+</td>
+<td style="text-align:left;">
+RACINE - VILLAGE OF RAYMOND - WARD 005
+</td>
+<td style="text-align:left;">
+RAYMOND TOWN HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+2255 76TH ST
+</td>
+<td style="text-align:left;">
+FRANKSVILLE
+</td>
+<td style="text-align:left;">
+53126
+</td>
+<td style="text-align:left;">
+RACINE
+</td>
+<td style="text-align:left;">
+262-835-4426
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+4/4/20
+</td>
+<td style="text-align:left;">
+DPW-APRIL 2020 ELECTION
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1579164
+</td>
+<td style="text-align:left;">
+10166375006
+</td>
+<td style="text-align:left;">
+RACINE - VILLAGE OF RAYMOND - WARD 006
+</td>
+<td style="text-align:left;">
+RAYMOND TOWN HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+2255 76TH ST
+</td>
+<td style="text-align:left;">
+FRANKSVILLE
+</td>
+<td style="text-align:left;">
+53126
+</td>
+<td style="text-align:left;">
+RACINE
+</td>
+<td style="text-align:left;">
+262-835-4426
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+4/4/20
+</td>
+<td style="text-align:left;">
+DPW-APRIL 2020 ELECTION
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+413490
+</td>
+<td style="text-align:left;">
+12719475001
+</td>
+<td style="text-align:left;">
+WALWORTH - TOWN OF DELAVAN - WARD 001
+</td>
+<td style="text-align:left;">
+DELAVAN COMMUNITY CENTER
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+1220 SOUTH SHORE DR
+</td>
+<td style="text-align:left;">
+DELAVAN
+</td>
+<td style="text-align:left;">
+53115
+</td>
+<td style="text-align:left;">
+WALWORTH
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+7/27/20
+</td>
+<td style="text-align:left;">
+DPW- FALL PARTISAN PRIMARY
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+415420
+</td>
+<td style="text-align:left;">
+12719475002
+</td>
+<td style="text-align:left;">
+WALWORTH - TOWN OF DELAVAN - WARD 002
+</td>
+<td style="text-align:left;">
+DELAVAN COMMUNITY CENTER
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+1220 SOUTH SHORE DR
+</td>
+<td style="text-align:left;">
+DELAVAN
+</td>
+<td style="text-align:left;">
+53115
+</td>
+<td style="text-align:left;">
+WALWORTH
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+7/27/20
+</td>
+<td style="text-align:left;">
+DPW- FALL PARTISAN PRIMARY
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+417328
+</td>
+<td style="text-align:left;">
+12719475003
+</td>
+<td style="text-align:left;">
+WALWORTH - TOWN OF DELAVAN - WARD 003
+</td>
+<td style="text-align:left;">
+DELAVAN COMMUNITY CENTER
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+1220 SOUTH SHORE DR
+</td>
+<td style="text-align:left;">
+DELAVAN
+</td>
+<td style="text-align:left;">
+53115
+</td>
+<td style="text-align:left;">
+WALWORTH
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+7/27/20
+</td>
+<td style="text-align:left;">
+DPW- FALL PARTISAN PRIMARY
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+414817
+</td>
+<td style="text-align:left;">
+12719475004
+</td>
+<td style="text-align:left;">
+WALWORTH - TOWN OF DELAVAN - WARD 004
+</td>
+<td style="text-align:left;">
+DELAVAN COMMUNITY CENTER
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+1220 SOUTH SHORE DR
+</td>
+<td style="text-align:left;">
+DELAVAN
+</td>
+<td style="text-align:left;">
+53115
+</td>
+<td style="text-align:left;">
+WALWORTH
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+7/27/20
+</td>
+<td style="text-align:left;">
+DPW- FALL PARTISAN PRIMARY
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+414895
+</td>
+<td style="text-align:left;">
+12719475005
+</td>
+<td style="text-align:left;">
+WALWORTH - TOWN OF DELAVAN - WARD 005
+</td>
+<td style="text-align:left;">
+DELAVAN COMMUNITY CENTER
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+1220 SOUTH SHORE DR
+</td>
+<td style="text-align:left;">
+DELAVAN
+</td>
+<td style="text-align:left;">
+53115
+</td>
+<td style="text-align:left;">
+WALWORTH
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+7/27/20
+</td>
+<td style="text-align:left;">
+DPW- FALL PARTISAN PRIMARY
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+415794
+</td>
+<td style="text-align:left;">
+12719475006
+</td>
+<td style="text-align:left;">
+WALWORTH - TOWN OF DELAVAN - WARD 006
+</td>
+<td style="text-align:left;">
+DELAVAN COMMUNITY CENTER
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+1220 SOUTH SHORE DR
+</td>
+<td style="text-align:left;">
+DELAVAN
+</td>
+<td style="text-align:left;">
+53115
+</td>
+<td style="text-align:left;">
+WALWORTH
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+7/27/20
+</td>
+<td style="text-align:left;">
+DPW- FALL PARTISAN PRIMARY
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1571037
+</td>
+<td style="text-align:left;">
+12719475007
+</td>
+<td style="text-align:left;">
+WALWORTH - TOWN OF DELAVAN - WARD 007
+</td>
+<td style="text-align:left;">
+DELAVAN COMMUNITY CENTER
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+1220 SOUTH SHORE DR
+</td>
+<td style="text-align:left;">
+DELAVAN
+</td>
+<td style="text-align:left;">
+53115
+</td>
+<td style="text-align:left;">
+WALWORTH
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+7/27/20
+</td>
+<td style="text-align:left;">
+DPW- FALL PARTISAN PRIMARY
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1579267
+</td>
+<td style="text-align:left;">
+12719475008
+</td>
+<td style="text-align:left;">
+WALWORTH - TOWN OF DELAVAN - WARD 008
+</td>
+<td style="text-align:left;">
+DELAVAN COMMUNITY CENTER
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+1220 SOUTH SHORE DR
+</td>
+<td style="text-align:left;">
+DELAVAN
+</td>
+<td style="text-align:left;">
+53115
+</td>
+<td style="text-align:left;">
+WALWORTH
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+7/27/20
+</td>
+<td style="text-align:left;">
+DPW- FALL PARTISAN PRIMARY
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1579268
+</td>
+<td style="text-align:left;">
+12719475009
+</td>
+<td style="text-align:left;">
+WALWORTH - TOWN OF DELAVAN - WARD 009
+</td>
+<td style="text-align:left;">
+DELAVAN COMMUNITY CENTER
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+1220 SOUTH SHORE DR
+</td>
+<td style="text-align:left;">
+DELAVAN
+</td>
+<td style="text-align:left;">
+53115
+</td>
+<td style="text-align:left;">
+WALWORTH
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+7/27/20
+</td>
+<td style="text-align:left;">
+DPW- FALL PARTISAN PRIMARY
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1579269
+</td>
+<td style="text-align:left;">
+12719475010
+</td>
+<td style="text-align:left;">
+WALWORTH - TOWN OF DELAVAN - WARD 010
+</td>
+<td style="text-align:left;">
+DELAVAN COMMUNITY CENTER
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+1220 SOUTH SHORE DR
+</td>
+<td style="text-align:left;">
+DELAVAN
+</td>
+<td style="text-align:left;">
+53115
+</td>
+<td style="text-align:left;">
+WALWORTH
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+7/27/20
+</td>
+<td style="text-align:left;">
+DPW- FALL PARTISAN PRIMARY
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1579270
+</td>
+<td style="text-align:left;">
+12719475011
+</td>
+<td style="text-align:left;">
+WALWORTH - TOWN OF DELAVAN - WARD 011
+</td>
+<td style="text-align:left;">
+DELAVAN COMMUNITY CENTER
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+1220 SOUTH SHORE DR
+</td>
+<td style="text-align:left;">
+DELAVAN
+</td>
+<td style="text-align:left;">
+53115
+</td>
+<td style="text-align:left;">
+WALWORTH
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+7/27/20
+</td>
+<td style="text-align:left;">
+DPW- FALL PARTISAN PRIMARY
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+418767
+</td>
+<td style="text-align:left;">
+13378750012
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF SUSSEX - WARD 012
+</td>
+<td style="text-align:left;">
+WIS NATIONAL GUARD ARMORY
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+W239N5678 MAPLE AVE
+</td>
+<td style="text-align:left;">
+SUSSEX
+</td>
+<td style="text-align:left;">
+53089
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+10/12/10
+</td>
+<td style="text-align:left;">
+BRANDA WEIX
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+414465
+</td>
+<td style="text-align:left;">
+13382575001
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF VERNON - WARD 001
+</td>
+<td style="text-align:left;">
+VERNON TOWN HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W249S8910 CENTER DR
+</td>
+<td style="text-align:left;">
+BIG BEND
+</td>
+<td style="text-align:left;">
+53103
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+262-662-2039
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+4/4/20
+</td>
+<td style="text-align:left;">
+DPW-APRIL 2020 ELECTION
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+417397
+</td>
+<td style="text-align:left;">
+13382575002
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF VERNON - WARD 002
+</td>
+<td style="text-align:left;">
+VERNON TOWN HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W249S8910 CENTER DR
+</td>
+<td style="text-align:left;">
+BIG BEND
+</td>
+<td style="text-align:left;">
+53103
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+262-662-2039
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+4/4/20
+</td>
+<td style="text-align:left;">
+DPW-APRIL 2020 ELECTION
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+414387
+</td>
+<td style="text-align:left;">
+13382575003
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF VERNON - WARD 003
+</td>
+<td style="text-align:left;">
+VERNON TOWN HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W249S8910 CENTER DR
+</td>
+<td style="text-align:left;">
+BIG BEND
+</td>
+<td style="text-align:left;">
+53103
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+262-662-2039
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+4/4/20
+</td>
+<td style="text-align:left;">
+DPW-APRIL 2020 ELECTION
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+414703
+</td>
+<td style="text-align:left;">
+13382575004
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF VERNON - WARD 004
+</td>
+<td style="text-align:left;">
+VERNON TOWN HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W249S8910 CENTER DR
+</td>
+<td style="text-align:left;">
+BIG BEND
+</td>
+<td style="text-align:left;">
+53103
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+262-662-2039
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+4/4/20
+</td>
+<td style="text-align:left;">
+DPW-APRIL 2020 ELECTION
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+414990
+</td>
+<td style="text-align:left;">
+13382575005
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF VERNON - WARD 005
+</td>
+<td style="text-align:left;">
+VERNON TOWN HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W249S8910 CENTER DR
+</td>
+<td style="text-align:left;">
+BIG BEND
+</td>
+<td style="text-align:left;">
+53103
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+262-662-2039
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+4/4/20
+</td>
+<td style="text-align:left;">
+DPW-APRIL 2020 ELECTION
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+415802
+</td>
+<td style="text-align:left;">
+13382575006
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF VERNON - WARD 006
+</td>
+<td style="text-align:left;">
+VERNON TOWN HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W249S8910 CENTER DR
+</td>
+<td style="text-align:left;">
+BIG BEND
+</td>
+<td style="text-align:left;">
+53103
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+262-662-2039
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+4/4/20
+</td>
+<td style="text-align:left;">
+DPW-APRIL 2020 ELECTION
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+414795
+</td>
+<td style="text-align:left;">
+13382575007
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF VERNON - WARD 007
+</td>
+<td style="text-align:left;">
+VERNON TOWN HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W249S8910 CENTER DR
+</td>
+<td style="text-align:left;">
+BIG BEND
+</td>
+<td style="text-align:left;">
+53103
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+262-662-2039
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+4/4/20
+</td>
+<td style="text-align:left;">
+DPW-APRIL 2020 ELECTION
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+414154
+</td>
+<td style="text-align:left;">
+13382575008
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF VERNON - WARD 008
+</td>
+<td style="text-align:left;">
+VERNON TOWN HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W249S8910 CENTER DR
+</td>
+<td style="text-align:left;">
+BIG BEND
+</td>
+<td style="text-align:left;">
+53103
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+262-662-2039
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+4/4/20
+</td>
+<td style="text-align:left;">
+DPW-APRIL 2020 ELECTION
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+415711
+</td>
+<td style="text-align:left;">
+13382575009
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF VERNON - WARD 009
+</td>
+<td style="text-align:left;">
+VERNON TOWN HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W249S8910 CENTER DR
+</td>
+<td style="text-align:left;">
+BIG BEND
+</td>
+<td style="text-align:left;">
+53103
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+262-662-2039
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+4/4/20
+</td>
+<td style="text-align:left;">
+DPW-APRIL 2020 ELECTION
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+415622
+</td>
+<td style="text-align:left;">
+13382575010
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF VERNON - WARD 010
+</td>
+<td style="text-align:left;">
+VERNON TOWN HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W249S8910 CENTER DR
+</td>
+<td style="text-align:left;">
+BIG BEND
+</td>
+<td style="text-align:left;">
+53103
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+262-662-2039
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+4/4/20
+</td>
+<td style="text-align:left;">
+DPW-APRIL 2020 ELECTION
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1579300
+</td>
+<td style="text-align:left;">
+13382575011
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF VERNON - WARD 011
+</td>
+<td style="text-align:left;">
+VERNON TOWN HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W249S8910 CENTER DR
+</td>
+<td style="text-align:left;">
+BIG BEND
+</td>
+<td style="text-align:left;">
+53103
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+262-662-2039
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+4/4/20
+</td>
+<td style="text-align:left;">
+DPW-APRIL 2020 ELECTION
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+416916
+</td>
+<td style="text-align:left;">
+13384275001
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF WAUKESHA - WARD 001
+</td>
+<td style="text-align:left;">
+WAUKESHA TOWN FIRE STATION
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+53189
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+<ol start="262" style="list-style-type: decimal">
+<li>542-5030
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+4/4/20
+</td>
+<td style="text-align:left;">
+DPW-APRIL 2020 ELECTION
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+416280
+</td>
+<td style="text-align:left;">
+13384275002
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF WAUKESHA - WARD 002
+</td>
+<td style="text-align:left;">
+WAUKESHA TOWN FIRE STATION
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+53189
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+<ol start="262" style="list-style-type: decimal">
+<li>542-5030
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+4/4/20
+</td>
+<td style="text-align:left;">
+DPW-APRIL 2020 ELECTION
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+414260
+</td>
+<td style="text-align:left;">
+13384275003
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF WAUKESHA - WARD 003
+</td>
+<td style="text-align:left;">
+WAUKESHA TOWN FIRE STATION
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+53189
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+<ol start="262" style="list-style-type: decimal">
+<li>542-5030
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+4/4/20
+</td>
+<td style="text-align:left;">
+DPW-APRIL 2020 ELECTION
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+414785
+</td>
+<td style="text-align:left;">
+13384275004
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF WAUKESHA - WARD 004
+</td>
+<td style="text-align:left;">
+WAUKESHA TOWN FIRE STATION
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+53189
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+<ol start="262" style="list-style-type: decimal">
+<li>542-5030
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+4/4/20
+</td>
+<td style="text-align:left;">
+DPW-APRIL 2020 ELECTION
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+414562
+</td>
+<td style="text-align:left;">
+13384275005
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF WAUKESHA - WARD 005
+</td>
+<td style="text-align:left;">
+WAUKESHA TOWN FIRE STATION
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+53189
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+<ol start="262" style="list-style-type: decimal">
+<li>542-5030
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+4/4/20
+</td>
+<td style="text-align:left;">
+DPW-APRIL 2020 ELECTION
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+415019
+</td>
+<td style="text-align:left;">
+13384275006
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF WAUKESHA - WARD 006
+</td>
+<td style="text-align:left;">
+WAUKESHA TOWN FIRE STATION
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+53189
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+<ol start="262" style="list-style-type: decimal">
+<li>542-5030
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+4/4/20
+</td>
+<td style="text-align:left;">
+DPW-APRIL 2020 ELECTION
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+415318
+</td>
+<td style="text-align:left;">
+13384275007
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF WAUKESHA - WARD 007
+</td>
+<td style="text-align:left;">
+WAUKESHA TOWN HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+53189
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+<ol start="262" style="list-style-type: decimal">
+<li>542-5030
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+4/4/20
+</td>
+<td style="text-align:left;">
+DPW-APRIL 2020 ELECTION
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+415880
+</td>
+<td style="text-align:left;">
+13384275008
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF WAUKESHA - WARD 008
+</td>
+<td style="text-align:left;">
+WAUKESHA TOWN FIRE STATION
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+53189
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+<ol start="262" style="list-style-type: decimal">
+<li>542-5030
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+4/4/20
+</td>
+<td style="text-align:left;">
+DPW-APRIL 2020 ELECTION
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+415336
+</td>
+<td style="text-align:left;">
+13384275009
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF WAUKESHA - WARD 009
+</td>
+<td style="text-align:left;">
+WAUKESHA TOWN HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+53189
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+<ol start="262" style="list-style-type: decimal">
+<li>542-5030
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+4/4/20
+</td>
+<td style="text-align:left;">
+DPW-APRIL 2020 ELECTION
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+414685
+</td>
+<td style="text-align:left;">
+13384275010
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF WAUKESHA - WARD 010
+</td>
+<td style="text-align:left;">
+WAUKESHA TOWN HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+53189
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+<ol start="262" style="list-style-type: decimal">
+<li>542-5030
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+4/4/20
+</td>
+<td style="text-align:left;">
+DPW-APRIL 2020 ELECTION
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+415016
+</td>
+<td style="text-align:left;">
+13384275011
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF WAUKESHA - WARD 011
+</td>
+<td style="text-align:left;">
+WAUKESHA TOWN HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+53189
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+<ol start="262" style="list-style-type: decimal">
+<li>542-5030
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+4/4/20
+</td>
+<td style="text-align:left;">
+DPW-APRIL 2020 ELECTION
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+415931
+</td>
+<td style="text-align:left;">
+13384275012
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF WAUKESHA - WARD 012
+</td>
+<td style="text-align:left;">
+WAUKESHA TOWN HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+53189
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+<ol start="262" style="list-style-type: decimal">
+<li>542-5030
+</td>
+<td style="text-align:left;">
+STATE ELECTION OFFICIAL
+</td>
+<td style="text-align:left;">
+4/4/20
+</td>
+<td style="text-align:left;">
+DPW-APRIL 2020 ELECTION
+</td>
+</tr>
+</tbody>
+</table>
+</div></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol></li>
+</ol>
+<p>In new upload, not in old VAN:</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true"></a><span class="kw">anti_join</span>(upload, van, <span class="dt">by =</span> <span class="kw">c</span>(<span class="st">&quot;County&quot;</span>, <span class="st">&quot;Address&quot;</span>, <span class="st">&quot;Polling Location&quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">kablebox</span>()</span></code></pre></div>
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; ">
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+Precinct ID
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Precinct Code
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Precinct Name
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Polling Location
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Location Description
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Address
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+City
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Zip
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+County
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Polling Location Contact Info
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Authenticating Authority
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Date Authenticated*
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+ReportingUnit
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+PollingPlaceAddress
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+WISCONSIN INDIANHEAD TECHNICAL COLLEGE-ASHLAND
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+2100 BEASER AVE
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+54806
+</td>
+<td style="text-align:left;">
+BAYFIELD
+</td>
+<td style="text-align:left;">
+715-682-4591
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+BAYFIELD COUNTY - CITY OF ASHLAND - WARD 12
+</td>
+<td style="text-align:left;">
+2100 BEASER AVE, ASHLAND, WI 54806
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+416976
+</td>
+<td style="text-align:left;">
+01153625001
+</td>
+<td style="text-align:left;">
+BUFFALO - TOWN OF MONDOVI - WARD 001
+</td>
+<td style="text-align:left;">
+MONDOVI CITY HALL - CHAMBERS
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+156 S FRANKLIN ST
+</td>
+<td style="text-align:left;">
+MONDOVI
+</td>
+<td style="text-align:left;">
+54755
+</td>
+<td style="text-align:left;">
+BUFFALO
+</td>
+<td style="text-align:left;">
+715-926-3866
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+BUFFALO COUNTY - TOWN OF MONDOVI - WARD 1
+</td>
+<td style="text-align:left;">
+156 S FRANKLIN ST, MONDOVI, WI 54755-1514
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+SPAR BUILDING (KAUKAUNA COMMUNITY ROOM)
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+207 REAUME AV
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+54130
+</td>
+<td style="text-align:left;">
+CALUMET
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+CALUMET COUNTY - CITY OF KAUKAUNA - WARD 11
+</td>
+<td style="text-align:left;">
+207 REAUME AV, KAUKAUNA, WI 54130
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+KEWASKUM VILLAGE HALL
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+204 1ST ST
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+53040
+</td>
+<td style="text-align:left;">
+FOND DU LAC
+</td>
+<td style="text-align:left;">
+262-626-8484
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+FOND DU LAC COUNTY - VILLAGE OF KEWASKUM - WARD 6
+</td>
+<td style="text-align:left;">
+204 1ST ST, KEWASKUM, WI 53040-8929
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+LA BELLE GOLF CLUB
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+6996 PENNSYLVANIA ST
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+53066
+</td>
+<td style="text-align:left;">
+JEFFERSON
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+JEFFERSON COUNTY - VILLAGE OF LAC LA BELLE - WARD 2
+</td>
+<td style="text-align:left;">
+6996 PENNSYLVANIA ST, OCONOMOWOC, WI 53066
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+WISCONSIN DELLS MUNICIPAL BUILDING
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+300 LA CROSSE ST
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+53965
+</td>
+<td style="text-align:left;">
+JUNEAU
+</td>
+<td style="text-align:left;">
+608-254-2012
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+JUNEAU COUNTY - CITY OF WISCONSIN DELLS - WARD 7
+</td>
+<td style="text-align:left;">
+300 LA CROSSE ST, WISCONSIN DELLS, WI 53965-1568
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+413378
+</td>
+<td style="text-align:left;">
+07953000016
+</td>
+<td style="text-align:left;">
+MILWAUKEE - CITY OF MILWAUKEE - WARD 016
+</td>
+<td style="text-align:left;">
+GREEN TREE PREPRATORY
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+6850 N 53RD ST
+</td>
+<td style="text-align:left;">
+MILWAUKEE
+</td>
+<td style="text-align:left;">
+53223
+</td>
+<td style="text-align:left;">
+MILWAUKEE
+</td>
+<td style="text-align:left;">
+414-286-3491
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+MILWAUKEE COUNTY - CITY OF MILWAUKEE - WARD 16 AND MILWAUKEE COUNTY - CITY OF MILWAUKEE - WARD 17
+</td>
+<td style="text-align:left;">
+6850 N 53RD ST, MILWAUKEE, WI 53223-5239
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+412615
+</td>
+<td style="text-align:left;">
+07953000017
+</td>
+<td style="text-align:left;">
+MILWAUKEE - CITY OF MILWAUKEE - WARD 017
+</td>
+<td style="text-align:left;">
+GREEN TREE PREPRATORY
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+6850 N 53RD ST
+</td>
+<td style="text-align:left;">
+MILWAUKEE
+</td>
+<td style="text-align:left;">
+53223
+</td>
+<td style="text-align:left;">
+MILWAUKEE
+</td>
+<td style="text-align:left;">
+414-286-3491
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+MILWAUKEE COUNTY - CITY OF MILWAUKEE - WARD 16 AND MILWAUKEE COUNTY - CITY OF MILWAUKEE - WARD 17
+</td>
+<td style="text-align:left;">
+6850 N 53RD ST, MILWAUKEE, WI 53223-5239
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+413839
+</td>
+<td style="text-align:left;">
+07953000102
+</td>
+<td style="text-align:left;">
+MILWAUKEE - CITY OF MILWAUKEE - WARD 102
+</td>
+<td style="text-align:left;">
+BOYS AND GIRLS CLUB - MARY RYAN
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+3000 N SHERMAN BLVD
+</td>
+<td style="text-align:left;">
+MILWAUKEE
+</td>
+<td style="text-align:left;">
+53210
+</td>
+<td style="text-align:left;">
+MILWAUKEE
+</td>
+<td style="text-align:left;">
+414-286-3491
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+MILWAUKEE COUNTY - CITY OF MILWAUKEE - WARD 102 AND MILWAUKEE COUNTY - CITY OF MILWAUKEE - WARD 103 AND MILWAUKEE COUNTY - CITY OF MILWAUKEE - WARD 104
+</td>
+<td style="text-align:left;">
+3000 N SHERMAN BLVD, MILWAUKEE, WI 53210-1765
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+412668
+</td>
+<td style="text-align:left;">
+07953000103
+</td>
+<td style="text-align:left;">
+MILWAUKEE - CITY OF MILWAUKEE - WARD 103
+</td>
+<td style="text-align:left;">
+BOYS AND GIRLS CLUB - MARY RYAN
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+3000 N SHERMAN BLVD
+</td>
+<td style="text-align:left;">
+MILWAUKEE
+</td>
+<td style="text-align:left;">
+53210
+</td>
+<td style="text-align:left;">
+MILWAUKEE
+</td>
+<td style="text-align:left;">
+414-286-3491
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+MILWAUKEE COUNTY - CITY OF MILWAUKEE - WARD 102 AND MILWAUKEE COUNTY - CITY OF MILWAUKEE - WARD 103 AND MILWAUKEE COUNTY - CITY OF MILWAUKEE - WARD 104
+</td>
+<td style="text-align:left;">
+3000 N SHERMAN BLVD, MILWAUKEE, WI 53210-1765
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+414546
+</td>
+<td style="text-align:left;">
+07953000104
+</td>
+<td style="text-align:left;">
+MILWAUKEE - CITY OF MILWAUKEE - WARD 104
+</td>
+<td style="text-align:left;">
+BOYS AND GIRLS CLUB - MARY RYAN
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+3000 N SHERMAN BLVD
+</td>
+<td style="text-align:left;">
+MILWAUKEE
+</td>
+<td style="text-align:left;">
+53210
+</td>
+<td style="text-align:left;">
+MILWAUKEE
+</td>
+<td style="text-align:left;">
+414-286-3491
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+MILWAUKEE COUNTY - CITY OF MILWAUKEE - WARD 102 AND MILWAUKEE COUNTY - CITY OF MILWAUKEE - WARD 103 AND MILWAUKEE COUNTY - CITY OF MILWAUKEE - WARD 104
+</td>
+<td style="text-align:left;">
+3000 N SHERMAN BLVD, MILWAUKEE, WI 53210-1765
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+416124
+</td>
+<td style="text-align:left;">
+07953000291
+</td>
+<td style="text-align:left;">
+MILWAUKEE - CITY OF MILWAUKEE - WARD 291
+</td>
+<td style="text-align:left;">
+SAINT ANDREW EVANGELICAL CHURCH - LIGHTHOUSE
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+1132 W OKLAHOMA AVE
+</td>
+<td style="text-align:left;">
+MILWAUKEE
+</td>
+<td style="text-align:left;">
+53215
+</td>
+<td style="text-align:left;">
+MILWAUKEE
+</td>
+<td style="text-align:left;">
+(414)286-3491
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+MILWAUKEE COUNTY - CITY OF MILWAUKEE - WARD 291
+</td>
+<td style="text-align:left;">
+1132 W OKLAHOMA AVE, MILWAUKEE, WI 53215-4618
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+ONTARIO FIRE STATION/MUNICIPAL BUILDING
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+205 STATE ST
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+54651
+</td>
+<td style="text-align:left;">
+MONROE
+</td>
+<td style="text-align:left;">
+608-337-4381
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+MONROE COUNTY - VILLAGE OF ONTARIO - WARD 2
+</td>
+<td style="text-align:left;">
+205 STATE ST, ONTARIO, WI 54651-3002
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+ROCKLAND VILLAGE HALL
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+105 CENTER ST
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+54653
+</td>
+<td style="text-align:left;">
+MONROE
+</td>
+<td style="text-align:left;">
+608-486-4037
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+MONROE COUNTY - VILLAGE OF ROCKLAND - WARD 2
+</td>
+<td style="text-align:left;">
+105 CENTER ST, ROCKLAND, WI 54653
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+PULASKI MUNICIPAL BUILDING
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+585 E GLENBROOK DR
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+54162
+</td>
+<td style="text-align:left;">
+OCONTO
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+OCONTO COUNTY - VILLAGE OF PULASKI - WARD 5
+</td>
+<td style="text-align:left;">
+585 E GLENBROOK DR, PULASKI, WI 54162-9769
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+HARRISON MUNICIPAL BUILDING
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+W5298 HWY 114
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+54952
+</td>
+<td style="text-align:left;">
+OUTAGAMIE
+</td>
+<td style="text-align:left;">
+920-989-1062
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+OUTAGAMIE COUNTY - VILLAGE OF HARRISON - WARDS 1-2
+</td>
+<td style="text-align:left;">
+W5298 HWY 114, MENASHA, WI 54952
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+HOWARD FIRE STATION #2
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+4165 SHAWANO AVE
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+54313
+</td>
+<td style="text-align:left;">
+OUTAGAMIE
+</td>
+<td style="text-align:left;">
+920-434-4640
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+OUTAGAMIE COUNTY - VILLAGE OF HOWARD - WARD 17
+</td>
+<td style="text-align:left;">
+4165 SHAWANO AVE, GREEN BAY, WI 54313-7550
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+414732
+</td>
+<td style="text-align:left;">
+10166375001
+</td>
+<td style="text-align:left;">
+RACINE - VILLAGE OF RAYMOND - WARD 001
+</td>
+<td style="text-align:left;">
+RAYMOND VILLAGE HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+2255 76TH ST
+</td>
+<td style="text-align:left;">
+FRANKSVILLE
+</td>
+<td style="text-align:left;">
+53126
+</td>
+<td style="text-align:left;">
+RACINE
+</td>
+<td style="text-align:left;">
+262-835-4426
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+RACINE COUNTY - VILLAGE OF RAYMOND - WARDS 1-6
+</td>
+<td style="text-align:left;">
+2255 76TH ST, FRANKSVILLE, WI 53126-9539
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+414807
+</td>
+<td style="text-align:left;">
+10166375002
+</td>
+<td style="text-align:left;">
+RACINE - VILLAGE OF RAYMOND - WARD 002
+</td>
+<td style="text-align:left;">
+RAYMOND VILLAGE HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+2255 76TH ST
+</td>
+<td style="text-align:left;">
+FRANKSVILLE
+</td>
+<td style="text-align:left;">
+53126
+</td>
+<td style="text-align:left;">
+RACINE
+</td>
+<td style="text-align:left;">
+262-835-4426
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+RACINE COUNTY - VILLAGE OF RAYMOND - WARDS 1-6
+</td>
+<td style="text-align:left;">
+2255 76TH ST, FRANKSVILLE, WI 53126-9539
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+414878
+</td>
+<td style="text-align:left;">
+10166375003
+</td>
+<td style="text-align:left;">
+RACINE - VILLAGE OF RAYMOND - WARD 003
+</td>
+<td style="text-align:left;">
+RAYMOND VILLAGE HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+2255 76TH ST
+</td>
+<td style="text-align:left;">
+FRANKSVILLE
+</td>
+<td style="text-align:left;">
+53126
+</td>
+<td style="text-align:left;">
+RACINE
+</td>
+<td style="text-align:left;">
+262-835-4426
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+RACINE COUNTY - VILLAGE OF RAYMOND - WARDS 1-6
+</td>
+<td style="text-align:left;">
+2255 76TH ST, FRANKSVILLE, WI 53126-9539
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+414160
+</td>
+<td style="text-align:left;">
+10166375004
+</td>
+<td style="text-align:left;">
+RACINE - VILLAGE OF RAYMOND - WARD 004
+</td>
+<td style="text-align:left;">
+RAYMOND VILLAGE HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+2255 76TH ST
+</td>
+<td style="text-align:left;">
+FRANKSVILLE
+</td>
+<td style="text-align:left;">
+53126
+</td>
+<td style="text-align:left;">
+RACINE
+</td>
+<td style="text-align:left;">
+262-835-4426
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+RACINE COUNTY - VILLAGE OF RAYMOND - WARDS 1-6
+</td>
+<td style="text-align:left;">
+2255 76TH ST, FRANKSVILLE, WI 53126-9539
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+416599
+</td>
+<td style="text-align:left;">
+10166375005
+</td>
+<td style="text-align:left;">
+RACINE - VILLAGE OF RAYMOND - WARD 005
+</td>
+<td style="text-align:left;">
+RAYMOND VILLAGE HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+2255 76TH ST
+</td>
+<td style="text-align:left;">
+FRANKSVILLE
+</td>
+<td style="text-align:left;">
+53126
+</td>
+<td style="text-align:left;">
+RACINE
+</td>
+<td style="text-align:left;">
+262-835-4426
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+RACINE COUNTY - VILLAGE OF RAYMOND - WARDS 1-6
+</td>
+<td style="text-align:left;">
+2255 76TH ST, FRANKSVILLE, WI 53126-9539
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1579164
+</td>
+<td style="text-align:left;">
+10166375006
+</td>
+<td style="text-align:left;">
+RACINE - VILLAGE OF RAYMOND - WARD 006
+</td>
+<td style="text-align:left;">
+RAYMOND VILLAGE HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+2255 76TH ST
+</td>
+<td style="text-align:left;">
+FRANKSVILLE
+</td>
+<td style="text-align:left;">
+53126
+</td>
+<td style="text-align:left;">
+RACINE
+</td>
+<td style="text-align:left;">
+262-835-4426
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+RACINE COUNTY - VILLAGE OF RAYMOND - WARDS 1-6
+</td>
+<td style="text-align:left;">
+2255 76TH ST, FRANKSVILLE, WI 53126-9539
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+LINCOLN TOWN HALL
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+W20774 STATE ROAD 121
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+54773
+</td>
+<td style="text-align:left;">
+TREMPEALEAU
+</td>
+<td style="text-align:left;">
+715-985-3038
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+TREMPEALEAU COUNTY - TOWN OF LINCOLN - WARDS 1-2
+</td>
+<td style="text-align:left;">
+W20774 STATE ROAD 121, WHITEHALL, WI 54773
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+DELAVAN TOWN HALL
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+5621 TOWN HALL ROAD
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+53115
+</td>
+<td style="text-align:left;">
+WALWORTH
+</td>
+<td style="text-align:left;">
+(262)728-3471
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+WALWORTH COUNTY - TOWN OF DELAVAN - WARDS 1-11
+</td>
+<td style="text-align:left;">
+5621 TOWN HALL ROAD, DELAVAN, WI 53115-3712
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+GOODRICH SCHOOL
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+8251 N CELINA ST
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+53224
+</td>
+<td style="text-align:left;">
+WASHINGTON
+</td>
+<td style="text-align:left;">
+414-286-3491
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+WASHINGTON COUNTY - CITY OF MILWAUKEE - WARD 318
+</td>
+<td style="text-align:left;">
+8251 N CELINA ST, MILWAUKEE, WI 53224-2713
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+RIVER TRAIL SCHOOL
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+12021 W FLORIST AVE
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+53225
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+414-286-3491
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+WAUKESHA COUNTY - CITY OF MILWAUKEE - WARD 319
+</td>
+<td style="text-align:left;">
+12021 W FLORIST AVE, MILWAUKEE, WI 53225-2119
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+414465
+</td>
+<td style="text-align:left;">
+13382575001
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF VERNON - WARD 001
+</td>
+<td style="text-align:left;">
+VERNON VILLAGE HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W249S8910 CENTER DR
+</td>
+<td style="text-align:left;">
+BIG BEND
+</td>
+<td style="text-align:left;">
+53103
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+(262)662-2039
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+WAUKESHA COUNTY - VILLAGE OF VERNON - WARDS 1-11
+</td>
+<td style="text-align:left;">
+W249S8910 CENTER DR, BIG BEND, WI 53103-8900
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+417397
+</td>
+<td style="text-align:left;">
+13382575002
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF VERNON - WARD 002
+</td>
+<td style="text-align:left;">
+VERNON VILLAGE HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W249S8910 CENTER DR
+</td>
+<td style="text-align:left;">
+BIG BEND
+</td>
+<td style="text-align:left;">
+53103
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+(262)662-2039
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+WAUKESHA COUNTY - VILLAGE OF VERNON - WARDS 1-11
+</td>
+<td style="text-align:left;">
+W249S8910 CENTER DR, BIG BEND, WI 53103-8900
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+414387
+</td>
+<td style="text-align:left;">
+13382575003
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF VERNON - WARD 003
+</td>
+<td style="text-align:left;">
+VERNON VILLAGE HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W249S8910 CENTER DR
+</td>
+<td style="text-align:left;">
+BIG BEND
+</td>
+<td style="text-align:left;">
+53103
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+(262)662-2039
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+WAUKESHA COUNTY - VILLAGE OF VERNON - WARDS 1-11
+</td>
+<td style="text-align:left;">
+W249S8910 CENTER DR, BIG BEND, WI 53103-8900
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+414703
+</td>
+<td style="text-align:left;">
+13382575004
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF VERNON - WARD 004
+</td>
+<td style="text-align:left;">
+VERNON VILLAGE HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W249S8910 CENTER DR
+</td>
+<td style="text-align:left;">
+BIG BEND
+</td>
+<td style="text-align:left;">
+53103
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+(262)662-2039
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+WAUKESHA COUNTY - VILLAGE OF VERNON - WARDS 1-11
+</td>
+<td style="text-align:left;">
+W249S8910 CENTER DR, BIG BEND, WI 53103-8900
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+414990
+</td>
+<td style="text-align:left;">
+13382575005
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF VERNON - WARD 005
+</td>
+<td style="text-align:left;">
+VERNON VILLAGE HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W249S8910 CENTER DR
+</td>
+<td style="text-align:left;">
+BIG BEND
+</td>
+<td style="text-align:left;">
+53103
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+(262)662-2039
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+WAUKESHA COUNTY - VILLAGE OF VERNON - WARDS 1-11
+</td>
+<td style="text-align:left;">
+W249S8910 CENTER DR, BIG BEND, WI 53103-8900
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+415802
+</td>
+<td style="text-align:left;">
+13382575006
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF VERNON - WARD 006
+</td>
+<td style="text-align:left;">
+VERNON VILLAGE HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W249S8910 CENTER DR
+</td>
+<td style="text-align:left;">
+BIG BEND
+</td>
+<td style="text-align:left;">
+53103
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+(262)662-2039
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+WAUKESHA COUNTY - VILLAGE OF VERNON - WARDS 1-11
+</td>
+<td style="text-align:left;">
+W249S8910 CENTER DR, BIG BEND, WI 53103-8900
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+414795
+</td>
+<td style="text-align:left;">
+13382575007
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF VERNON - WARD 007
+</td>
+<td style="text-align:left;">
+VERNON VILLAGE HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W249S8910 CENTER DR
+</td>
+<td style="text-align:left;">
+BIG BEND
+</td>
+<td style="text-align:left;">
+53103
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+(262)662-2039
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+WAUKESHA COUNTY - VILLAGE OF VERNON - WARDS 1-11
+</td>
+<td style="text-align:left;">
+W249S8910 CENTER DR, BIG BEND, WI 53103-8900
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+414154
+</td>
+<td style="text-align:left;">
+13382575008
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF VERNON - WARD 008
+</td>
+<td style="text-align:left;">
+VERNON VILLAGE HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W249S8910 CENTER DR
+</td>
+<td style="text-align:left;">
+BIG BEND
+</td>
+<td style="text-align:left;">
+53103
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+(262)662-2039
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+WAUKESHA COUNTY - VILLAGE OF VERNON - WARDS 1-11
+</td>
+<td style="text-align:left;">
+W249S8910 CENTER DR, BIG BEND, WI 53103-8900
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+415711
+</td>
+<td style="text-align:left;">
+13382575009
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF VERNON - WARD 009
+</td>
+<td style="text-align:left;">
+VERNON VILLAGE HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W249S8910 CENTER DR
+</td>
+<td style="text-align:left;">
+BIG BEND
+</td>
+<td style="text-align:left;">
+53103
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+(262)662-2039
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+WAUKESHA COUNTY - VILLAGE OF VERNON - WARDS 1-11
+</td>
+<td style="text-align:left;">
+W249S8910 CENTER DR, BIG BEND, WI 53103-8900
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+415622
+</td>
+<td style="text-align:left;">
+13382575010
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF VERNON - WARD 010
+</td>
+<td style="text-align:left;">
+VERNON VILLAGE HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W249S8910 CENTER DR
+</td>
+<td style="text-align:left;">
+BIG BEND
+</td>
+<td style="text-align:left;">
+53103
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+(262)662-2039
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+WAUKESHA COUNTY - VILLAGE OF VERNON - WARDS 1-11
+</td>
+<td style="text-align:left;">
+W249S8910 CENTER DR, BIG BEND, WI 53103-8900
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1579300
+</td>
+<td style="text-align:left;">
+13382575011
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF VERNON - WARD 011
+</td>
+<td style="text-align:left;">
+VERNON VILLAGE HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W249S8910 CENTER DR
+</td>
+<td style="text-align:left;">
+BIG BEND
+</td>
+<td style="text-align:left;">
+53103
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+(262)662-2039
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+WAUKESHA COUNTY - VILLAGE OF VERNON - WARDS 1-11
+</td>
+<td style="text-align:left;">
+W249S8910 CENTER DR, BIG BEND, WI 53103-8900
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+416916
+</td>
+<td style="text-align:left;">
+13384275001
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF WAUKESHA - WARD 001
+</td>
+<td style="text-align:left;">
+WAUKESHA VILLAGE FIRE STATION
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+53189
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+(262)542-5030
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 1,8 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 2-6 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 7,9-11 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARD 12
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD, WAUKESHA, WI 53189-7365
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+416280
+</td>
+<td style="text-align:left;">
+13384275002
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF WAUKESHA - WARD 002
+</td>
+<td style="text-align:left;">
+WAUKESHA VILLAGE FIRE STATION
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+53189
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+(262)542-5030
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 1,8 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 2-6 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 7,9-11 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARD 12
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD, WAUKESHA, WI 53189-7365
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+414260
+</td>
+<td style="text-align:left;">
+13384275003
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF WAUKESHA - WARD 003
+</td>
+<td style="text-align:left;">
+WAUKESHA VILLAGE FIRE STATION
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+53189
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+(262)542-5030
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 1,8 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 2-6 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 7,9-11 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARD 12
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD, WAUKESHA, WI 53189-7365
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+414785
+</td>
+<td style="text-align:left;">
+13384275004
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF WAUKESHA - WARD 004
+</td>
+<td style="text-align:left;">
+WAUKESHA VILLAGE FIRE STATION
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+53189
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+(262)542-5030
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 1,8 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 2-6 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 7,9-11 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARD 12
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD, WAUKESHA, WI 53189-7365
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+414562
+</td>
+<td style="text-align:left;">
+13384275005
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF WAUKESHA - WARD 005
+</td>
+<td style="text-align:left;">
+WAUKESHA VILLAGE FIRE STATION
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+53189
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+(262)542-5030
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 1,8 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 2-6 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 7,9-11 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARD 12
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD, WAUKESHA, WI 53189-7365
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+415019
+</td>
+<td style="text-align:left;">
+13384275006
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF WAUKESHA - WARD 006
+</td>
+<td style="text-align:left;">
+WAUKESHA VILLAGE FIRE STATION
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+53189
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+(262)542-5030
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 1,8 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 2-6 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 7,9-11 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARD 12
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD, WAUKESHA, WI 53189-7365
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+415318
+</td>
+<td style="text-align:left;">
+13384275007
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF WAUKESHA - WARD 007
+</td>
+<td style="text-align:left;">
+WAUKESHA VILLAGE FIRE STATION
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+53189
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+(262)542-5030
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 1,8 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 2-6 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 7,9-11 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARD 12
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD, WAUKESHA, WI 53189-7365
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+415880
+</td>
+<td style="text-align:left;">
+13384275008
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF WAUKESHA - WARD 008
+</td>
+<td style="text-align:left;">
+WAUKESHA VILLAGE FIRE STATION
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+53189
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+(262)542-5030
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 1,8 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 2-6 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 7,9-11 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARD 12
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD, WAUKESHA, WI 53189-7365
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+415336
+</td>
+<td style="text-align:left;">
+13384275009
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF WAUKESHA - WARD 009
+</td>
+<td style="text-align:left;">
+WAUKESHA VILLAGE FIRE STATION
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+53189
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+(262)542-5030
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 1,8 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 2-6 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 7,9-11 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARD 12
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD, WAUKESHA, WI 53189-7365
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+414685
+</td>
+<td style="text-align:left;">
+13384275010
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF WAUKESHA - WARD 010
+</td>
+<td style="text-align:left;">
+WAUKESHA VILLAGE FIRE STATION
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+53189
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+(262)542-5030
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 1,8 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 2-6 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 7,9-11 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARD 12
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD, WAUKESHA, WI 53189-7365
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+415016
+</td>
+<td style="text-align:left;">
+13384275011
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF WAUKESHA - WARD 011
+</td>
+<td style="text-align:left;">
+WAUKESHA VILLAGE FIRE STATION
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+53189
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+(262)542-5030
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 1,8 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 2-6 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 7,9-11 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARD 12
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD, WAUKESHA, WI 53189-7365
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+415931
+</td>
+<td style="text-align:left;">
+13384275012
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF WAUKESHA - WARD 012
+</td>
+<td style="text-align:left;">
+WAUKESHA VILLAGE FIRE STATION
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+53189
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+(262)542-5030
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 1,8 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 2-6 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 7,9-11 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARD 12
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD, WAUKESHA, WI 53189-7365
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+416916
+</td>
+<td style="text-align:left;">
+13384275001
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF WAUKESHA - WARD 001
+</td>
+<td style="text-align:left;">
+WAUKESHA VILLAGE HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+53189
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+(262)542-5030
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 1,8 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 2-6 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 7,9-11 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARD 12
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD, WAUKESHA, WI 53189-7365
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+416280
+</td>
+<td style="text-align:left;">
+13384275002
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF WAUKESHA - WARD 002
+</td>
+<td style="text-align:left;">
+WAUKESHA VILLAGE HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+53189
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+(262)542-5030
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 1,8 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 2-6 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 7,9-11 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARD 12
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD, WAUKESHA, WI 53189-7365
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+414260
+</td>
+<td style="text-align:left;">
+13384275003
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF WAUKESHA - WARD 003
+</td>
+<td style="text-align:left;">
+WAUKESHA VILLAGE HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+53189
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+(262)542-5030
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 1,8 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 2-6 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 7,9-11 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARD 12
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD, WAUKESHA, WI 53189-7365
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+414785
+</td>
+<td style="text-align:left;">
+13384275004
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF WAUKESHA - WARD 004
+</td>
+<td style="text-align:left;">
+WAUKESHA VILLAGE HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+53189
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+(262)542-5030
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 1,8 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 2-6 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 7,9-11 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARD 12
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD, WAUKESHA, WI 53189-7365
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+414562
+</td>
+<td style="text-align:left;">
+13384275005
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF WAUKESHA - WARD 005
+</td>
+<td style="text-align:left;">
+WAUKESHA VILLAGE HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+53189
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+(262)542-5030
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 1,8 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 2-6 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 7,9-11 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARD 12
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD, WAUKESHA, WI 53189-7365
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+415019
+</td>
+<td style="text-align:left;">
+13384275006
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF WAUKESHA - WARD 006
+</td>
+<td style="text-align:left;">
+WAUKESHA VILLAGE HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+53189
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+(262)542-5030
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 1,8 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 2-6 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 7,9-11 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARD 12
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD, WAUKESHA, WI 53189-7365
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+415318
+</td>
+<td style="text-align:left;">
+13384275007
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF WAUKESHA - WARD 007
+</td>
+<td style="text-align:left;">
+WAUKESHA VILLAGE HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+53189
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+(262)542-5030
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 1,8 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 2-6 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 7,9-11 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARD 12
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD, WAUKESHA, WI 53189-7365
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+415880
+</td>
+<td style="text-align:left;">
+13384275008
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF WAUKESHA - WARD 008
+</td>
+<td style="text-align:left;">
+WAUKESHA VILLAGE HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+53189
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+(262)542-5030
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 1,8 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 2-6 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 7,9-11 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARD 12
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD, WAUKESHA, WI 53189-7365
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+415336
+</td>
+<td style="text-align:left;">
+13384275009
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF WAUKESHA - WARD 009
+</td>
+<td style="text-align:left;">
+WAUKESHA VILLAGE HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+53189
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+(262)542-5030
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 1,8 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 2-6 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 7,9-11 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARD 12
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD, WAUKESHA, WI 53189-7365
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+414685
+</td>
+<td style="text-align:left;">
+13384275010
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF WAUKESHA - WARD 010
+</td>
+<td style="text-align:left;">
+WAUKESHA VILLAGE HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+53189
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+(262)542-5030
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 1,8 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 2-6 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 7,9-11 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARD 12
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD, WAUKESHA, WI 53189-7365
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+415016
+</td>
+<td style="text-align:left;">
+13384275011
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF WAUKESHA - WARD 011
+</td>
+<td style="text-align:left;">
+WAUKESHA VILLAGE HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+53189
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+(262)542-5030
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 1,8 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 2-6 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 7,9-11 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARD 12
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD, WAUKESHA, WI 53189-7365
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+415931
+</td>
+<td style="text-align:left;">
+13384275012
+</td>
+<td style="text-align:left;">
+WAUKESHA - VILLAGE OF WAUKESHA - WARD 012
+</td>
+<td style="text-align:left;">
+WAUKESHA VILLAGE HALL
+</td>
+<td style="text-align:left;">
+7:00 AM - 8:00 PM
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+53189
+</td>
+<td style="text-align:left;">
+WAUKESHA
+</td>
+<td style="text-align:left;">
+(262)542-5030
+</td>
+<td style="text-align:left;">
+State Election Official
+</td>
+<td style="text-align:left;">
+8-11-2020
+</td>
+<td style="text-align:left;">
+WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 1,8 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 2-6 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARDS 7,9-11 AND WAUKESHA COUNTY - VILLAGE OF WAUKESHA - WARD 12
+</td>
+<td style="text-align:left;">
+W250S3567 CENTER ROAD, WAUKESHA, WI 53189-7365
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="save-new-polling-location-data" class="section level2">
+<h2>Save new polling location data</h2>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true"></a><span class="kw">write_csv</span>(upload, <span class="dt">path =</span> <span class="kw">here</span>(<span class="st">&quot;data&quot;</span>, upload_file))</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true"></a></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true"></a><span class="kw">library</span>(googlesheets4)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true"></a></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true"></a>ss &lt;-<span class="st"> </span>googledrive<span class="op">::</span><span class="kw">drive_get</span>(<span class="st">&quot;polls&quot;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true"></a><span class="st">  </span><span class="kw">gs4_get</span>() </span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true"></a></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true"></a>upload <span class="op">%&gt;%</span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true"></a><span class="st">  </span><span class="kw">sheet_write</span>(<span class="dt">ss =</span> ss,</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true"></a>              <span class="dt">sheet =</span> <span class="kw">paste</span>(<span class="st">&quot;VAN Polling Locations&quot;</span>, <span class="st">`</span><span class="dt">Date Authenticated*</span><span class="st">`</span>))</span></code></pre></div>
+<p>Here are the first few rows of the upload:</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true"></a>upload <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">head</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">kablebox</span>()</span></code></pre></div>
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; ">
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+Precinct ID
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Precinct Code
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Precinct Name
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Polling Location
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Location Description
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Address
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+City
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Zip
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+County
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Polling Location Contact Info
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Authenticating Authority
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Date Authenticated*
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+ReportingUnit
 </th>
 <th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
 PollingPlaceAddress
@@ -4766,7 +9958,7 @@ State Election Official
 8-11-2020
 </td>
 <td style="text-align:left;">
-ADAMS
+ADAMS COUNTY - CITY OF ADAMS - WARDS 1-4
 </td>
 <td style="text-align:left;">
 101 N MAIN ST, ADAMS, WI 53910-9805
@@ -4810,7 +10002,7 @@ State Election Official
 8-11-2020
 </td>
 <td style="text-align:left;">
-ADAMS
+ADAMS COUNTY - CITY OF ADAMS - WARDS 1-4
 </td>
 <td style="text-align:left;">
 101 N MAIN ST, ADAMS, WI 53910-9805
@@ -4854,7 +10046,7 @@ State Election Official
 8-11-2020
 </td>
 <td style="text-align:left;">
-ADAMS
+ADAMS COUNTY - CITY OF ADAMS - WARDS 1-4
 </td>
 <td style="text-align:left;">
 101 N MAIN ST, ADAMS, WI 53910-9805
@@ -4898,7 +10090,7 @@ State Election Official
 8-11-2020
 </td>
 <td style="text-align:left;">
-ADAMS
+ADAMS COUNTY - CITY OF ADAMS - WARDS 1-4
 </td>
 <td style="text-align:left;">
 101 N MAIN ST, ADAMS, WI 53910-9805
@@ -4942,7 +10134,7 @@ State Election Official
 8-11-2020
 </td>
 <td style="text-align:left;">
-WISCONSIN DELLS
+ADAMS COUNTY - CITY OF WISCONSIN DELLS - WARDS 5,9
 </td>
 <td style="text-align:left;">
 300 LA CROSSE ST, WISCONSIN DELLS, WI 53965-1568
@@ -4986,7 +10178,7 @@ State Election Official
 8-11-2020
 </td>
 <td style="text-align:left;">
-ADAMS
+ADAMS COUNTY - TOWN OF ADAMS - WARDS 1-3
 </td>
 <td style="text-align:left;">
 1980 11TH AVE, FRIENDSHIP, WI 53934-9005
@@ -4995,12 +10187,13 @@ ADAMS
 </tbody>
 </table>
 </div>
-<p>Download VAN-formatted combined elections.wi.gov + Google Civic polling locations <a href="https://github.com/judgelord/vote/tree/master/data">here</a> (click on “raw” and then save) or go to this link and then save:</p>
 </div>
-</div>
-<div id="upload-to-van-httpsraw.githubusercontent.comjudgelordvotemasterdatavan20polling20locations208-11-2020.csv" class="section level1">
-<h1>Upload to VAN: <a href="https://raw.githubusercontent.com/judgelord/vote/master/data/VAN%20Polling%20Locations%208-11-2020.csv" class="uri">https://raw.githubusercontent.com/judgelord/vote/master/data/VAN%20Polling%20Locations%208-11-2020.csv</a></h1>
+<div id="van-formatted-combined-elections.wi.gov-google-civic-polling-locations" class="section level2">
+<h2>VAN-formatted combined elections.wi.gov + Google Civic polling locations:</h2>
+<p>CSV file: <a href="https://raw.githubusercontent.com/judgelord/vote/master/data/VAN%20Polling%20Locations%208-11-2020.xlsx" class="uri">https://raw.githubusercontent.com/judgelord/vote/master/data/VAN%20Polling%20Locations%208-11-2020.xlsx</a></p>
+<p><a href="https://docs.google.com/spreadsheets/d/1cFJX0yGY91bzDpaR9ODwCeSCbzUrkWpRb1m7HwMKOA4/edit?usp=sharing">Google Sheet</a></p>
 <hr />
+</div>
 </div>
 <div id="q-a" class="section level1">
 <h1>Q &amp; A</h1>
@@ -5008,27 +10201,27 @@ ADAMS
 <li>Which fields from the VAN must be replaced exactly? If the state changes how <code>Polling Location</code> is described, do we want to replace it or have it fail to match with the <code>Precinct ID</code> from the VAN template? There are over 200 polling locations with slightly different names in the file on the state’s website and the old VAN data.</li>
 </ul>
 <blockquote>
-<p>Precinct ID, Precinct Code and Precinct Name are ones that should always be the same from VAN. If state’s name is slightly different for a polling location, if it’s easier to just change it to that, that is fine. If polling location is described differently, just replace to what state has. I think that answers your question, but let me know if it doesn’t.</p>
+<p>Precinct ID, Precinct Code, and Precinct Name are ones that should always be the same from VAN. If the state’s name is slightly different for a polling location, if it’s easier to just change it to that, that is fine. If the polling location is described differently, just replace it with what the state has. I think that answers your question, but let me know if it doesn’t.</p>
 </blockquote>
 <ul>
 <li>There are over 200 polling location addresses in the State’s 8-11-2020 xlsx file that I do not see in the VAN list. I only investigated the first one, 2100 Beaser Ave, Ashland, WI, and I am not clear if Bayfield Ward 12 is now voting there or not. Is there a simple explanation? If they need to be investigated, Can I anything with the data to make these cases easier to investigate?</li>
 </ul>
 <blockquote>
-<p>These are most likely what we call ghost wards, where no one lives in. So we just exclude them from uploading to VAN since they don’t have a VAN Precinct ID</p>
+<p>These are most likely what we call ghost wards, where no one lives in. So we just exclude them from uploading to VAN since they don’t have a VAN Precinct ID.</p>
 </blockquote>
 <ul>
 <li>The state’s <code>Muni</code> is not the same as <code>City</code> in the VAN data for almost 2000 polling place addresses. For now, <code>Muni</code> is not being used in the merge.</li>
 <li>If we are trying to align <code>City</code> and <code>Muni</code>, <code>City</code> in the VAN data does not contain “Town of”/“City of”/“Village of” but both the state’s poll locations <code>Muni</code> xlsx file and the addresses file do. We are dropping the epithet, correct?</li>
 </ul>
 <blockquote>
-<p>This is probably because in smaller munis the actual address for a place has another muni in it. Example is Town of Adams in Adams County. The actual address for the Town of Adams Town Hall has Friendship as the muni. So I would continue not using muni to match. We don’t need to align the actual municipality name with the address municipality name.</p>
+<p>This is probably because, in smaller munis, the actual address for a place has another muni in it. An example is the Town of Adams in Adams County. The actual address for the Town of Adams Town Hall has Friendship as the muni. So I would continue not using muni to match. We don’t need to align the actual municipality name with the address municipality name.</p>
 </blockquote>
 <ul>
 <li>If Google Civic has polling locations that the file on the state website does not, what should <code>Authenticating Authority</code> be? It is “Google Civic API” for now.</li>
 <li><code>Authority Contact Info</code> is “DPW- Fall Partisan Primary” in the VAN file. Do we want this to take the new file name or WEC’s phone number?</li>
 </ul>
 <blockquote>
-<p>This is something that get’s applied in bulk after I upload polling locations. So if it’s easier for you to just not deal with those that’s fine. If it isn’t than yeah Google Civic can be the authenticating authority and DPW-November Election as contact info</p>
+<p>This is something that gets applied in bulk after I upload polling locations. So if it’s easier for you to just not deal with those, that’s fine. If it isn’t, then yeah, Google Civic can be the authenticating authority and DPW-November Election as contact info</p>
 </blockquote>
 <ul>
 <li><code>Location Description</code> in the VAN file contains poll hours. Do we want to merge this into the new upload or try to pull it in from Google Civic? Or both? Or neither?</li>
@@ -5046,13 +10239,19 @@ ADAMS
 <li>If a polling location is removed (i.e., it was in the previous VAN upload), but it is not in the new data, do we keep it in the upload sheet with some kind of a note, or do we just note on this data merge page that locations were removed?</li>
 </ul>
 <blockquote>
-<p>Don’t need it noted in the file to upload, but noted in the data merge page works.</p>
+<p>Don’t need it noted in the file to upload but noted in the data merge page works.</p>
 </blockquote>
 </div>
-<div id="notes" class="section level1">
-<h1>Notes</h1>
+<div id="todo" class="section level1">
+<h1>TODO</h1>
+<ul>
+<li>split out reporting units from the state to see if wards move addresses (not just if there are new or deleted addresses)</li>
+</ul>
+</div>
+<div id="notes-about-data-for-van" class="section level1">
+<h1>Notes about data for VAN</h1>
 <ol style="list-style-type: decimal">
-<li>The Addresses in the VAN data capitalize oddly–“1St” “2Nd” “3Rd” etc.–I made the other addresses match this format, but it is odd and will likely make trouble in other merges. All caps is easier.</li>
+<li>The Addresses in the VAN data capitalize oddly–“1St” “2Nd” “3Rd” etc.–I made all strings all caps.</li>
 </ol>
 </div>
 <div id="additional-google-civic-api-contents" class="section level1">
