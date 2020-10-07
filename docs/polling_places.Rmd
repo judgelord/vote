@@ -51,9 +51,9 @@ We are currently using this file:
 
 ```{r}
 # UPDATE THIS IF A NEW FILE IS POSTED! 
-file <- "PPL 2020 Partisan Primary 2.xlsx"
+file <- "2020 General Election PPL RU List.xlsx"
 
-`Date Authenticated*` <- "8-11-2020"
+`Date Authenticated*` <- "7-10-2020"
 
 upload_file <- paste0("VAN Polling Locations ", `Date Authenticated*`, ".xlsx")
 
@@ -77,7 +77,7 @@ official_locations %<>%
   ungroup() 
 ```
 
-It should be the most recent xlsx file of polling locations posted here: https://elections.wi.gov/node/6527
+The most recent xlsx file of polling locations that is posted: https://elections.wi.gov/node/6527
 
 ```{r}
 # polling locations posted on website
@@ -462,7 +462,7 @@ write_csv(upload, path = here("data", upload_file))
 
 library(googlesheets4)
 
-ss <- googledrive::drive_get("polls") %>%
+ss <- googledrive::drive_get("WI polling locations") %>%
   gs4_get() 
 
 upload %>%
