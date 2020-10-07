@@ -1958,8 +1958,8 @@ Polling Place List - 2020 Partisan Primary- UPDATED 3:30pm 8-11-2020.xlsx
 </div>
 <hr />
 </div>
-<div id="polling-locations-from-the-state-via-google-civics-api" class="section level1">
-<h1>Polling locations from the state via Google Civic’s API</h1>
+<div id="polling-locations-via-google-civics-api" class="section level1">
+<h1>Polling locations via Google Civic’s API</h1>
 <p>(Actually, it goes State (elections.wi.gov) –&gt; Voter Information Project –&gt; Google Civic’s API)</p>
 <p>To check the state’s data’s accuracy, we look up polling locations for addresses in every voting precinct using the Google Civic API.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="co">#########################################################</span></span>
@@ -2384,10 +2384,10 @@ DELL PRAIRIE TOWN HALL
 <h2>Format for VAN upload</h2>
 <p>Notes:</p>
 <ul>
-<li>Several names have spaces in them</li>
+<li>Several VAN variable names have spaces in them</li>
 <li>VAN addresses are sometimes title case and sometimes all caps. I am making all addresses all caps for the best matching prospects. (WEC polling locations are in all caps.)</li>
 </ul>
-<p>Here are the top few rows of the last VAN upload:</p>
+<p>Here are the top few rows of the VAN file from 8-11-2020, (the August 2020 Primary):</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true"></a><span class="co"># old VAN data</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true"></a>van &lt;-<span class="st"> </span>readxl<span class="op">::</span><span class="kw">read_xlsx</span>(<span class="kw">here</span>(<span class="st">&quot;data&quot;</span>, <span class="st">&quot;VAN Polling Locations.xlsx&quot;</span>))</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true"></a></span>
@@ -12493,7 +12493,7 @@ VESPER COMMUNITY CENTER
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true"></a>added <span class="op">%&lt;&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">Issue =</span><span class="st">&quot;New address&quot;</span>)</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true"></a></span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true"></a>poll_address_changes &lt;-<span class="st"> </span><span class="kw">full_join</span>(added, deleted)  <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(Issue, <span class="kw">everything</span>())</span></code></pre></div>
-<p>These are added to the <a href="https://docs.google.com/spreadsheets/d/1GYjifHWJ-N_Z3YEHMVWp58lA5d_emrzvgd4O951UTdU/edit#gid=120487606">Polling Location Issue Tracker</a></p>
+<p>Potentially added or deleted polling locations are automatically created <a href="https://docs.google.com/spreadsheets/d/1cFJX0yGY91bzDpaR9ODwCeSCbzUrkWpRb1m7HwMKOA4/edit#gid=740092819">here</a>. When we confirm that these are actual changes and not erroneous mismatches, they should be added to the <a href="https://docs.google.com/spreadsheets/d/1GYjifHWJ-N_Z3YEHMVWp58lA5d_emrzvgd4O951UTdU/edit#gid=120487606">Polling Location Issue Tracker</a></p>
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true"></a><span class="kw">library</span>(googlesheets4)</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true"></a><span class="co">#FIXME pull previously flagged issues and put new ones at the top</span></span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true"></a></span>

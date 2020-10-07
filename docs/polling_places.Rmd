@@ -93,7 +93,7 @@ kablebox(files)
 
 ---
 
-# Polling locations from the state via Google Civic's API
+# Polling locations via Google Civic's API
 
 (Actually, it goes State (elections.wi.gov) --> Voter Information Project --> Google Civic's API)
 
@@ -240,12 +240,12 @@ locations %<>% full_join(api_locations)
 
 Notes: 
 
-- Several names have spaces in them 
+- Several VAN variable names have spaces in them 
 - VAN addresses are sometimes title case and sometimes all caps. I am making all addresses all caps for the best matching prospects. (WEC polling locations are in all caps.)
 
 
 
-Here are the top few rows of the last VAN upload:
+Here are the top few rows of the VAN file from 8-11-2020, (the August 2020 Primary):
 
 ```{r}
 # old VAN data
@@ -395,7 +395,7 @@ added %<>% mutate(Issue ="New address")
 poll_address_changes <- full_join(added, deleted)  %>% select(Issue, everything())
 ```
 
-These are added to the [Polling Location Issue Tracker](https://docs.google.com/spreadsheets/d/1GYjifHWJ-N_Z3YEHMVWp58lA5d_emrzvgd4O951UTdU/edit#gid=120487606)
+Potentially added or deleted polling locations are automatically created [here](https://docs.google.com/spreadsheets/d/1cFJX0yGY91bzDpaR9ODwCeSCbzUrkWpRb1m7HwMKOA4/edit#gid=740092819). When we confirm that these are actual changes and not erroneous mismatches, they should be added to the [Polling Location Issue Tracker](https://docs.google.com/spreadsheets/d/1GYjifHWJ-N_Z3YEHMVWp58lA5d_emrzvgd4O951UTdU/edit#gid=120487606)
 
 ```{r, eval=FALSE}
 library(googlesheets4)
