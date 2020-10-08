@@ -241,6 +241,7 @@ locations %<>% full_join(api_locations)
 Notes: 
 
 - Several VAN variable names have spaces in them 
+- VAN has one row per ward, but the WEC file may say Wards 1-5
 - VAN addresses are sometimes title case and sometimes all caps. I am making all addresses all caps for the best matching prospects. (WEC polling locations are in all caps.)
 
 
@@ -267,8 +268,6 @@ van_new <- locations %>%
          `Zip` = str_extract(PollingPlaceAddress,"WI [0-9]*") %>% 
            str_remove("WI "),
          # Muni, Phone, and Location Name is from the state
-         # Muni is not the same as City
-          Muni = Muni %>% str_remove("(TOWN|CITY|VILLAGE) OF "), 
          `Polling Location` = str_to_upper(PollingPlaceName),# %>% str_remove("^School "), #FIXME if we are altering names in the state data to match the VAN data 
          `Polling Location Contact Info` = Phone,
          # Precinct ID  and name is from API
@@ -284,10 +283,35 @@ van_new %<>%
 
 van_new$`Precinct ID` %<>% as.numeric()
 
-# van_new %>% 
-#   select(any_of(names(van))) %>% 
-#   head() %>% 
-#   kablebox()
+# a function to split out wards
+split <- function(ward){
+  
+  min = str_extract(ward, "[0-9]") %>% 
+           as.numeric()
+  
+  max = str_extract(ward, "-[0-9].*") %>% 
+           as.numeric() %>% abs()
+  
+  full_seq(c(min, 
+             max),
+           1) %>% str_c(collapse = ",") 
+}
+
+# split out wards
+van_new %>% select(ReportingUnit) %>% 
+  # undo earlier merging
+  mutate(ReportingUnit = str_split(ReportingUnit, " AND ") ) %>% 
+  unnest(ReportingUnit) %>% 
+  mutate(ward = str_extract(ReportingUnit, "[1-9].*") %>% 
+           # split on commas in wards
+           str_split(",")) %>% 
+  unnest(ward) %>% 
+  mutate(ward_seq = map_chr(ward, possibly(split, otherwise = NA)),
+         ward = coalesce(ward_seq, ward) %>% 
+           str_split(",")) %>% 
+  unnest(ward)
+
+
 
 # make sure all required columns not coming from VAN are there
 tibble(VAN_column = names(van),
