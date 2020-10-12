@@ -53,7 +53,7 @@ We are currently using this file:
 # UPDATE THIS IF A NEW FILE IS POSTED! 
 file <- "2020 General Election PPL RU List.xlsx"
 
-`Date Authenticated*` <- "7-10-2020"
+`Date Authenticated*` <- "2020-10-07"
 
 upload_file <- paste0("VAN Polling Locations ", `Date Authenticated*`, ".xlsx")
 
@@ -65,7 +65,8 @@ official_locations <- readxl::read_xlsx(here::here("data", file))
 
 official_locations %<>% mutate_if(is.character, str_to_upper) %>%
   mutate(PollingPlaceAddress = PollingPlaceAddress %>% 
-           str_replace(" RD", " ROAD"),
+           str_replace(" RD", " ROAD") %>%
+           str_replace("MT\\.", "MOUNT"),
          County = str_remove(County, "COUNTY"))
 
 # some locations have more than one room and some munis have duplicates
@@ -78,12 +79,13 @@ official_locations %<>%
                                unique(Muni), 
                                unique(ReportingUnit), 
                                sep = " - ",
-                               collapse = " and ")) %>%
+                               collapse = " and ") %>%
+           str_replace("MT\\.", "MOUNT")) %>%
   ungroup() %>%
   distinct()
 ```
 
-The most recent xlsx file of polling locations that is posted: https://elections.wi.gov/node/6527
+The most recent xlsx file of polling locations that is posted at https://elections.wi.gov/node/6527
 
 ```{r}
 # polling locations posted on website
@@ -99,137 +101,9 @@ kablebox(files)
 
 ---
 
-# Polling locations via Google Civic's API
-
-(Actually, it goes State (elections.wi.gov) --> Voter Information Project --> Google Civic's API)
-
-To check the state's data's accuracy, we look up polling locations for addresses in every voting precinct using the Google Civic API.
-
-```{r}
-#########################################################
-# one address per precinct
-addresses <- read_csv(here::here("data", "wisconsin_example_addresses.csv"))
-
-addresses %<>% mutate_if(is.character, str_to_upper)
-
-addresses %<>% arrange(county_name)
-
-# FIXME DELETE THIS WHEN API IS WORKING
-addresses %<>% head(2)
-# /FIXME
-```
-
-
-
-Polling locations are sometimes (in the days or weeks before an election) available via the Google Civic API, which uses data collected from states by the Voter Information Project, which notifies users when it posts data here: https://groups.google.com/g/vip-community
-
-Notes about the Google Civic API (see the relevant documentation [here](https://developers.google.com/civic-information/docs/v2/elections/voterInfoQuery))  
-- create an API key here: https://console.developers.google.com/apis/credentials  
-- remember to authorize you API key  
-- API calls should not need `electionId`; docs say it is optional  
-- `pollingLocations` will not always be returned  
-- may return a great deal more than polling locations (see Additional Google Civic API Contents below)
-- may return more than one polling place per input address as a list 
-
-
-
-```{r}
-# make full street address
-addresses %<>% 
-  mutate(voter_address = paste(voting_street_address,
-                               voting_city, 
-                               state_code))
-
-addresses$voter_address[1]
-```
-
-Here is the polling place from the Google Civic API for the above address:
-```{r}
-
-# need to get AND authorize an api key
-source(here::here("api_key.R"))
-
-# A function to get poll addresses
-get_poll <- function(voter_address){
-  
-  voter_address %<>% 
-    str_replace_all(" ", "%20") %>%
-    str_remove_all(",")
-  
-  url <- str_c("https://civicinfo.googleapis.com/civicinfo/v2/voterinfo?address=", 
-               voter_address, 
-               "&returnAllAvailableData=true&key=", 
-               api_key)
-  
-  
-  poll <- GET(url) %>% 
-    .$content %>% 
-    rawToChar() %>% 
-    fromJSON() %>%
-    .$pollingLocations %>% # note: there is a lot more than this
-    .$address %>% 
-    {ifelse(is.null(.), "NULL", .)}
-  
-  return(poll)
-}
-
-
-# test 
-get_poll(addresses$voter_address[1])
-
-# apply function to addresses
-api_locations <- addresses %>% 
-  # "NULL" if NULL, "error" if any error
-  mutate(PollingPlaceAddress = voter_address %>% map(possibly(get_poll, "error"))) 
-
-# expand if there is more then one polling place per address
-api_locations %<>% unnest(PollingPlaceAddress)
-
-api_locations %>% select(voting_street_address, precinct_name, precinct_id, PollingPlaceAddress) %>%  kablebox()
-```
-
-### API results not in the state's xlsx file
-
-```{r}
-api_locations %>% 
-  filter(PollingPlaceAddress != "NULL") %>% # filter out API errors
-  anti_join(official_locations) %>% # filter out locations already posted
-  select(precinct_name, precinct_id, PollingPlaceAddress) %>%
-  kablebox()
-```
-
-### Cases where Google Civic's API did not return the same address when given polling locations
-
-> Until the API is working, it is all of them--just showing a few for now.
-
-```{r}
-official_locations %>% 
-  head() %>% #FIXME WHEN API IS WORKING
-  mutate(PollingPlaceAddress_API = map(PollingPlaceAddress, get_poll)) %>% # get polling places for polling places' addresses
-  filter(PollingPlaceAddress_API != PollingPlaceAddress) %>% # mismatches
-  select(Muni, ReportingUnit, PollingPlaceName, PollingPlaceAddress, PollingPlaceAddress_API) %>%
-  kablebox()
-```
-
-### Polling place addresses not returned by Google Civic's API
-
-> Until the API is working, it is all of them--just showing a few for now.
-
-```{r}
-official_locations %>% 
-  head() %>% #FIXME WHEN API IS WORKING
-  anti_join(api_locations) %>% # remove ones matched with API
-  select(Muni, ReportingUnit, PollingPlaceName, PollingPlaceAddress) %>% 
-  kablebox()
-```
-
----
-
 ## Combine results
 
 ```{r}
-# name both official and API results to fit VAN
-api_locations %<>% rename(County = county_name)
 
 # reformat county
 official_locations %<>% 
@@ -238,8 +112,6 @@ official_locations %<>%
 
 
 locations <- official_locations
-
-locations %<>% full_join(api_locations)
 ```
 
 ## Format for VAN upload 
@@ -277,9 +149,6 @@ van_new <- locations %>%
          # Muni, Phone, and Location Name is from the state
          `Polling Location` = str_to_upper(PollingPlaceName),# %>% str_remove("^School "), #FIXME if we are altering names in the state data to match the VAN data 
          `Polling Location Contact Info` = Phone,
-         # Precinct ID  and name is from API
-         `Precinct ID` = precinct_id,
-         `Precinct Name` = precinct_name,
          `Date Authenticated*` = `Date Authenticated*`,
          `Authenticating Authority` = ifelse(is.na(ReportingUnit), "Google Civic", "State Election Official") )
 
@@ -288,7 +157,6 @@ van_new %<>%
   mutate_all(as.character) %>%
   mutate_all(str_squish)
 
-van_new$`Precinct ID` %<>% as.numeric()
 
 # a function to split out wards
 split <- function(ward){
@@ -319,10 +187,12 @@ van_new %<>% #select(ReportingUnit) %>%
          ward = coalesce(ward_seq, ward) %>% 
            str_split(",")) %>% 
   unnest(ward) %>% 
-  mutate(ward = ward %>% str_pad(3, side = "left", pad = "0")) %>% 
+  mutate(ward = ward %>% 
+           str_remove("[A-z]") %>% 
+           str_pad(3, side = "left", pad = "0")) %>% 
   mutate(ReportingUnit = str_replace(ReportingUnit, " WARD(|S) .*", paste(" WARD", ward))) %>% 
   ungroup() %>% 
-  select(-ward, -ward_seq) %>%
+  select(-ward_seq) %>%
   select(ReportingUnit, everything()) %>% 
   distinct() %>% 
   add_count(ReportingUnit) %>% 
@@ -341,63 +211,68 @@ tibble(VAN_column = names(van),
 ## Join with old VAN upload data
 
 ```{r}
+# add in precinct IDs for new addressses
+van_new %<>% 
+  rename(`Precinct Name` = ReportingUnit) %>%
+  left_join(van %>% select(`Precinct ID`, 
+                           `Precinct Code`, 
+                           `Precinct Name`,
+                           City)) 
+
+#FIXME inspect NAs
+van_new %<>% 
+  select(`Precinct Name`, `Precinct ID`, everything()) %>%
+  distinct()
+
 upload <- van_new %>%
   filter(Address != "NULL") %>% 
   select(PollingPlaceAddress,
-         #Muni, 
-         ReportingUnit, 
          any_of(names(van)) ) %>% 
   left_join(van %>% 
               # drop info that we want to replace, never retain 
               select(-`Polling Location Contact Info`, 
                      -`Authority Contact Info`,
                      -`Date Authenticated*`,
-                     -`Authenticating Authority`),
-            # NOTE: requiring exact match on polling location name, which can cause mismatches
-            by= c("County", 
-                  "Address", 
-                  #"City", 
-                  "Zip")) %>% 
+                     -`Authenticating Authority`,),
+            # NOTE: requiring exact match on polling location name can cause mismatches
+            by= c("Precinct Name", "Precinct Code", "Precinct ID", "County", "City", "Zip"),
+            suffix = c("_WEC", "_VAN")) %>% 
   distinct()
+
+
 ```
 
 ### Discrepancies in Polling Location Names
 
 > NOTE: We are not matching on the polling location name, so this is just a check for false positives or name changes that may have occurred without an address change.
 
-#### Cases where the state's polling location name (x) is not exactly the same as the last VAN upload's polling location name (y):
+#### Cases where the addresses match, but the state's polling location name is not exactly the same as the last VAN upload's polling location name:
 
 ```{r}
 # where polling location strings are not the same
 upload %>% 
-  filter(`Polling Location.x` != `Polling Location.y` ) %>% 
-  select(`Polling Location.x`,  
-         `Polling Location.y`, 
-         Address, 
+  filter(Address_WEC == Address_VAN,
+         `Polling Location_WEC` != `Polling Location_VAN` ) %>% 
+  select(`Polling Location_WEC`,  
+         `Polling Location_VAN`, 
+         Address_WEC, Address_VAN, 
          City, 
          Zip, County) %>% 
   distinct() %>% 
   kablebox()
 ```
 
-
-> Precinct Names and IDs should match, but they are not from the State's file, so if google civic fails to return a matching polling place address for the example address in each precinct, Precinct Names and IDs will be `NA`.
-
-> We are not matching on Precinct Name or ID. Where Precinct Names differ between the example addresses and VAN, we use the Precinct Name from the example addresses (but we could do the reverse).
+> We are not matching on Precinct Name. Where Precinct Names differ between the example addresses and VAN, we use the Precinct Name based on WEC's "Reporting Unit" (but we could do the reverse).
 
 
 ```{r}
 upload %<>% 
   # take the State's name first 
-  mutate(`Precinct ID` = coalesce(`Precinct ID.x`,
-                                  `Precinct ID.y`,),
-         `Precinct Name` = coalesce(`Precinct Name.x`,
-                                    `Precinct Name.y`),
-         `Polling Location` = coalesce(`Polling Location.x` , 
-                                       `Polling Location.y`)
-         ) %>% 
+  mutate(`Polling Location` = coalesce(`Polling Location_WEC` , 
+                                       `Polling Location_VAN`),
+         Address = Address_WEC) %>% 
   # select variable names from van
-  select(any_of(names(van)), ReportingUnit,  PollingPlaceAddress) %>% 
+  select(any_of(names(van)), Address_WEC, Address_VAN,  PollingPlaceAddress) %>% 
   distinct()
 ```
 
@@ -408,8 +283,9 @@ upload %<>%
 These polling places may have been deleted
 ```{r}
 # polling addresses not in VAN? 
-deleted <- van %>%  filter(!Address %in% upload$Address) %>% 
+deleted <- van %>%  filter(!Address %in% upload$Address_WEC) %>% 
   select(County,  Address, `Polling Location`, `Precinct Name`, `Date Authenticated*`) %>% 
+  rename(Address_VAN = Address) %>%
   distinct() 
 
 deleted %>% kablebox()
@@ -423,9 +299,8 @@ These may be new polling places
 ```{r}
 # polling addresses not in VAN? 
 added <- upload %>% 
-  filter(is.na(`Precinct Code`),
-         !Address %in% van$Address) %>% 
-  select(County, ReportingUnit,  `Precinct Name`,Address, `Polling Location`, `Date Authenticated*`) %>% 
+  filter(Address_WEC != Address_VAN) %>% 
+  select(County, `Precinct Name`,Address_WEC, Address_VAN, `Polling Location`, `Date Authenticated*`) %>% 
   distinct() 
 
 added %>% kablebox()
@@ -433,9 +308,30 @@ added %>% kablebox()
 deleted %<>% mutate(Issue = "Deleted address")
 added %<>% mutate(Issue ="New address")
 
-poll_address_changes <- full_join(added, deleted)  %>% select(Issue, everything())
+poll_address_changes <- full_join(added, deleted)  
 
-poll_address_changes
+VANmissing <- read_csv(here::here("data", "VAN_missing_precincts.csv"))
+
+poll_address_changes %<>% anti_join(VANmissing %>% select(`Precinct Name`, `Address`))
+
+
+poll_address_changes %<>%
+  separate(`Precinct Name`, into = c("county", "Muni", "ward"), sep = " - ") %>% 
+  select(-county) %>% 
+  group_by(County, Muni, Address_VAN, Address_WEC) %>% 
+  mutate(ward = ward %>% str_remove("WARD 0*") %>% str_c(collapse = ","),
+         ) %>% 
+  ungroup() %>%
+  add_count(Muni) %>% 
+  distinct() %>%
+  mutate(ReportingUnit = paste(Muni, "WARD", ward)) %>% 
+  select(-Muni, -ward)
+
+poll_address_changes %<>%
+  arrange(-n, County, ReportingUnit) %>% 
+  select(n, Issue, County, ReportingUnit, everything() )
+
+
 ```
 
 Potentially added or deleted polling locations are automatically created [here](https://docs.google.com/spreadsheets/d/1cFJX0yGY91bzDpaR9ODwCeSCbzUrkWpRb1m7HwMKOA4/edit#gid=740092819). When we confirm that these are actual changes and not erroneous mismatches, they should be added to the [Polling Location Issue Tracker](https://docs.google.com/spreadsheets/d/1GYjifHWJ-N_Z3YEHMVWp58lA5d_emrzvgd4O951UTdU/edit#gid=120487606)
@@ -444,45 +340,14 @@ Potentially added or deleted polling locations are automatically created [here](
 library(googlesheets4)
 #FIXME pull previously flagged issues and put new ones at the top
 
-ss <- googledrive::drive_get("polls") %>%
+ss <- googledrive::drive_get("WI polling locations") %>%
   gs4_get() 
 
 poll_address_changes %>%
   sheet_write(ss = ss,
-              sheet = str_c(Sys.Date() %>% as.character(), 
-                            " Issues"))
+              sheet = str_c("Issues ", Sys.Date() %>% as.character() ))
 ```
 
-#### Cases where the county + address is not matching in VAN 
-
-These may be "ghost wards" but still may be worth checking.
-
-```{r}
-# polling addresses + counties not in VAN? 
-upload %>% 
-  filter(is.na(`Precinct Code`),
-         !Address %in% poll_address_changes$Address) %>% 
-  select(County,  PollingPlaceAddress, `Polling Location`) %>% 
-  distinct() %>% 
-  kablebox()
-```
-
----
-
-These could be new locations or something else, like how the State says that people in Bayfield Ward 12 are now going into Ashland to vote???
-
-```{r}
-# last VAN upload 
-van %>% 
-  filter(str_detect(Address, "BEASER")) %>% 
-  select(County, `Precinct Name`, Address) %>% distinct() %>% kablebox()
-
-# Current state data
-official_locations %>%
-  filter(str_detect(PollingPlaceAddress, "BEASER")) %>% 
-  select(County,  Muni, ReportingUnit, PollingPlaceAddress) %>% kablebox()
-
-```
 
 ### All locations being updated in any way
 
@@ -509,6 +374,8 @@ ss <- googledrive::drive_get("WI polling locations") %>%
   gs4_get() 
 
 upload %>%
+  mutate(`Precinct ID` = `Precinct ID` %>% replace_na(0)) %>% 
+  arrange(`Precinct ID`) %>% 
   sheet_write(ss = ss,
               sheet = paste("VAN Polling Locations", `Date Authenticated*`))
 ```
