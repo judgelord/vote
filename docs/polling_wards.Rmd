@@ -284,7 +284,7 @@ These polling places may have been deleted
 ```{r}
 # polling addresses not in VAN? 
 deleted <- van %>%  filter(!Address %in% upload$Address_WEC) %>% 
-  select(County,  Address, `Polling Location`, `Precinct Name`, `Date Authenticated*`) %>% 
+  select(County,  Address, `Polling Location`, `Precinct Name`, `Date Authenticated*`, `Precinct ID`) %>% 
   rename(Address_VAN = Address) %>%
   distinct() 
 
@@ -299,8 +299,8 @@ These may be new polling places
 ```{r}
 # polling addresses not in VAN? 
 added <- upload %>% 
-  filter(Address_WEC != Address_VAN) %>% 
-  select(County, `Precinct Name`,Address_WEC, Address_VAN, `Polling Location`, `Date Authenticated*`) %>% 
+  filter(Address_WEC != Address_VAN | is.na(Address_VAN))  %>% 
+  select(County, `Precinct Name`,Address_WEC, Address_VAN, `Polling Location`, `Date Authenticated*`, `Precinct ID`) %>% 
   distinct() 
 
 added %>% kablebox()
@@ -308,38 +308,72 @@ added %>% kablebox()
 deleted %<>% mutate(Issue = "Deleted address")
 added %<>% mutate(Issue ="New address")
 
-poll_address_changes <- full_join(added, deleted)  
+poll_ward_changes <- full_join(added, deleted)  
 
 VANmissing <- read_csv(here::here("data", "VAN_missing_precincts.csv"))
 
-poll_address_changes %<>% anti_join(VANmissing %>% select(`Precinct Name`, `Address`))
+poll_ward_changes %<>% anti_join(VANmissing %>% select(`Precinct Name`, `Address`)) %>% separate(`Precinct Name`, into = c("county", "Muni", "ward"), sep = " - ") %>% 
+  select(-county)
 
-
-poll_address_changes %<>%
-  separate(`Precinct Name`, into = c("county", "Muni", "ward"), sep = " - ") %>% 
-  select(-county) %>% 
+# collapse
+poll_address_changes <- poll_ward_changes %>%
   group_by(County, Muni, Address_VAN, Address_WEC) %>% 
   mutate(ward = ward %>% str_remove("WARD 0*") %>% str_c(collapse = ","),
-         ) %>% 
+         `Precinct ID` = `Precinct ID` %>% str_c(collapse = ",")) %>% 
   ungroup() %>%
   add_count(Muni) %>% 
   distinct() %>%
   mutate(ReportingUnit = paste(Muni, "WARD", ward)) %>% 
-  select(-Muni, -ward)
+  select(-ward)
 
+# arrange by number of issues per Muni
 poll_address_changes %<>%
   arrange(-n, County, ReportingUnit) %>% 
   select(n, Issue, County, ReportingUnit, everything() )
 
-
+poll_address_changes %>% kablebox()
 ```
 
 Potentially added or deleted polling locations are automatically created [here](https://docs.google.com/spreadsheets/d/1cFJX0yGY91bzDpaR9ODwCeSCbzUrkWpRb1m7HwMKOA4/edit#gid=740092819). When we confirm that these are actual changes and not erroneous mismatches, they should be added to the [Polling Location Issue Tracker](https://docs.google.com/spreadsheets/d/1GYjifHWJ-N_Z3YEHMVWp58lA5d_emrzvgd4O951UTdU/edit#gid=120487606)
 
 ```{r, eval=FALSE}
 library(googlesheets4)
-#FIXME pull previously flagged issues and put new ones at the top
 
+googledrive::drive_get("Nov projected dem vote by ward") %>%
+  gs4_get()
+
+votes <- read_sheet(ss) %>% 
+  transmute(`Precinct ID` = van_precinct_id,
+            projected_dem_vote = projected_dem_vote) #%>% separate(van_precinct_name, into = c("County", "Muni", "ward"), sep = " - ")
+
+#FIXME calculate diff in voters with a poll in their ward when we have wards of polling addresses
+
+# votes %>% full_join(poll_ward_changes %>% select(`Precinct ID`, `Precinct Name`))
+
+poll_address_changes <- poll_ward_changes %>% 
+  left_join(votes) %>% 
+  group_by(County, Muni, Address_VAN, Address_WEC) %>% 
+  mutate(ward = ward %>% str_remove("WARD 0*") %>% str_c(collapse = ","),
+         `Precinct ID` = `Precinct ID` %>% str_c(collapse = ","),
+         projected_dem_vote = sum(projected_dem_vote)) %>% 
+  ungroup() %>%
+  add_count(Muni, name = "Wards Changing") %>% 
+  distinct() %>%
+  add_count(Muni, Issue) %>% 
+  mutate(ReportingUnit = paste(Muni, "WARD", ward)) %>% 
+  add_count(ReportingUnit) %>% 
+  mutate(FLAG = ifelse(Issue == "Deleted address" & nn ==1, "!!!", "")) %>% 
+  mutate(Issue = paste(n, FLAG, Issue)) %>% 
+  select(-ward, -Muni, -n, - FLAG) 
+
+# arrange by number of issues per Muni
+poll_address_changes %<>%
+  arrange(-`Wards Changing`, County, ReportingUnit) %>% 
+  select(`Wards Changing`, Issue, projected_dem_vote, County, ReportingUnit, everything() )
+
+poll_address_changes %>% kablebox()
+
+#FIXME pull previously flagged issues and put new ones at the top
 ss <- googledrive::drive_get("WI polling locations") %>%
   gs4_get() 
 
