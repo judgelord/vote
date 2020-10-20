@@ -1,5 +1,5 @@
 ---
-title: "Polling Places Changes in WI"
+title: "Polling Place Changes in WI"
 subtitle: 
 author:
 output:
@@ -39,8 +39,9 @@ kablebox <- . %>%  knitr::kable() %>%
   scroll_box(height = "400px")
 ```
 
+> Note: Below are **election day** polling places. For early voting (October 20-30) and ballot drop box locations, go to [iwillvote.com](https://iwillvote.com/locate/?state=WI)
 
-# Polling Locations from the Wisconsin Elections Commission
+# Polling Places from the Wisconsin Elections Commission
 
 ```{r}
 # UPDATE THIS IF A NEW FILE IS POSTED! 
@@ -51,9 +52,7 @@ official_locations <- readxl::read_xlsx(here::here("data", file))
 date <- "8-11-2020"
 ```
 
-This analysis uses the `r file` posed on `r date`. Data on polling locations are posted: https://elections.wi.gov/node/6527
-
-Here are the files on that page:
+This analysis uses the "`r file`" data posted on `r date`. Here are the current files posted on https://elections.wi.gov/node/6527:
 
 ```{r}
 # polling locations posted on website
@@ -137,7 +136,7 @@ diff %<>% mutate(General = str_c(PollingPlaceName.General,
 
 
 
-```{r map}
+```{r map_change}
 wi <- map_data("county", "wisconsin") %>% mutate(County = str_to_title(subregion))
 
 diff %<>% 
@@ -161,7 +160,7 @@ wi %>%
   mutate(center_lat = mean(range(lat) ),
          center_long = mean(range(long) ) ) %>%
 ggplot( aes(x = long, y = lat, group = group, fill = changes) ) +
-  geom_polygon(color = "grey60") +
+  geom_polygon(color = "white") +
   geom_point(aes(x = Longitude.Primary, 
                  y = Latitude.Primary), 
              color = "Red", alpha = .5) +
@@ -171,7 +170,13 @@ ggplot( aes(x = long, y = lat, group = group, fill = changes) ) +
   geom_text( aes(x = center_long, y = center_lat, label = County), size = 2, angle = 45, check_overlap = T, color = "white") +
   theme_void() + 
   labs(fill = "Polling Place\nAddresses Changed\nper County")
+```
 
+New polling locations are green. Removed locations are red. Brighter points mean that more Wards moved to or from that polling location. 
+
+The geo data have a few errors, but these points are mostly correct.
+
+```{r map_net}
 # net 
 wi %>% 
   group_by(subregion) %>%
@@ -179,7 +184,7 @@ wi %>%
   mutate(center_lat = mean(range(lat) ),
          center_long = mean(range(long) ) ) %>%
 ggplot( aes(x = long, y = lat, group = group, fill = net) ) +
-  geom_polygon(color = "grey60") +
+  geom_polygon(color = "white") +
   geom_point(aes(x = Longitude.Primary, 
                  y = Latitude.Primary), 
              color = "Red", alpha = .5) +
@@ -194,9 +199,7 @@ ggplot( aes(x = long, y = lat, group = group, fill = net) ) +
 
 Green Bay (Brown County) and Burlington (Racine County) now have *fewer* polling places than they did for the August Primary election.  
 
-Brighter points indicate that more Wards moved to or from that polling location. 
 
-WEC's location data have a few errors, but these points are mostly correct.
 
 ```{r}
 # table of changes 
@@ -213,6 +216,55 @@ diff %>%
   kable_styling() %>% 
   scroll_box(height = "600px")
 ```
+
+```{r map_county}
+# a function to plot each county
+countymap <- function(county){
+p <- wi %>% 
+  filter(County == county) %>% 
+ggplot( ) +
+  geom_polygon(aes(x = long, y = lat, group = group)) +
+  geom_point(aes(x = Longitude.Primary, 
+                 y = Latitude.Primary), 
+             color = "Red", alpha = .5) +
+  geom_point(aes(x = Longitude.General, 
+                 y = Latitude.General), 
+             color = "Green", shape = "+", size = 5, alpha = .5) + 
+  geom_text( aes(x = Longitude.Primary, 
+                 y = Latitude.Primary,
+                 label = PollingPlaceName.Primary), 
+             color = "Red", alpha = .5, 
+             angle = 45, check_overlap = T) +
+    geom_text( aes(x = Longitude.General, 
+                 y = Latitude.General,
+                 label = PollingPlaceName.General), 
+             color = "Green", alpha = .5, 
+             angle = 45, check_overlap = T) +
+  geom_segment(aes(x = Longitude.Primary,
+                   y = Latitude.Primary,
+                   xend = Longitude.General, 
+                   yend = Latitude.General), 
+                #arrow = arrow(length = unit(0.1, "cm")),
+               color = "green") + 
+  geom_text( aes(x = Longitude.General, 
+                 y = Latitude.General,
+                 label = PollingPlaceName.General), 
+             color = "Green", alpha = .5, 
+             angle = 45, check_overlap = T) +
+  theme_void() + 
+  labs(title = paste(county, "County"))
+
+return(p)
+}
+
+counties <- map(diff %>%
+      filter(net != 0 | changes > 5) %>%
+      .$County %>% unique(),
+    countymap)
+
+counties
+```
+
 ---
 
 # Polling locations via Google Civic's API
@@ -315,7 +367,7 @@ api_locations %>%
 
 ### Cases where Google Civic's API did not return the same address when given polling locations
 
-> Until the API is working, it is all of them--just showing a few for now.
+> Until the API is working, it is all of them. I'm just showing a few for now.
 
 ```{r}
 official_locations %>% 
@@ -328,7 +380,7 @@ official_locations %>%
 
 ### Polling place addresses not returned by Google Civic's API
 
-> Until the API is working, it is all of them--just showing a few for now.
+> Until the API is working, it is all of them. I'm just showing a few for now.
 
 ```{r}
 official_locations %>% 
@@ -340,7 +392,6 @@ official_locations %>%
 
 ---
 
-## Combine results
 
 ```{r}
 # align official and Google Civic API results
