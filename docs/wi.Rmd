@@ -1,0 +1,452 @@
+---
+title: "Polling Places Changes in WI"
+subtitle: 
+author:
+output:
+    # pdf_document:
+    #   toc: true
+    #   keep_tex: true
+    html_document:
+      highlight: zenburn
+      toc: true
+      toc_float: true
+      code_folding: hide
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, 
+                      cache = FALSE, 
+                      #fig.width=8.5, 
+                      split = T,
+                      fig.align = 'center', 
+                      fig.path='figs/',
+                      warning=FALSE, 
+                      message=FALSE)
+
+library(httr)
+library(jsonlite)
+library(tidyverse)
+library(magrittr)
+library(here)
+library(knitr)
+library(kableExtra)
+library(rvest)
+
+kablebox <- . %>%  knitr::kable() %>% 
+  kable_styling() %>% 
+  scroll_box(height = "400px")
+```
+
+
+# Polling Locations from the Wisconsin Elections Commission
+
+```{r}
+# UPDATE THIS IF A NEW FILE IS POSTED! 
+file <- "2020 General Election PPL RU List.xlsx"
+
+official_locations <- readxl::read_xlsx(here::here("data", file))
+
+date <- "8-11-2020"
+```
+
+This analysis uses the `r file` posed on `r date`. Data on polling locations are posted: https://elections.wi.gov/node/6527
+
+Here are the files on that page:
+
+```{r}
+# polling locations posted on website
+html <- read_html("https://elections.wi.gov/node/6527") %>%
+  html_nodes("a") 
+
+files <- tibble(file = html_text(html),
+                link = html_attr(html, "href")) %>% 
+  filter(str_detect(file, "xls|csv")) 
+                
+kable(files) %>% 
+  kable_styling() %>% 
+  scroll_box()
+``` 
+
+---
+
+# Changes from the August Primary Election
+
+```{r}
+old_locations <- readxl::read_xlsx(here::here("data", "PPL 2020 Partisan Primary 2.xlsx")) %>% 
+  select(County, Muni, ReportingUnit, PollingPlaceName, PollingPlaceAddress, Longitude, Latitude)
+
+# a function to split out wards
+split <- function(ward){
+  
+  min = str_extract(ward, "[0-9]*") %>% 
+           as.numeric()
+  
+  max = str_extract(ward, "-[0-9]*") %>% 
+           as.numeric() %>% abs()
+  
+  full_seq(c(min,
+             max),
+           1) %>%
+    str_c(collapse = ",") 
+}
+
+# split out wards
+split_wards <- . %>%
+  mutate_if(is.character, str_to_upper) %>% 
+  mutate(ward = str_extract(ReportingUnit, "[1-9].*") %>% 
+           # split on commas in wards
+           str_split(",")) %>% 
+  unnest(ward) %>% 
+  # remove any letters
+  mutate(ward = ward %>% str_remove("[A-z]")) %>% 
+  # make a sequence of wards
+  mutate(ward_seq = map_chr(ward, possibly(split, otherwise = NA)),
+         ward = coalesce(ward_seq, ward) %>% 
+           str_split(",")) %>% 
+  unnest(ward) %>% 
+  mutate_if(is.character, str_to_title) %>%
+  mutate(County = str_remove(County, " County")) %>%
+  mutate(ReportingUnit = paste("Ward ", ward)) %>% 
+  ungroup() %>% 
+  select(-ward_seq)
+
+
+# apply function to old and new polling locations
+official <- official_locations %>% split_wards()
+old <- old_locations %>% split_wards()
+
+# diff between old and new polling locations
+diff <- anti_join(official, old, 
+                  by = c("County", "Muni", "ReportingUnit", 
+                         "ward", "PollingPlaceAddress")) %>%
+  left_join(old, 
+            by = c("County", "Muni", "ReportingUnit", "ward"),
+            suffix = c(".General", ".Primary"))
+
+# simplify 
+diff %<>% mutate(General = str_c(PollingPlaceName.General, 
+                                 PollingPlaceAddress.General, 
+                                 sep = ", "),
+                 Primary = str_c(PollingPlaceName.Primary, 
+                                 PollingPlaceAddress.Primary, 
+                                 sep = ", "))
+```
+
+
+
+
+```{r map}
+wi <- map_data("county", "wisconsin") %>% mutate(County = str_to_title(subregion))
+
+diff %<>% 
+  group_by(County)%>% 
+  mutate(changes = length(unique(PollingPlaceAddress.General)),
+         net = changes - length(unique(PollingPlaceAddress.Primary))) 
+wi  %<>% 
+  # add counts 
+  left_join(diff %>% 
+              select(County, Muni, PollingPlaceAddress.General, changes, net) ) %>% 
+  mutate(changes = changes %>% replace_na(0)) %>% 
+  # add points 
+  full_join(diff %>% mutate(group = NA)) %>% 
+  mutate(changes = changes %>% replace_na(0),
+         net = net %>% replace_na(0)) 
+
+# changes 
+wi %>% 
+  group_by(subregion) %>%
+  # Find the center of each subregion
+  mutate(center_lat = mean(range(lat) ),
+         center_long = mean(range(long) ) ) %>%
+ggplot( aes(x = long, y = lat, group = group, fill = changes) ) +
+  geom_polygon(color = "grey60") +
+  geom_point(aes(x = Longitude.Primary, 
+                 y = Latitude.Primary), 
+             color = "Red", alpha = .5) +
+  geom_point(aes(x = Longitude.General, 
+                 y = Latitude.General), 
+             color = "Green", shape = "+", size = 5, alpha = .5) + 
+  geom_text( aes(x = center_long, y = center_lat, label = County), size = 2, angle = 45, check_overlap = T, color = "white") +
+  theme_void() + 
+  labs(fill = "Polling Place\nAddresses Changed\nper County")
+
+# net 
+wi %>% 
+  group_by(subregion) %>%
+  # Find the center of each subregion
+  mutate(center_lat = mean(range(lat) ),
+         center_long = mean(range(long) ) ) %>%
+ggplot( aes(x = long, y = lat, group = group, fill = net) ) +
+  geom_polygon(color = "grey60") +
+  geom_point(aes(x = Longitude.Primary, 
+                 y = Latitude.Primary), 
+             color = "Red", alpha = .5) +
+  geom_point(aes(x = Longitude.General, 
+                 y = Latitude.General), 
+             color = "Green", shape = "+", size = 5, alpha = .5) + 
+  geom_text( aes(x = center_long, y = center_lat, label = County), 
+             size = 2, angle = 45, check_overlap = T, color = "white") +
+  theme_void() + 
+  labs(fill = "Net Polling Places\nAdded per County")
+```
+
+Green Bay (Brown County) and Burlington (Racine County) now have *fewer* polling places than they did for the August Primary election.  
+
+Brighter points indicate that more Wards moved to or from that polling location. 
+
+WEC's location data have a few errors, but these points are mostly correct.
+
+```{r}
+# table of changes 
+diff %>% 
+  ungroup( ) %>%
+  group_by(County, Muni, General, Primary) %>% 
+  summarise(Ward = paste(County, Muni, "Ward", 
+                         paste(ward, collapse = ", "),
+                         sep = ", ")) %>%
+  ungroup() %>% 
+  select(Ward, Primary, General) %>%  
+  distinct() %>% 
+  knitr::kable() %>% 
+  kable_styling() %>% 
+  scroll_box(height = "600px")
+```
+---
+
+# Polling locations via Google Civic's API
+
+(Actually, it goes Wisconsin Elections Commission --> Voter Information Project --> Google Civic's API)
+
+To check that Google Civic is providing the same information that is posted on the Election Commission's website, we can look up polling locations for addresses in each  voting precinct using the Google Civic API.
+
+```{r}
+#########################################################
+# one address per precinct
+addresses <- read_csv(here::here("data", "wisconsin_example_addresses.csv"))
+
+addresses %<>% mutate_if(is.character, str_to_upper)
+
+addresses %<>% arrange(county_name)
+
+# FIXME DELETE THIS WHEN API IS WORKING
+addresses %<>% head(2)
+# /FIXME
+```
+
+
+
+Polling locations are sometimes (in the days or weeks before an election) available via the Google Civic API, which uses data collected from states by the Voter Information Project, which notifies users when it posts data here: https://groups.google.com/g/vip-community
+
+Notes about the Google Civic API (see the relevant documentation [here](https://developers.google.com/civic-information/docs/v2/elections/voterInfoQuery))  
+- create an API key here: https://console.developers.google.com/apis/credentials  
+- remember to authorize you API key  
+- API calls should not need `electionId`; docs say it is optional  
+- `pollingLocations` will not always be returned  
+- may return a great deal more than polling locations (see Additional Google Civic API Contents below)
+- may return more than one polling place per input address as a list 
+
+
+
+```{r}
+# make full street address
+addresses %<>% 
+  mutate(voter_address = paste(voting_street_address,
+                               voting_city, 
+                               state_code))
+
+addresses$voter_address[1]
+```
+
+Here is the polling place from the Google Civic API for the above address:
+```{r}
+# need to get AND authorize an api key
+source(here::here("api_key.R"))
+
+# A function to get poll addresses
+get_poll <- function(voter_address){
+  
+  voter_address %<>% 
+    str_replace_all(" ", "%20") %>%
+    str_remove_all(",")
+  
+  url <- str_c("https://civicinfo.googleapis.com/civicinfo/v2/voterinfo?address=", 
+               voter_address, 
+               "&returnAllAvailableData=true&key=", 
+               api_key)
+  
+  
+  poll <- GET(url) %>% 
+    .$content %>% 
+    rawToChar() %>% 
+    fromJSON() %>%
+    .$pollingLocations %>% # note: there is a lot more than this
+    .$address %>% 
+    {ifelse(is.null(.), "NULL", .)}
+  
+  return(poll)
+}
+
+
+# test 
+get_poll(addresses$voter_address[1])
+
+# apply function to addresses
+api_locations <- addresses %>% 
+  # "NULL" if NULL, "error" if any error
+  mutate(PollingPlaceAddress = voter_address %>% map(possibly(get_poll, "error"))) 
+
+# expand if there is more then one polling place per address
+api_locations %<>% unnest(PollingPlaceAddress)
+
+api_locations %>% select(voting_street_address, precinct_name, precinct_id, PollingPlaceAddress) %>%  kablebox()
+```
+
+### API results not in the state's xlsx file
+
+```{r}
+api_locations %>% 
+  filter(PollingPlaceAddress != "NULL") %>% # filter out API errors
+  anti_join(official_locations) %>% # filter out locations already posted
+  select(precinct_name, precinct_id, PollingPlaceAddress) %>%
+  kablebox()
+```
+
+### Cases where Google Civic's API did not return the same address when given polling locations
+
+> Until the API is working, it is all of them--just showing a few for now.
+
+```{r}
+official_locations %>% 
+  head() %>% #FIXME WHEN THE API IS WORKING
+  mutate(PollingPlaceAddress_API = map(PollingPlaceAddress, get_poll)) %>% # get polling places for polling places' addresses
+  filter(PollingPlaceAddress_API != PollingPlaceAddress) %>% # mismatches
+  select(Muni, ReportingUnit, PollingPlaceName, PollingPlaceAddress, PollingPlaceAddress_API) %>%
+  kablebox()
+```
+
+### Polling place addresses not returned by Google Civic's API
+
+> Until the API is working, it is all of them--just showing a few for now.
+
+```{r}
+official_locations %>% 
+  head() %>% #FIXME WHEN THE API IS WORKING
+  anti_join(api_locations) %>% # remove ones matched with API
+  select(Muni, ReportingUnit, PollingPlaceName, PollingPlaceAddress) %>% 
+  kablebox()
+```
+
+---
+
+## Combine results
+
+```{r}
+# align official and Google Civic API results
+api_locations %<>% rename(County = county_name)
+
+# reformat county
+official_locations %<>% 
+  mutate_if(is.character, str_to_title) %>% 
+  mutate(County = str_remove(County, " COUNTY") )
+
+
+locations <- full_join(official_locations, api_locations)
+```
+
+
+
+
+
+
+
+## Additional Google Civic API Contents
+
+For reference, these values may or may not be returned: 
+```
+"pollingLocations": [
+    {
+      "id": string,
+      "address": {
+        "locationName": string,
+        "line1": string,
+        "line2": string,
+        "line3": string,
+        "city": string,
+        "state": string,
+        "zip": string
+      },
+      "notes": string,
+      "pollingHours": string,
+      "name": string,
+      "voterServices": string,
+      "startDate": string,
+      "endDate": string,
+      "latitude": double,
+      "longitude": double,
+      "sources": [
+        {
+          "name": string,
+          "official": boolean
+        }
+      ]
+    }
+  ],
+  "earlyVoteSites": [
+    {
+      "id": string,
+      "address": {
+        "locationName": string,
+        "line1": string,
+        "line2": string,
+        "line3": string,
+        "city": string,
+        "state": string,
+        "zip": string
+      },
+      "notes": string,
+      "pollingHours": string,
+      "name": string,
+      "voterServices": string,
+      "startDate": string,
+      "endDate": string,
+      "latitude": double,
+      "longitude": double,
+      "sources": [
+        {
+          "name": string,
+          "official": boolean
+        }
+      ]
+    }
+  ],
+  "dropOffLocations": [
+    {
+      "id": string,
+      "address": {
+        "locationName": string,
+        "line1": string,
+        "line2": string,
+        "line3": string,
+        "city": string,
+        "state": string,
+        "zip": string
+      },
+      "notes": string,
+      "pollingHours": string,
+      "name": string,
+      "voterServices": string,
+      "startDate": string,
+      "endDate": string,
+      "latitude": double,
+      "longitude": double,
+      "sources": [
+        {
+          "name": string,
+          "official": boolean
+        }
+      ]
+    }
+  ],
+```
