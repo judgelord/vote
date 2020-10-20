@@ -159,7 +159,7 @@ wi %>%
   # Find the center of each subregion
   mutate(center_lat = mean(range(lat) ),
          center_long = mean(range(long) ) ) %>%
-ggplot( aes(x = long, y = lat, group = group, fill = changes) ) +
+ggplot( aes(x = long, y = lat, group = group, fill = factor(changes)) ) +
   geom_polygon(color = "white") +
   geom_point(aes(x = Longitude.Primary, 
                  y = Latitude.Primary), 
@@ -167,9 +167,11 @@ ggplot( aes(x = long, y = lat, group = group, fill = changes) ) +
   geom_point(aes(x = Longitude.General, 
                  y = Latitude.General), 
              color = "Green", shape = "+", size = 5, alpha = .5) + 
-  geom_text( aes(x = center_long, y = center_lat, label = County), size = 2, angle = 45, check_overlap = T, color = "white") +
+  geom_text( aes(x = center_long, y = center_lat, label = County), 
+             size = 2, angle = 45, check_overlap = T, color = "white") +
   theme_void() + 
-  labs(fill = "Polling Place\nAddresses Changed\nper County")
+  labs(fill = "Polling Place\nAddresses Changed\nper County") +
+  scale_fill_manual(values = colorRampPalette(c("#6BAED6", "#08306B"))(14))
 ```
 
 New polling locations are green. Removed locations are red. Brighter points mean that more Wards moved to or from that polling location. 
@@ -183,7 +185,7 @@ wi %>%
   # Find the center of each subregion
   mutate(center_lat = mean(range(lat) ),
          center_long = mean(range(long) ) ) %>%
-ggplot( aes(x = long, y = lat, group = group, fill = net) ) +
+ggplot( aes(x = long, y = lat, group = group, fill = factor(net)) ) +
   geom_polygon(color = "white") +
   geom_point(aes(x = Longitude.Primary, 
                  y = Latitude.Primary), 
@@ -194,7 +196,8 @@ ggplot( aes(x = long, y = lat, group = group, fill = net) ) +
   geom_text( aes(x = center_long, y = center_lat, label = County), 
              size = 2, angle = 45, check_overlap = T, color = "white") +
   theme_void() + 
-  labs(fill = "Net Polling Places\nAdded per County")
+  labs(fill = "Net Polling Places\nAdded per County") +
+  scale_fill_brewer(direction = -1) 
 ```
 
 Green Bay (Brown County) and Burlington (Racine County) now have *fewer* polling places than they did for the August Primary election.  
@@ -223,7 +226,7 @@ countymap <- function(county){
 p <- wi %>% 
   filter(County == county) %>% 
 ggplot( ) +
-  geom_polygon(aes(x = long, y = lat, group = group)) +
+  geom_polygon(aes(x = long, y = lat, group = group), fill = "#08306B") +
   geom_point(aes(x = Longitude.Primary, 
                  y = Latitude.Primary), 
              color = "Red", alpha = .5) +
