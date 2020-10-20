@@ -174,7 +174,7 @@ ggplot( aes(x = long, y = lat, group = group, fill = changes) ) +
 
 New polling locations are green. Removed locations are red. Brighter points mean that more Wards moved to or from that polling location. 
 
-The geo data have a few errors, but these points are mostly correct.
+The geodata has a few errors, but these points are mostly correct.
 
 ```{r map_net}
 # net 
@@ -257,21 +257,19 @@ ggplot( ) +
 return(p)
 }
 
-counties <- map(diff %>%
-      filter(net != 0 | changes > 5) %>%
+map(diff %>%
+      filter(net != 0 | changes > 6) %>%
       .$County %>% unique(),
-    countymap)
-
-counties
+    countymap) 
 ```
 
 ---
 
-# Polling locations via Google Civic's API
+# Polling place locations via Google Civic's API
 
 (Actually, it goes Wisconsin Elections Commission --> Voter Information Project --> Google Civic's API)
 
-To check that Google Civic is providing the same information that is posted on the Election Commission's website, we can look up polling locations for addresses in each  voting precinct using the Google Civic API.
+To check that Google Civic is providing the same information that is posted on the Election Commission's website, we can look up polling locations for addresses in each voting precinct using the Google Civic API.
 
 ```{r}
 #########################################################
@@ -313,7 +311,7 @@ addresses$voter_address[1]
 
 Here is the polling place from the Google Civic API for the above address:
 ```{r}
-# need to get AND authorize an api key
+# need to get AND authorize an API key
 source(here::here("api_key.R"))
 
 # A function to get poll addresses
@@ -367,7 +365,7 @@ api_locations %>%
 
 ### Cases where Google Civic's API did not return the same address when given polling locations
 
-> Until the API is working, it is all of them. I'm just showing a few for now.
+> Until the API is working, it will be all addresses. I'm just showing a few for now.
 
 ```{r}
 official_locations %>% 
@@ -380,7 +378,7 @@ official_locations %>%
 
 ### Polling place addresses not returned by Google Civic's API
 
-> Until the API is working, it is all of them. I'm just showing a few for now.
+> Until the API is working, it will be all addresses. I'm just showing a few for now.
 
 ```{r}
 official_locations %>% 
