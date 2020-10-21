@@ -124,7 +124,13 @@ diff <- anti_join(official, old,
             by = c("County", "Muni", "ReportingUnit", "ward"),
             suffix = c(".General", ".Primary"))
 
-# simplify 
+# calculate the total and net number of changes
+diff %<>% 
+  group_by(County)%>% 
+  mutate(changes = length(unique(PollingPlaceAddress.General)),
+         net = changes - length(unique(PollingPlaceAddress.Primary))) 
+
+# simplify polling place names + addresses 
 diff %<>% mutate(General = str_c(PollingPlaceName.General, 
                                  PollingPlaceAddress.General, 
                                  sep = ", "),
@@ -139,27 +145,23 @@ diff %<>% mutate(General = str_c(PollingPlaceName.General,
 ```{r map_change}
 wi <- map_data("county", "wisconsin") %>% mutate(County = str_to_title(subregion))
 
-diff %<>% 
-  group_by(County)%>% 
-  mutate(changes = length(unique(PollingPlaceAddress.General)),
-         net = changes - length(unique(PollingPlaceAddress.Primary))) 
 wi  %<>% 
-  # add counts 
+  # add total and net changes to map data
   left_join(diff %>% 
               select(County, Muni, PollingPlaceAddress.General, changes, net) ) %>% 
-  mutate(changes = changes %>% replace_na(0)) %>% 
-  # add points 
+  # append polling location points 
   full_join(diff %>% mutate(group = NA)) %>% 
   mutate(changes = changes %>% replace_na(0),
          net = net %>% replace_na(0)) 
 
-# changes 
+# plot changes 
 wi %>% 
   group_by(subregion) %>%
   # Find the center of each subregion
   mutate(center_lat = mean(range(lat) ),
          center_long = mean(range(long) ) ) %>%
-ggplot( aes(x = long, y = lat, group = group, fill = factor(changes)) ) +
+  ggplot( ) +
+  aes(x = long, y = lat, group = group, fill = factor(changes)) +
   geom_polygon(color = "white") +
   geom_point(aes(x = Longitude.Primary, 
                  y = Latitude.Primary), 
@@ -167,6 +169,7 @@ ggplot( aes(x = long, y = lat, group = group, fill = factor(changes)) ) +
   geom_point(aes(x = Longitude.General, 
                  y = Latitude.General), 
              color = "Green", shape = "+", size = 5, alpha = .5) + 
+  # label counties at their center
   geom_text( aes(x = center_long, y = center_lat, label = County), 
              size = 2, angle = 45, check_overlap = T, color = "white") +
   theme_void() + 
@@ -185,7 +188,8 @@ wi %>%
   # Find the center of each subregion
   mutate(center_lat = mean(range(lat) ),
          center_long = mean(range(long) ) ) %>%
-ggplot( aes(x = long, y = lat, group = group, fill = factor(net)) ) +
+ggplot() +
+  aes(x = long, y = lat, group = group, fill = factor(net)) + 
   geom_polygon(color = "white") +
   geom_point(aes(x = Longitude.Primary, 
                  y = Latitude.Primary), 
@@ -225,7 +229,7 @@ diff %>%
 countymap <- function(county){
 p <- wi %>% 
   filter(County == county) %>% 
-ggplot( ) +
+ggplot() +
   geom_polygon(aes(x = long, y = lat, group = group), fill = "#08306B") +
   geom_point(aes(x = Longitude.Primary, 
                  y = Latitude.Primary), 
@@ -262,7 +266,8 @@ return(p)
 
 map(diff %>%
       filter(net != 0 | changes > 6) %>%
-      .$County %>% unique(),
+      .$County %>% 
+      unique(),
     countymap) 
 ```
 
