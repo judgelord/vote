@@ -176,7 +176,7 @@ ggplot( aes(x = long, y = lat, group = group, fill = factor(changes)) ) +
 
 New polling locations are green. Removed locations are red. Brighter points mean that more Wards moved to or from that polling location. 
 
-The geodata has a few errors, but these points are mostly correct.
+These data have a few errors. For example, red dots in Rusk and Jackson counties are the result of latitude or longitude typos, but these points are mostly correct. A few of these "changes" are the result of errors in the Elections Commission's August file. For example, the polling location addresses for the Town of Dewey and Town of Sharon are simply incorrect in the August Primary Election file.
 
 ```{r map_net}
 # net 
