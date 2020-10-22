@@ -45,11 +45,11 @@ kablebox <- . %>%  knitr::kable() %>%
 
 ```{r}
 # UPDATE THIS IF A NEW FILE IS POSTED! 
-file <- "2020 General Election PPL RU List.xlsx"
+file <- "Polling Place Locations - 2020 General Election Updated 10-21-2020.xlsx"
 
 official_locations <- readxl::read_xlsx(here::here("data", file))
 
-date <- "8-11-2020"
+date <- "10-21-2020"
 ```
 
 This analysis uses the "`r file`" data posted on `r date`. Here are the current files posted on https://elections.wi.gov/node/6527:
@@ -271,11 +271,216 @@ map(diff %>%
     countymap) 
 ```
 
+
 ---
+
+# Changes since October 7th, 2020
+
+Polling locations are not supposed to change in the month before an election but `¯\_(ツ)_/¯`
+
+```{r}
+old_locations <- readxl::read_xlsx(here::here("data", "2020 General Election PPL RU List.xlsx")) %>% 
+  select(County, Muni, ReportingUnit, PollingPlaceName, PollingPlaceAddress, Longitude, Latitude)
+
+# a function to split out wards
+split <- function(ward){
+  
+  min = str_extract(ward, "[0-9]*") %>% 
+           as.numeric()
+  
+  max = str_extract(ward, "-[0-9]*") %>% 
+           as.numeric() %>% abs()
+  
+  full_seq(c(min,
+             max),
+           1) %>%
+    str_c(collapse = ",") 
+}
+
+# split out wards
+split_wards <- . %>%
+  mutate_if(is.character, str_to_upper) %>% 
+  mutate(ward = str_extract(ReportingUnit, "[1-9].*") %>% 
+           # split on commas in wards
+           str_split(",")) %>% 
+  unnest(ward) %>% 
+  # remove any letters
+  mutate(ward = ward %>% str_remove("[A-z]")) %>% 
+  # make a sequence of wards
+  mutate(ward_seq = map_chr(ward, possibly(split, otherwise = NA)),
+         ward = coalesce(ward_seq, ward) %>% 
+           str_split(",")) %>% 
+  unnest(ward) %>% 
+  mutate_if(is.character, str_to_title) %>%
+  mutate(County = str_remove(County, " County")) %>%
+  mutate(ReportingUnit = paste("Ward ", ward)) %>% 
+  ungroup() %>% 
+  select(-ward_seq)
+
+
+# apply function to old and new polling locations
+official <- official_locations %>% split_wards()
+old <- old_locations %>% split_wards()
+
+# diff between old and new polling locations
+diff <- anti_join(official, old, 
+                  by = c("County", "Muni", "ReportingUnit", 
+                         "ward", "PollingPlaceAddress")) %>%
+  left_join(old, 
+            by = c("County", "Muni", "ReportingUnit", "ward"),
+            suffix = c(".General", ".Primary"))
+
+# calculate the total and net number of changes
+diff %<>% 
+  group_by(County)%>% 
+  mutate(changes = length(unique(PollingPlaceAddress.General)),
+         net = changes - length(unique(PollingPlaceAddress.Primary))) 
+
+# simplify polling place names + addresses 
+diff %<>% mutate(General = str_c(PollingPlaceName.General, 
+                                 PollingPlaceAddress.General, 
+                                 sep = ", "),
+                 Primary = str_c(PollingPlaceName.Primary, 
+                                 PollingPlaceAddress.Primary, 
+                                 sep = ", "))
+```
+
+
+
+
+```{r map_change_october}
+wi <- map_data("county", "wisconsin") %>% mutate(County = str_to_title(subregion))
+
+wi  %<>% 
+  # add total and net changes to map data
+  left_join(diff %>% 
+              select(County, Muni, PollingPlaceAddress.General, changes, net) ) %>% 
+  # append polling location points 
+  full_join(diff %>% mutate(group = NA)) %>% 
+  mutate(changes = changes %>% replace_na(0),
+         net = net %>% replace_na(0)) 
+
+# plot changes 
+wi %>% 
+  group_by(subregion) %>%
+  # Find the center of each subregion
+  mutate(center_lat = mean(range(lat) ),
+         center_long = mean(range(long) ) ) %>%
+  ggplot( ) +
+  aes(x = long, y = lat, group = group, fill = factor(changes)) +
+  geom_polygon(color = "white") +
+  geom_point(aes(x = Longitude.Primary, 
+                 y = Latitude.Primary), 
+             color = "Red", alpha = .5) +
+  geom_point(aes(x = Longitude.General, 
+                 y = Latitude.General), 
+             color = "Green", shape = "+", size = 5, alpha = .5) + 
+  # label counties at their center
+  geom_text( aes(x = center_long, y = center_lat, label = County), 
+             size = 2, angle = 45, check_overlap = T, color = "white") +
+  theme_void() + 
+  labs(fill = "Polling Place\nAddresses Changed\nper County") +
+  scale_fill_manual(values = colorRampPalette(c("#6BAED6", "#08306B"))(14))
+```
+
+New polling locations are green. Removed locations are red. Brighter points mean that more Wards moved to or from that polling location. 
+
+
+```{r map_net_october}
+# net 
+wi %>% 
+  group_by(subregion) %>%
+  # Find the center of each subregion
+  mutate(center_lat = mean(range(lat) ),
+         center_long = mean(range(long) ) ) %>%
+ggplot() +
+  aes(x = long, y = lat, group = group, fill = factor(net)) + 
+  geom_polygon(color = "white") +
+  geom_point(aes(x = Longitude.Primary, 
+                 y = Latitude.Primary), 
+             color = "Red", alpha = .5) +
+  geom_point(aes(x = Longitude.General, 
+                 y = Latitude.General), 
+             color = "Green", shape = "+", size = 5, alpha = .5) + 
+  geom_text( aes(x = center_long, y = center_lat, label = County), 
+             size = 2, angle = 45, check_overlap = T, color = "white") +
+  theme_void() + 
+  labs(fill = "Net Polling Places\nAdded per County") +
+  scale_fill_brewer(direction = -1) 
+```
+
+
+
+
+
+```{r}
+# table of changes 
+diff %>% 
+  ungroup( ) %>%
+  group_by(County, Muni, General, Primary) %>% 
+  summarise(Ward = paste(County, Muni, "Ward", 
+                         paste(ward, collapse = ", "),
+                         sep = ", ")) %>%
+  ungroup() %>% 
+  select(Ward, Primary, General) %>%  
+  distinct() %>% 
+  knitr::kable() %>% 
+  kable_styling() %>% 
+  scroll_box(height = "600px")
+```
+
+```{r map_county_october}
+# a function to plot each county
+countymap <- function(county){
+p <- wi %>% 
+  filter(County == county) %>% 
+ggplot() +
+  geom_polygon(aes(x = long, y = lat, group = group), fill = "#08306B") +
+  geom_point(aes(x = Longitude.Primary, 
+                 y = Latitude.Primary), 
+             color = "Red", alpha = .5) +
+  geom_point(aes(x = Longitude.General, 
+                 y = Latitude.General), 
+             color = "Green", shape = "+", size = 5, alpha = .5) + 
+  geom_text( aes(x = Longitude.Primary, 
+                 y = Latitude.Primary,
+                 label = PollingPlaceName.Primary), 
+             color = "Red", alpha = .5, 
+             angle = 45, check_overlap = T) +
+    geom_text( aes(x = Longitude.General, 
+                 y = Latitude.General,
+                 label = PollingPlaceName.General), 
+             color = "Green", alpha = .5, 
+             angle = 45, check_overlap = T) +
+  geom_segment(aes(x = Longitude.Primary,
+                   y = Latitude.Primary,
+                   xend = Longitude.General, 
+                   yend = Latitude.General), 
+                #arrow = arrow(length = unit(0.1, "cm")),
+               color = "green") + 
+  geom_text( aes(x = Longitude.General, 
+                 y = Latitude.General,
+                 label = PollingPlaceName.General), 
+             color = "Green", alpha = .5, 
+             angle = 45, check_overlap = T) +
+  theme_void() + 
+  labs(title = paste(county, "County"))
+
+return(p)
+}
+
+map(diff %>%
+      filter(net != 0 | changes > 6) %>%
+      .$County %>% 
+      unique(),
+    countymap) 
+```
+
+<!---
 
 # Polling place locations via Google Civic's API
 
-(Actually, it goes Wisconsin Elections Commission --> Voter Information Project --> Google Civic's API)
+(Actually, it goes Wisconsin Elections Commission -> Voter Information Project -> Google Civic's API)
 
 To check that Google Civic is providing the same information that is posted on the Election Commission's website, we can look up polling locations for addresses in each voting precinct using the Google Civic API.
 
@@ -318,7 +523,7 @@ addresses$voter_address[1]
 ```
 
 Here is the polling place from the Google Civic API for the above address:
-```{r}
+```{r, eval=FALSE}
 # need to get AND authorize an API key
 source(here::here("api_key.R"))
 
@@ -363,7 +568,7 @@ api_locations %>% select(voting_street_address, precinct_name, precinct_id, Poll
 
 ### API results not in the state's xlsx file
 
-```{r}
+```{r, eval = FALSE}
 api_locations %>% 
   filter(PollingPlaceAddress != "NULL") %>% # filter out API errors
   anti_join(official_locations) %>% # filter out locations already posted
@@ -375,7 +580,7 @@ api_locations %>%
 
 > Until the API is working, it will be all addresses. I'm just showing a few for now.
 
-```{r}
+```{r, eval=FALSE}
 official_locations %>% 
   head() %>% #FIXME WHEN THE API IS WORKING
   mutate(PollingPlaceAddress_API = map(PollingPlaceAddress, get_poll)) %>% # get polling places for polling places' addresses
@@ -388,7 +593,7 @@ official_locations %>%
 
 > Until the API is working, it will be all addresses. I'm just showing a few for now.
 
-```{r}
+```{r,eval=FALSE}
 official_locations %>% 
   head() %>% #FIXME WHEN THE API IS WORKING
   anti_join(api_locations) %>% # remove ones matched with API
@@ -399,7 +604,7 @@ official_locations %>%
 ---
 
 
-```{r}
+```{r, eval=FALSE}
 # align official and Google Civic API results
 api_locations %<>% rename(County = county_name)
 
@@ -409,7 +614,7 @@ official_locations %<>%
   mutate(County = str_remove(County, " COUNTY") )
 
 
-locations <- full_join(official_locations, api_locations)
+# locations <- full_join(official_locations, api_locations)
 ```
 
 
@@ -507,3 +712,5 @@ For reference, these values may or may not be returned:
     }
   ],
 ```
+
+-->

@@ -1,0 +1,65 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+```{r message=FALSE}
+# required packages
+library(tidyverse, magrittr)
+library(rvest)
+theme_set(theme_minimal())
+options(ggplot2.descrete.color="viridis")
+```
+
+```{r}
+#rvest's html_nodes("a") gets all links from a page. We want to filter to xlsx files.
+
+html <- read_html("https://elections.wi.gov/node/6527") %>% html_nodes("a") 
+
+a <- tibble(file = html_text(html),
+            link = html_attr(html, "href")) %>% 
+               filter(str_detect(link, "xls"))
+
+download.file(a$link[1],  "wi.xlsx")
+
+polls <- readxl::read_xlsx("wi.xlsx")
+         
+ggplot(polls) + 
+  geom_point(aes(x = Longitude, y = Latitude))
+         
+#ggplot2's tidy map_data allow us to use #dplyr's mutate
+
+wi <- map_data("county", "wisconsin")  %>%   
+  mutate(County = str_c( str_to_upper(subregion), " COUNTY"))
+
+#ggplot2's tidy map_data plot like any other data. geom_polygon connects the dots
+
+ggplot(wi) +
+  geom_polygon( aes(x = long, y = lat, group = group) ) 
+
+#ggplot thinks in layers. Let's poll location layer to the map
+wi %<>% full_join(polls)
+
+plot_polls<- function(x){
+  ggplot(x) +
+    geom_polygon( aes(x = long, y = lat, group = group) ) +
+    geom_point( aes(x = Longitude, y = Latitude) )
+}
+
+plot_polls(wi)
+
+#ggplots you want to repeat can go inside a function
+countymap <- function(x){
+  wi %>% 
+    filter(County == x) %>%
+    plot_polls() + aes(color = Muni) + labs(color = x)
+}
+```
+
+```{r county_map_thread, fig.width=11}
+#purrr's map function lets us apply a function to make multiple plots.
+map(wi$County %>% unique() %>% tail(),
+    countymap) 
+
+# In my case to a subset of counties that gained or lost polling places or had more than 6 polling places move
+```

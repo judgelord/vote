@@ -51,9 +51,9 @@ We are currently using this file:
 
 ```{r}
 # UPDATE THIS IF A NEW FILE IS POSTED! 
-file <- "2020 General Election PPL RU List.xlsx"
+file <- "Polling Place Locations - 2020 General Election Updated 10-21-2020.xlsx"
 
-`Date Authenticated*` <- "2020-10-07"
+`Date Authenticated*` <- "2020-10-21"
 
 upload_file <- paste0("VAN Polling Locations ", `Date Authenticated*`, ".xlsx")
 
@@ -339,7 +339,7 @@ Potentially added or deleted polling locations are automatically created [here](
 ```{r, eval=FALSE}
 library(googlesheets4)
 
-googledrive::drive_get("Nov projected dem vote by ward") %>%
+ss <- googledrive::drive_get("Nov projected dem vote by ward") %>%
   gs4_get()
 
 votes <- read_sheet(ss) %>% 
@@ -369,15 +369,33 @@ poll_address_changes <- poll_ward_changes %>%
 # arrange by number of issues per Muni
 poll_address_changes %<>%
   arrange(-`Wards Changing`, County, ReportingUnit) %>% 
-  select(`Wards Changing`, Issue, projected_dem_vote, County, ReportingUnit, everything() )
+  select(County, 
+         Issue, ReportingUnit,
+         `Wards Changing`,
+         projected_dem_vote, 
+         everything() )
 
 poll_address_changes %>% kablebox()
 
-#FIXME pull previously flagged issues and put new ones at the top
+
+#pull previously flagged issues and put new ones at the top
+ss <- googledrive::drive_get("Polling Location Issue Tracker") %>%
+  gs4_get() 
+
+poll_address_changes_old <- sheets_read(ss, "Observed from WEC Data")
+
+# note new and old
+new_issues <- anti_join(poll_address_changes, poll_address_changes_old) %>% 
+  mutate( date_added = Sys.Date() )
+
+out <- full_join(poll_address_changes_old,  new_issues) %>% arrange(date_added)
+
+# write to sheet
 ss <- googledrive::drive_get("WI polling locations") %>%
   gs4_get() 
 
-poll_address_changes %>%
+
+out %>%
   sheet_write(ss = ss,
               sheet = str_c("Issues ", Sys.Date() %>% as.character() ))
 ```
@@ -404,8 +422,19 @@ write_csv(upload, path = here("data", upload_file))
 
 library(googlesheets4)
 
+
+
+## drop "ghost wards missing from van"
 ss <- googledrive::drive_get("WI polling locations") %>%
   gs4_get() 
+
+
+# ghost wards 
+ghosts <- read_sheet(ss, "VAN missing precincts")
+
+ghosts %<>% select(`Precinct Name`, Address)
+
+upload %<>% anti_join(ghosts)
 
 upload %>%
   mutate(`Precinct ID` = `Precinct ID` %>% replace_na(0)) %>% 
