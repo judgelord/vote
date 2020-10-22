@@ -328,20 +328,20 @@ diff <- anti_join(official, old,
                          "ward", "PollingPlaceAddress")) %>%
   left_join(old, 
             by = c("County", "Muni", "ReportingUnit", "ward"),
-            suffix = c(".General", ".Primary"))
+            suffix = c(".October21", ".October7"))
 
 # calculate the total and net number of changes
 diff %<>% 
   group_by(County)%>% 
-  mutate(changes = length(unique(PollingPlaceAddress.General)),
-         net = changes - length(unique(PollingPlaceAddress.Primary))) 
+  mutate(changes = length(unique(PollingPlaceAddress.October21)),
+         net = changes - length(unique(PollingPlaceAddress.October7))) 
 
 # simplify polling place names + addresses 
-diff %<>% mutate(General = str_c(PollingPlaceName.General, 
-                                 PollingPlaceAddress.General, 
+diff %<>% mutate(October21 = str_c(PollingPlaceName.October21, 
+                                 PollingPlaceAddress.October21, 
                                  sep = ", "),
-                 Primary = str_c(PollingPlaceName.Primary, 
-                                 PollingPlaceAddress.Primary, 
+                 October7 = str_c(PollingPlaceName.October7, 
+                                 PollingPlaceAddress.October7, 
                                  sep = ", "))
 ```
 
@@ -354,7 +354,7 @@ wi <- map_data("county", "wisconsin") %>% mutate(County = str_to_title(subregion
 wi  %<>% 
   # add total and net changes to map data
   left_join(diff %>% 
-              select(County, Muni, PollingPlaceAddress.General, changes, net) ) %>% 
+              select(County, Muni, PollingPlaceAddress.October21, changes, net) ) %>% 
   # append polling location points 
   full_join(diff %>% mutate(group = NA)) %>% 
   mutate(changes = changes %>% replace_na(0),
@@ -369,11 +369,11 @@ wi %>%
   ggplot( ) +
   aes(x = long, y = lat, group = group, fill = factor(changes)) +
   geom_polygon(color = "white") +
-  geom_point(aes(x = Longitude.Primary, 
-                 y = Latitude.Primary), 
+  geom_point(aes(x = Longitude.October7, 
+                 y = Latitude.October7), 
              color = "Red", alpha = .5) +
-  geom_point(aes(x = Longitude.General, 
-                 y = Latitude.General), 
+  geom_point(aes(x = Longitude.October21, 
+                 y = Latitude.October21), 
              color = "Green", shape = "+", size = 5, alpha = .5) + 
   # label counties at their center
   geom_text( aes(x = center_long, y = center_lat, label = County), 
@@ -396,11 +396,11 @@ wi %>%
 ggplot() +
   aes(x = long, y = lat, group = group, fill = factor(net)) + 
   geom_polygon(color = "white") +
-  geom_point(aes(x = Longitude.Primary, 
-                 y = Latitude.Primary), 
+  geom_point(aes(x = Longitude.October7, 
+                 y = Latitude.October7), 
              color = "Red", alpha = .5) +
-  geom_point(aes(x = Longitude.General, 
-                 y = Latitude.General), 
+  geom_point(aes(x = Longitude.October21, 
+                 y = Latitude.October21), 
              color = "Green", shape = "+", size = 5, alpha = .5) + 
   geom_text( aes(x = center_long, y = center_lat, label = County), 
              size = 2, angle = 45, check_overlap = T, color = "white") +
@@ -417,12 +417,12 @@ ggplot() +
 # table of changes 
 diff %>% 
   ungroup( ) %>%
-  group_by(County, Muni, General, Primary) %>% 
+  group_by(County, Muni, October21, October7) %>% 
   summarise(Ward = paste(County, Muni, "Ward", 
                          paste(ward, collapse = ", "),
                          sep = ", ")) %>%
   ungroup() %>% 
-  select(Ward, Primary, General) %>%  
+  select(Ward, October7, October21) %>%  
   distinct() %>% 
   knitr::kable() %>% 
   kable_styling() %>% 
@@ -436,31 +436,31 @@ p <- wi %>%
   filter(County == county) %>% 
 ggplot() +
   geom_polygon(aes(x = long, y = lat, group = group), fill = "#08306B") +
-  geom_point(aes(x = Longitude.Primary, 
-                 y = Latitude.Primary), 
+  geom_point(aes(x = Longitude.October7, 
+                 y = Latitude.October7), 
              color = "Red", alpha = .5) +
-  geom_point(aes(x = Longitude.General, 
-                 y = Latitude.General), 
+  geom_point(aes(x = Longitude.October21, 
+                 y = Latitude.October21), 
              color = "Green", shape = "+", size = 5, alpha = .5) + 
-  geom_text( aes(x = Longitude.Primary, 
-                 y = Latitude.Primary,
-                 label = PollingPlaceName.Primary), 
+  geom_text( aes(x = Longitude.October7, 
+                 y = Latitude.October7,
+                 label = PollingPlaceName.October7), 
              color = "Red", alpha = .5, 
              angle = 45, check_overlap = T) +
-    geom_text( aes(x = Longitude.General, 
-                 y = Latitude.General,
-                 label = PollingPlaceName.General), 
+    geom_text( aes(x = Longitude.October21, 
+                 y = Latitude.October21,
+                 label = PollingPlaceName.October21), 
              color = "Green", alpha = .5, 
              angle = 45, check_overlap = T) +
-  geom_segment(aes(x = Longitude.Primary,
-                   y = Latitude.Primary,
-                   xend = Longitude.General, 
-                   yend = Latitude.General), 
+  geom_segment(aes(x = Longitude.October7,
+                   y = Latitude.October7,
+                   xend = Longitude.October21, 
+                   yend = Latitude.October21), 
                 #arrow = arrow(length = unit(0.1, "cm")),
                color = "green") + 
-  geom_text( aes(x = Longitude.General, 
-                 y = Latitude.General,
-                 label = PollingPlaceName.General), 
+  geom_text( aes(x = Longitude.October21, 
+                 y = Latitude.October21,
+                 label = PollingPlaceName.October21), 
              color = "Green", alpha = .5, 
              angle = 45, check_overlap = T) +
   theme_void() + 
