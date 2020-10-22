@@ -106,7 +106,7 @@ split_wards <- . %>%
            str_split(",")) %>% 
   unnest(ward) %>% 
   mutate_if(is.character, str_to_title) %>%
-  mutate(County = str_remove(County, " County")) %>%
+  mutate(County = str_remove(County, " County") %>% str_remove("\\.")) %>%
   mutate(ReportingUnit = paste("Ward ", ward)) %>% 
   ungroup() %>% 
   select(-ward_seq)
@@ -282,44 +282,7 @@ Polling locations are not supposed to change in the month before an election but
 old_locations <- readxl::read_xlsx(here::here("data", "2020 General Election PPL RU List.xlsx")) %>% 
   select(County, Muni, ReportingUnit, PollingPlaceName, PollingPlaceAddress, Longitude, Latitude)
 
-# a function to split out wards
-split <- function(ward){
-  
-  min = str_extract(ward, "[0-9]*") %>% 
-           as.numeric()
-  
-  max = str_extract(ward, "-[0-9]*") %>% 
-           as.numeric() %>% abs()
-  
-  full_seq(c(min,
-             max),
-           1) %>%
-    str_c(collapse = ",") 
-}
-
-# split out wards
-split_wards <- . %>%
-  mutate_if(is.character, str_to_upper) %>% 
-  mutate(ward = str_extract(ReportingUnit, "[1-9].*") %>% 
-           # split on commas in wards
-           str_split(",")) %>% 
-  unnest(ward) %>% 
-  # remove any letters
-  mutate(ward = ward %>% str_remove("[A-z]")) %>% 
-  # make a sequence of wards
-  mutate(ward_seq = map_chr(ward, possibly(split, otherwise = NA)),
-         ward = coalesce(ward_seq, ward) %>% 
-           str_split(",")) %>% 
-  unnest(ward) %>% 
-  mutate_if(is.character, str_to_title) %>%
-  mutate(County = str_remove(County, " County")) %>%
-  mutate(ReportingUnit = paste("Ward ", ward)) %>% 
-  ungroup() %>% 
-  select(-ward_seq)
-
-
-# apply function to old and new polling locations
-official <- official_locations %>% split_wards()
+# apply function to old polling locations
 old <- old_locations %>% split_wards()
 
 # diff between old and new polling locations
@@ -379,8 +342,8 @@ wi %>%
   geom_text( aes(x = center_long, y = center_lat, label = County), 
              size = 2, angle = 45, check_overlap = T, color = "white") +
   theme_void() + 
-  labs(fill = "Polling Place\nAddresses Changed\nper County") +
-  scale_fill_manual(values = colorRampPalette(c("#6BAED6", "#08306B"))(14))
+  labs(fill = "Polling Place\nAddresses Changed\nper County Between\nOct. 7 and Oct. 21 2020") +
+  scale_fill_brewer(direction = -1) 
 ```
 
 New polling locations are green. Removed locations are red. Brighter points mean that more Wards moved to or from that polling location. 
@@ -405,7 +368,7 @@ ggplot() +
   geom_text( aes(x = center_long, y = center_lat, label = County), 
              size = 2, angle = 45, check_overlap = T, color = "white") +
   theme_void() + 
-  labs(fill = "Net Polling Places\nAdded per County") +
+  labs(fill = "Net Polling Places\nAdded per County Between\nOct. 7 and Oct. 21 2020") +
   scale_fill_brewer(direction = -1) 
 ```
 
@@ -470,7 +433,7 @@ return(p)
 }
 
 map(diff %>%
-      filter(net != 0 | changes > 6) %>%
+      filter(net != 0 | changes > 0) %>%
       .$County %>% 
       unique(),
     countymap) 
