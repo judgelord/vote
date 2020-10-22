@@ -1,28 +1,43 @@
 ---
-title: "Untitled"
-output: html_document
+title: "Polling Places in WI"
+output:
+    html_document:
+      highlight: zenburn
 ---
 
 ```{r message=FALSE}
+knitr::opts_chunk$set(echo = TRUE, 
+                      cache = FALSE, 
+                      fig.width=8.5, 
+                      split = T,
+                      fig.align = 'center', 
+                      fig.path='figs/',
+                      warning=FALSE, 
+                      message=FALSE)
+
 # required packages
 library(tidyverse, magrittr)
 library(rvest)
+library(knitr)
 theme_set(theme_minimal())
 options(ggplot2.descrete.color="viridis")
 ```
 
 ```{r}
-#rvest's html_nodes("a") gets all links from a page. We want to filter to xlsx files.
+#rvest's html_nodes("a") gets each bit of linked text on a web page. We want to filter to xlsx files and download the first one.
 
-html <- read_html("https://elections.wi.gov/node/6527") %>% html_nodes("a") 
+html <- read_html("https://elections.wi.gov/node/6976") %>% 
+ html_nodes("a") 
 
-a <- tibble(file = html_text(html),
-            link = html_attr(html, "href")) %>% 
-               filter(str_detect(link, "xls"))
+a <- tibble(text = html_text(html),
+                  link = html_attr(html, "href") ) %>% 
+ filter( str_detect(link, "xls") )
 
-download.file(a$link[1],  "wi.xlsx")
+download.file(a$link[1],  "polls.xlsx")
 
-polls <- readxl::read_xlsx("wi.xlsx")
+kable(a)
+
+polls <- readxl::read_xlsx("polls.xlsx")
          
 ggplot(polls) + 
   geom_point(aes(x = Longitude, y = Latitude))
@@ -38,7 +53,7 @@ ggplot(wi) +
   geom_polygon( aes(x = long, y = lat, group = group) ) 
 
 #ggplot thinks in layers. Let's poll location layer to the map
-wi %<>% full_join(polls)
+wi <- full_join(wi, polls)
 
 plot_polls<- function(x){
   ggplot(x) +
@@ -58,7 +73,7 @@ countymap <- function(x){
 
 ```{r county_map_thread, fig.width=11}
 #purrr's map function lets us apply a function to make multiple plots.
-map(wi$County %>% unique() %>% tail(),
+map(wi$County %>% unique() %>% head(),
     countymap) 
 
 # In my case to a subset of counties that gained or lost polling places or had more than 6 polling places move

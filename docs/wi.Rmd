@@ -56,7 +56,7 @@ This analysis uses the "`r file`" data posted on `r date`. Here are the current 
 
 ```{r}
 # polling locations posted on website
-html <- read_html("https://elections.wi.gov/node/6527") %>%
+html <- read_html("https://elections.wi.gov/node/6976") %>%
   html_nodes("a") 
 
 files <- tibble(file = html_text(html),
@@ -204,8 +204,11 @@ ggplot() +
   scale_fill_brewer(direction = -1) 
 ```
 
-Green Bay (Brown County) and Burlington (Racine County) now have *fewer* polling places than they did for the August Primary election.  
+Green Bay (Brown County) and Burlington (Racine County) now have *fewer* polling places than they did for the August Primary election. 
 
+On September 15th, Green Bay's City Council [voted](https://greenbaywi.civicclerk.com/Web/Player.aspx?id=6914&key=-1&mod=-1&mk=-1&nov=0) to consolidate Wards 6,7,9, & 14 (who voted at Danz Elementry in the August Primary) and Wards 22 & 23 (who voted at Curative Connections). These Wards now all vote at the Bay Beach Amusement Park. Danz Elementary is 68% Latinx and 85% economically disadvantaged. [Green bay has received grants](https://www.greenbaypressgazette.com/story/news/2020/09/24/wisconsin-election-green-bay-lines-up-polling-places-pushes-absentee-voting/5810372002/) to keep polls open but still has just over half of its usual number of polls.
+
+Burlington Wards 1-4 voted at Cross Lutheran Church in the Primary. They now vote with Wards 5-8 at the Veterans Memorial Building.
 
 
 ```{r}
@@ -276,20 +279,20 @@ map(diff %>%
 
 # Changes since October 7th, 2020
 
-Polling locations are not supposed to change in the month before an election but `¯\_(ツ)_/¯`
+Polling locations are not supposed to change in the 30 days before an election but `¯\_(ツ)_/¯`
 
 ```{r}
-old_locations <- readxl::read_xlsx(here::here("data", "2020 General Election PPL RU List.xlsx")) %>% 
+oct_locations <- readxl::read_xlsx(here::here("data", "2020 General Election PPL RU List.xlsx")) %>% 
   select(County, Muni, ReportingUnit, PollingPlaceName, PollingPlaceAddress, Longitude, Latitude)
 
 # apply function to old polling locations
-old <- old_locations %>% split_wards()
+oct <- oct_locations %>% split_wards()
 
 # diff between old and new polling locations
-diff <- anti_join(official, old, 
+diff <- anti_join(official, oct, 
                   by = c("County", "Muni", "ReportingUnit", 
                          "ward", "PollingPlaceAddress")) %>%
-  left_join(old, 
+  left_join(oct, 
             by = c("County", "Muni", "ReportingUnit", "ward"),
             suffix = c(".October21", ".October7"))
 
