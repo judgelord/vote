@@ -281,7 +281,7 @@ map(diff %>%
 
 By law, polling locations are [not supposed to change](https://docs.legis.wisconsin.gov/document/statutes/2003/5.25(3)) in the 60 days before an general election but `¯\_(ツ)_/¯` 
 
-Note: The Election Commission's [guidance](https://elections.wi.gov/clerks/guidance/accessibility/new-polling-place) just says 30 days, but Wisconsin Statute 5.25(3) specifies 60 days for general elections.
+The Election Commission's [guidance](https://elections.wi.gov/clerks/guidance/accessibility/new-polling-place) just says 30 days, but Wisconsin Statute 5.25(3) specifies 60 days for general elections.
 
 >"Polling places shall be established for each September primary and general election at least 60 days before the election, and for each other election at least 30 days before the election." - Wisconsin Statute 5.25(3)
 
