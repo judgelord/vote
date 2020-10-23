@@ -52,7 +52,7 @@ official_locations <- readxl::read_xlsx(here::here("data", file))
 date <- "10-21-2020"
 ```
 
-This analysis uses the "`r file`" data posted on `r date`. Here are the current files posted on https://elections.wi.gov/node/6527:
+This analysis uses the "`r file`" data posted on `r date`. Here are the current files posted on https://elections.wi.gov/node/6976:
 
 ```{r}
 # polling locations posted on website
@@ -279,7 +279,7 @@ map(diff %>%
 
 # Changes since October 7th, 2020
 
-By law, polling locations are [not supposed to change](https://docs.legis.wisconsin.gov/document/statutes/2003/5.25(3)) in the 60 days before an general election but `¯\_(ツ)_/¯` 
+By law, polling locations are [not supposed to change](https://docs.legis.wisconsin.gov/document/statutes/2003/5.25(3)) in the 60 days before a general election but `¯\_(ツ)_/¯` 
 
 The Election Commission's [guidance](https://elections.wi.gov/clerks/guidance/accessibility/new-polling-place) just says 30 days, but Wisconsin Statute 5.25(3) specifies 60 days for general elections.
 
