@@ -36,7 +36,7 @@ library(rvest)
 
 kablebox <- . %>%  knitr::kable() %>% 
   kable_styling() %>% 
-  scroll_box(height = "400px")
+  scroll_box(height = "200px")
 ```
 
 > Note: Below are **election day** polling places. For early voting (October 20-30) and ballot drop box locations, go to [iwillvote.com](https://iwillvote.com/locate/?state=WI)
@@ -282,7 +282,7 @@ By law, polling locations are [not supposed to change](https://docs.legis.wiscon
 
 The Election Commission's [guidance](https://elections.wi.gov/clerks/guidance/accessibility/new-polling-place) just says 30 days, but Wisconsin Statute 5.25(3) specifies 60 days for general elections.
 
->"Polling places shall be established for each September primary and general election at least 60 days before the election, and for each other election at least 30 days before the election." - Wisconsin Statute 5.25(3)
+>"Polling places shall be established for each September primary and general election at least 60 days before the election, and for each other election at least 30 days before the election." - [Wisconsin Statute 5.25(3)](https://docs.legis.wisconsin.gov/document/statutes/2003/5.25(3))
 
 ```{r}
 oct_locations <- readxl::read_xlsx(here::here("data", "2020 General Election PPL RU List.xlsx")) %>% 
@@ -442,22 +442,24 @@ map(diff %>%
     countymap) 
 ```
 
-# Early voting and dropboxes
+# Early voting and ballot drop boxes
 
-To request an absentee ballot in Wisconsin, you must go to the Election Commission's website myvote.wi.gov. This site then shows voters their options for Early Voting (called "In-Person Absentee" in Wisconsin) and Drop Boxes. The Elections Commission relies on Municipal Clerks to provide this information. Unfortunatly, even halfway thorough early voting, many municipalities have not yet provided this information. For example, Madison has, but Green Bay has not.
+> Note: Because the Election Commission's website, myvote.wi.gov, is incomplete, voters should go to [iwillvote.com](https://iwillvote.com/locate/?state=WI) for early voting and ballot drop box locations
 
-### Madison
+To request an absentee ballot in Wisconsin, you must go to the Election Commission's website myvote.wi.gov. This site then shows voters their Early Voting (called "In-Person Absentee") and Drop Box options. The Election Commission relies on Municipal Clerks to provide this information. Unfortunately, even halfway through early voting, many municipalities have not yet provided this information. For example, Madison has, but Green Bay has not.
+
+### myvote.wi.gov has options for Madison
 
 ![](figs/Madison.png)
 
-### Green Bay
+### myvote.wi.gov lacks options for Green Bay
 
 ![](figs/Green Bay WI.jpg)
 
 
-### Early voting and drop box information available for all Wisconsin municipalities (each dot is a polling place):
+### myvote.wi.gov lacks early voting or drop box information for most municipalities 
 
-```{r early}
+```{r}
 early <- read_csv(here("data", "Early Voting Sites - 2020 General Election.csv")) %>% 
   select(Muni) %>% 
   distinct() %>% 
@@ -471,8 +473,8 @@ drop <- read_csv(here("data", "Absentee Dropboxes - 2020 General Election.csv"))
          drop = "Drop boxes listed")
 
 # add to data
-# reformat county
 official_locations %<>% 
+  # reformat county
   mutate(County = County %>% 
            str_to_title() %>% 
            str_remove(" County") ) %>% 
@@ -481,7 +483,21 @@ official_locations %<>%
   mutate(drop = drop %>% replace_na("No information"),
          early = early %>% replace_na("No information") )
 
+# summary table 
+official_locations %>% 
+  select(Muni, early, drop) %>% 
+  distinct() %>% 
+  mutate(early = str_replace(early, "Early voting options listed", "Yes"),
+         drop = str_replace(drop, "Drop boxes listed", "Yes")) %>%
+count(early, drop) %>% 
+  rename(`Early voting options listed` = early,
+         `Drop boxes listed` = drop,
+         `Municipalities` = n) %>% 
+  kablebox()
+```
 
+
+```{r early}
 # format map data 
 wi <- map_data("county", "wisconsin") %>% 
   mutate(County = str_to_title(subregion) ) %>% 
@@ -513,15 +529,15 @@ ggplot(x) +
                  label = Muni), 
              size = 200/nrow(x), vjust = -1, check_overlap = T) +
   theme_void() + 
-  labs(color = "Early voting options\non myvote.wi.gov") +
+  labs(color = "Early voting options\non myvote.wi.gov\nby polling place") +
   scale_color_brewer(palette = "Set2")
 }
 
 early_plot(wi)
 
-early_plot(wi %>% filter(County == "Brown")) 
+early_plot(wi %>% filter(County == "Brown")) + labs(title = "Brown County")
 
-early_plot(wi %>% filter(County == "Milwaukee"))
+early_plot(wi %>% filter(County == "Milwaukee")) + labs(title = "Milwaukee County")
 ```
 
 ```{r dropbox}
@@ -542,14 +558,14 @@ ggplot(x) +
                  label = Muni), 
              size = 200/nrow(x), vjust = -1, check_overlap = T) +
   theme_void() + 
-  labs(color = "Ballot drop box options\non myvote.wi.gov") +
+  labs(color = "Ballot drop box options\non myvote.wi.gov\nby polling place") +
   scale_color_brewer(palette = "Set2")
 }
 
 drop_plot(wi)
 
-drop_plot(wi %>% filter(County == "Brown"))
-drop_plot(wi %>% filter(County == "Milwaukee"))
+drop_plot(wi %>% filter(County == "Brown")) + labs(title = "Brown County")
+drop_plot(wi %>% filter(County == "Milwaukee")) + labs(title = "Milwaukee County")
 ```
 <!---
 
