@@ -537,6 +537,8 @@ early_plot(wi)
 
 early_plot(wi %>% filter(County == "Brown")) + labs(title = "Brown County")
 
+early_plot(wi %>% filter(County == "Outagamie")) + labs(title = "Outagamie")
+
 early_plot(wi %>% filter(County == "Milwaukee")) + labs(title = "Milwaukee County")
 ```
 
@@ -566,6 +568,7 @@ drop_plot(wi)
 
 drop_plot(wi %>% filter(County == "Brown")) + labs(title = "Brown County")
 drop_plot(wi %>% filter(County == "Milwaukee")) + labs(title = "Milwaukee County")
+
 ```
 <!---
 
