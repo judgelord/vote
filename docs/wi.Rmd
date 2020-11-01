@@ -126,6 +126,11 @@ diff <- anti_join(official, old,
             by = c("County", "Muni", "ReportingUnit", "ward"),
             suffix = c(".General", ".Primary"))
 
+# save most recent split data 
+write_csv(official, here("data", paste("WEC" , date, "by ward.csv")))
+# save most recent diff data 
+write_csv(diff, here("data", paste("WEC" , date, "by ward new.csv")))
+
 # calculate the total and net number of changes
 diff %<>% 
   group_by(County)%>% 
@@ -570,6 +575,54 @@ drop_plot(wi %>% filter(County == "Brown")) + labs(title = "Brown County")
 drop_plot(wi %>% filter(County == "Milwaukee")) + labs(title = "Milwaukee County")
 
 ```
+
+# Ballot Drop Boxes Close at Different Times
+
+About 75% of Absentee Ballot Drop Boxes are open until polls close at 8 PM, but hundreds of drop boxes across Wisconsin close earlier, meaning that a voter must take their ballot to their polling place if they miss the last drop box pickup. Voters can check their municipality's Drop Box pickup time on myvote.wi.gov; If it is not there (myvote has no information on most drop boxes), they should try iwillvote.com or call their Clerk. 
+
+```{r dropbox_dates}
+drop_date <- read_csv(here("data", "Absentee Dropboxes - 2020 General Election.csv")) %>% 
+  select(Muni, ToDate) %>% 
+  mutate(Muni = str_remove(Muni, " - .*") %>% str_to_title() ) %>% 
+  distinct() %>%
+  mutate(date = ifelse(ToDate == "11/3/2020", " Election Day", "Before Election Day") )
+
+# add drob box date data to map
+wi %<>% 
+  mutate(Muni = str_to_title(Muni)) %>% 
+  full_join(drop_date)
+
+# drop boxes
+drop_plot <- function(x){ 
+  
+ggplot(x) +
+  aes(x = long, y = lat, group = group) + 
+  geom_polygon(color = "white") +
+  geom_point(aes(x = Longitude, 
+                 y = Latitude,
+                 color = date ),
+               alpha = 900/nrow(x) ) + 
+  geom_text( aes(x = center_long, y = center_lat, label = County), 
+             size = 2, angle = 45, check_overlap = T, color = "white") +
+      geom_text( aes(x = Longitude, 
+                 y = Latitude,
+                 color = date,
+                 label = Muni), 
+             size = 200/nrow(x), vjust = -1, check_overlap = T) +
+    theme_void() +
+  scale_color_brewer(palette = "Set2") + 
+  labs(color = "Ballot drop box deadline\non myvote.wi.gov\nby polling place") 
+}
+
+drop_plot(wi)
+drop_plot(wi %>% filter(County == "Dane")) + labs(title = "Dane County")
+drop_plot(wi %>% filter(County == "Portage")) + labs(title = "Portage County")
+drop_plot(wi %>% filter(County == "Racine")) + labs(title = "Racine County")
+drop_plot(wi %>% filter(County == "Rock")) + labs(title = "Rock County")
+drop_plot(wi %>% filter(County == "Green")) + labs(title = "Green County")
+drop_plot(wi %>% filter(County == "Ozaukee")) + labs(title = "Ozaukee County")
+```
+
 <!---
 
 # Polling place locations via Google Civic's API
