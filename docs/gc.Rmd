@@ -1,0 +1,365 @@
+---
+title: "Google Civic vs. WI Election Commission Polling Places"
+subtitle: 
+author:
+output:
+    # pdf_document:
+    #   toc: true
+    #   keep_tex: true
+    html_document:
+      highlight: zenburn
+      toc: true
+      toc_float: true
+      code_folding: hide
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, 
+                      cache = FALSE, 
+                      fig.width=8.5, 
+                      split = T,
+                      fig.align = 'center', 
+                      fig.path='figs/',
+                      warning=FALSE, 
+                      message=FALSE)
+
+library(httr)
+library(jsonlite)
+library(tidyverse)
+library(magrittr)
+library(here)
+library(knitr)
+library(kableExtra)
+library(rvest)
+
+kablebox <- . %>%  knitr::kable() %>% 
+  kable_styling() %>% 
+  scroll_box(height = "400px")
+```
+
+This link will update when the WEC file and date in the code chunk below are updated.
+
+# Polling Locations from the state 
+
+We are currently using this file (pre-processed [here]()):
+
+```{r}
+# UPDATE THIS IF A NEW FILE IS POSTED! 
+file <- "Polling Place Locations - 2020 General Election Updated 10-21-2020.xlsx"
+
+`Date Authenticated*` <- "2020-10-21"
+
+tibble(file,
+       `Date Authenticated*`) %>% 
+  kablebox()
+
+official_locations <- read_csv(here::here("data", file))
+
+official_locations %<>% mutate_if(is.character, str_to_upper) %>%
+  mutate(PollingPlaceAddress = PollingPlaceAddress %>% 
+           str_replace(" RD", " ROAD"),
+         County = str_remove(County, "COUNTY"))
+
+# some locations have more than one room and some munis have duplicates
+official_locations %<>% select(-VotingRoomArea)
+
+# combine polling places at the same address
+official_locations %<>%
+  group_by(County, PollingPlaceAddress, PollingPlaceName, Muni) %>%
+  mutate(ReportingUnit = paste(unique(County), 
+                               unique(Muni), 
+                               unique(ReportingUnit), 
+                               sep = " - ",
+                               collapse = " and ")) %>%
+  ungroup() %>%
+  distinct()
+```
+
+The most recent xlsx file of polling locations that is posted: https://elections.wi.gov/node/6527
+
+```{r}
+# polling locations posted on website
+html <- read_html("https://elections.wi.gov/node/6976") %>%
+  html_nodes("a") 
+
+files <- tibble(file = html_text(html),
+                link = html_attr(html, "href")) %>% 
+  filter(str_detect(file, "xls|csv")) 
+                
+kablebox(files)
+```
+
+---
+
+# Polling locations via Google Civic's API
+
+(Actually, it goes State (elections.wi.gov) --> Voter Information Project --> Google Civic's API)
+
+To check the state's data's accuracy, we look up polling locations for addresses in every voting precinct using the Google Civic API.
+
+```{r}
+#########################################################
+# one address per precinct
+addresses <- read_csv(here::here("data", "wisconsin_example_addresses.csv"))
+
+addresses %<>% mutate_if(is.character, str_to_upper)
+
+addresses %<>% arrange(county_name)
+
+# FIXME DELETE THIS WHEN API IS WORKING
+addresses %<>% head()
+# /FIXME
+```
+
+
+
+Polling locations are sometimes (in the days or weeks before an election) available via the Google Civic API, which uses data collected from states by the Voter Information Project, which notifies users when it posts data here: https://groups.google.com/g/vip-community
+
+Notes about the Google Civic API (see the relevant documentation [here](https://developers.google.com/civic-information/docs/v2/elections/voterInfoQuery))  
+- create an API key here: https://console.developers.google.com/apis/credentials  
+- remember to authorize you API key  
+- API calls should not need `electionId`; docs say it is optional  
+- `pollingLocations` will not always be returned  
+- may return a great deal more than polling locations (see Additional Google Civic API Contents below)
+- may return more than one polling place per input address as a list 
+
+
+
+```{r}
+# make full street address
+addresses %<>% 
+  mutate(voter_address = paste(voting_street_address,
+                               voting_city, 
+                               state_code))
+
+addresses$voter_address[2]
+```
+
+Here is the polling place from the Google Civic API for the above address:
+```{r}
+
+# need to get AND authorize an api key
+source(here::here("api_key.R"))
+
+# A function to get poll addresses
+get_poll <- function(voter_address){
+  
+  voter_address %<>% 
+    str_replace_all(" ", "%20") %>%
+    str_remove_all(",")
+  
+  url <- str_c("https://civicinfo.googleapis.com/civicinfo/v2/voterinfo?address=", 
+               voter_address, 
+               "&returnAllAvailableData=true&key=", 
+               api_key)
+  
+  
+  poll <- GET(url) %>% 
+    .$content %>% 
+    rawToChar() %>% 
+    fromJSON() %>%
+    .$pollingLocations %>% # note: there is a lot more than this
+    #.$address %>% 
+    {ifelse(is.null(.), "NULL", .)} %>% 
+    unlist() %>% 
+    str_c(collapse = ", ")
+  
+  #if(poll == "NULL"){Sys.sleep(1)}
+  
+  return(poll)
+}
+
+get_poll(addresses$voter_address[2])
+```
+
+```{r, eval = FALSE}
+# apply function to addresses
+api_locations <- addresses %>% 
+  # "NULL" if NULL, "error" if any error
+  mutate(GC_Polling_Place = voter_address %>% map_chr(possibly(get_poll, "error"))) 
+
+## For some reason GC returnds 400 or 500 observations and a lot of nulls each pass--does not appear to be a rate limit thing, so we just do pass after pass until we are not getting any more. 
+
+# initialize found 
+api_found <- api_locations %>% filter(GC_Polling_Place != "NULL")
+
+# initialize missing
+api_missing <- api_locations %>% filter(GC_Polling_Place == "NULL")
+
+##############################################
+# loop until api_found approaches api_locations
+while( nrow(api_missing) < nrow(api_locations_temp) ){  
+  
+api_locations_temp <- api_missing %>% 
+  # "NULL" if NULL, "error" if any error
+  mutate(GC_Polling_Place = voter_address %>% map_chr(possibly(get_poll, "error"))) 
+
+api_missing <- api_locations_temp %>% filter(GC_Polling_Place == "NULL")
+
+api_found %<>% full_join(api_locations_temp %>% 
+                           filter(GC_Polling_Place != "NULL"))
+message(paste( nrow(api_found), "found," 
+               nrow(api_missing), "left.")
+}
+# END LOOP 
+#########################################
+
+GC_api_locations <- addresses %>% left_join(api_found) %>% select(-starts_with("vot"))
+
+write_csv(GC_api_locations, here("data", "GC_api_locations.csv"))
+```
+
+### API results not in the state's xlsx file
+
+```{r}
+# summary table
+api_locations %>% 
+  head() %>% 
+  select(voting_street_address, precinct_name, precinct_id, GC_Polling_Place) %>%  
+  kablebox()
+
+api_locations %>% spread(GC_Polling_Place, ",")
+
+api_locations %>% 
+  filter(PollingPlaceAddress != "NULL") %>% # filter out API errors
+  anti_join(official_locations) %>% # filter out locations already posted
+  select(precinct_name, precinct_id, PollingPlaceAddress) %>%
+  kablebox()
+```
+
+### Cases where Google Civic's API did not return the same address when given polling locations
+
+> Until the API is working, it is all of them--just showing a few for now.
+
+```{r}
+official_locations %>% 
+  head() %>% #FIXME WHEN API IS WORKING
+  mutate(PollingPlaceAddress_API = map(PollingPlaceAddress, get_poll)) %>% # get polling places for polling places' addresses
+  filter(PollingPlaceAddress_API != PollingPlaceAddress) %>% # mismatches
+  select(Muni, ReportingUnit, PollingPlaceName, PollingPlaceAddress, PollingPlaceAddress_API) %>%
+  kablebox()
+```
+
+### Polling place addresses not returned by Google Civic's API
+
+> Until the API is working, it is all of them--just showing a few for now.
+
+```{r}
+official_locations %>% 
+  head() %>% #FIXME WHEN API IS WORKING
+  anti_join(api_locations) %>% # remove ones matched with API
+  select(Muni, ReportingUnit, PollingPlaceName, PollingPlaceAddress) %>% 
+  kablebox()
+```
+
+---
+
+## Combine results
+
+```{r}
+# name both official and API results to fit VAN
+api_locations %<>% rename(County = county_name)
+
+# reformat county
+official_locations %<>% 
+  mutate_if(is.character, str_to_upper) %>% 
+  mutate(County = str_remove(County, " COUNTY") )
+
+
+locations <- official_locations
+
+locations %<>% full_join(api_locations)
+```
+
+
+# Additional Google Civic API Contents
+
+For reference, these values may or may not be returned: 
+```
+"pollingLocations": [
+    {
+      "id": string,
+      "address": {
+        "locationName": string,
+        "line1": string,
+        "line2": string,
+        "line3": string,
+        "city": string,
+        "state": string,
+        "zip": string
+      },
+      "notes": string,
+      "pollingHours": string,
+      "name": string,
+      "voterServices": string,
+      "startDate": string,
+      "endDate": string,
+      "latitude": double,
+      "longitude": double,
+      "sources": [
+        {
+          "name": string,
+          "official": boolean
+        }
+      ]
+    }
+  ],
+  "earlyVoteSites": [
+    {
+      "id": string,
+      "address": {
+        "locationName": string,
+        "line1": string,
+        "line2": string,
+        "line3": string,
+        "city": string,
+        "state": string,
+        "zip": string
+      },
+      "notes": string,
+      "pollingHours": string,
+      "name": string,
+      "voterServices": string,
+      "startDate": string,
+      "endDate": string,
+      "latitude": double,
+      "longitude": double,
+      "sources": [
+        {
+          "name": string,
+          "official": boolean
+        }
+      ]
+    }
+  ],
+  "dropOffLocations": [
+    {
+      "id": string,
+      "address": {
+        "locationName": string,
+        "line1": string,
+        "line2": string,
+        "line3": string,
+        "city": string,
+        "state": string,
+        "zip": string
+      },
+      "notes": string,
+      "pollingHours": string,
+      "name": string,
+      "voterServices": string,
+      "startDate": string,
+      "endDate": string,
+      "latitude": double,
+      "longitude": double,
+      "sources": [
+        {
+          "name": string,
+          "official": boolean
+        }
+      ]
+    }
+  ],
+```
