@@ -51,9 +51,9 @@ We are currently using this file:
 
 ```{r}
 # UPDATE THIS IF A NEW FILE IS POSTED! 
-file <- "2020 General Election PPL RU List.xlsx"
+file <- "Polling Place Locations - 2020 General Election Updated 10-21-2020.xlsx"
 
-`Date Authenticated*` <- "7-10-2020"
+`Date Authenticated*` <- "2020-10-21"
 
 upload_file <- paste0("VAN Polling Locations ", `Date Authenticated*`, ".xlsx")
 

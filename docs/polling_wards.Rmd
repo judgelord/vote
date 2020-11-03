@@ -89,7 +89,7 @@ The most recent xlsx file of polling locations that is posted at https://electio
 
 ```{r}
 # polling locations posted on website
-html <- read_html("https://elections.wi.gov/node/6527") %>%
+html <- read_html("https://elections.wi.gov/node/6976") %>%
   html_nodes("a") 
 
 files <- tibble(file = html_text(html),
