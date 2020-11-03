@@ -39,59 +39,6 @@ kablebox <- . %>%  knitr::kable() %>%
   scroll_box(height = "400px")
 ```
 
-This link will update when the WEC file and date in the code chunk below are updated.
-
-# Polling Locations from the state 
-
-We are currently using this file (pre-processed [here]()):
-
-```{r}
-# UPDATE THIS IF A NEW FILE IS POSTED! 
-file <- "Polling Place Locations - 2020 General Election Updated 10-21-2020.xlsx"
-
-`Date Authenticated*` <- "2020-10-21"
-
-tibble(file,
-       `Date Authenticated*`) %>% 
-  kablebox()
-
-official_locations <- read_csv(here::here("data", file))
-
-official_locations %<>% mutate_if(is.character, str_to_upper) %>%
-  mutate(PollingPlaceAddress = PollingPlaceAddress %>% 
-           str_replace(" RD", " ROAD"),
-         County = str_remove(County, "COUNTY"))
-
-# some locations have more than one room and some munis have duplicates
-official_locations %<>% select(-VotingRoomArea)
-
-# combine polling places at the same address
-official_locations %<>%
-  group_by(County, PollingPlaceAddress, PollingPlaceName, Muni) %>%
-  mutate(ReportingUnit = paste(unique(County), 
-                               unique(Muni), 
-                               unique(ReportingUnit), 
-                               sep = " - ",
-                               collapse = " and ")) %>%
-  ungroup() %>%
-  distinct()
-```
-
-The most recent xlsx file of polling locations that is posted: https://elections.wi.gov/node/6527
-
-```{r}
-# polling locations posted on website
-html <- read_html("https://elections.wi.gov/node/6976") %>%
-  html_nodes("a") 
-
-files <- tibble(file = html_text(html),
-                link = html_attr(html, "href")) %>% 
-  filter(str_detect(file, "xls|csv")) 
-                
-kablebox(files)
-```
-
----
 
 # Polling locations via Google Civic's API
 
@@ -107,10 +54,6 @@ addresses <- read_csv(here::here("data", "wisconsin_example_addresses.csv"))
 addresses %<>% mutate_if(is.character, str_to_upper)
 
 addresses %<>% arrange(county_name)
-
-# FIXME DELETE THIS WHEN API IS WORKING
-addresses %<>% head()
-# /FIXME
 ```
 
 
@@ -166,8 +109,6 @@ get_poll <- function(voter_address){
     unlist() %>% 
     str_c(collapse = ", ")
   
-  #if(poll == "NULL"){Sys.sleep(1)}
-  
   return(poll)
 }
 
@@ -183,96 +124,145 @@ api_locations <- addresses %>%
 ## For some reason GC returnds 400 or 500 observations and a lot of nulls each pass--does not appear to be a rate limit thing, so we just do pass after pass until we are not getting any more. 
 
 # initialize found 
-api_found <- api_locations %>% filter(GC_Polling_Place != "NULL")
+api_found <- api_locations %>% filter(!GC_Polling_Place %in% c("error", "NULL"))
 
 # initialize missing
-api_missing <- api_locations %>% filter(GC_Polling_Place == "NULL")
+api_missing <- api_locations %>% filter(GC_Polling_Place %in% c("error", "NULL"))
 
 ##############################################
 # loop until api_found approaches api_locations
-while( nrow(api_missing) < nrow(api_locations_temp) ){  
+n = 0
+while(n < 5 | nrow(api_missing) < nrow(api_locations_temp) ){  
   
 api_locations_temp <- api_missing %>% 
   # "NULL" if NULL, "error" if any error
   mutate(GC_Polling_Place = voter_address %>% map_chr(possibly(get_poll, "error"))) 
 
-api_missing <- api_locations_temp %>% filter(GC_Polling_Place == "NULL")
+api_missing <- api_locations_temp %>% filter(GC_Polling_Place %in% c("error", "NULL"))
 
 api_found %<>% full_join(api_locations_temp %>% 
-                           filter(GC_Polling_Place != "NULL"))
-message(paste( nrow(api_found), "found," 
-               nrow(api_missing), "left.")
+                           filter(!GC_Polling_Place %in% c("error", "NULL")))
+message(paste( 
+  nrow(api_locations_temp) - nrow(api_missing), "new,",
+  nrow(api_found), "found in all,",
+  nrow(api_missing), "left."))
+
+# run 5 times if 0 new
+if(nrow(api_missing) == nrow(api_locations_temp)){n = n + 1}
+   
 }
 # END LOOP 
 #########################################
 
 GC_api_locations <- addresses %>% left_join(api_found) %>% select(-starts_with("vot"))
 
+# csv for github
 write_csv(GC_api_locations, here("data", "GC_api_locations.csv"))
+
+# google sheet 
+library(googlesheets4)
+
+ss <- googledrive::drive_get("WI polling locations") %>%
+  gs4_get() 
+
+GC_api_locations %>%
+  sheet_write(ss = ss,
+              sheet = paste("GC Polling Locations", Sys.Date() ))
 ```
 
-### API results not in the state's xlsx file
+### Sample API results 
 
 ```{r}
+api_locations <- read_csv(here("data", "GC_api_locations.csv"))
+
 # summary table
 api_locations %>% 
   head() %>% 
-  select(voting_street_address, precinct_name, precinct_id, GC_Polling_Place) %>%  
-  kablebox()
-
-api_locations %>% spread(GC_Polling_Place, ",")
-
-api_locations %>% 
-  filter(PollingPlaceAddress != "NULL") %>% # filter out API errors
-  anti_join(official_locations) %>% # filter out locations already posted
-  select(precinct_name, precinct_id, PollingPlaceAddress) %>%
+  select(precinct_name, precinct_id, GC_Polling_Place) %>%  
   kablebox()
 ```
 
-### Cases where Google Civic's API did not return the same address when given polling locations
-
-> Until the API is working, it is all of them--just showing a few for now.
+# Google Civic API results compared to the WEC file from 10-27
 
 ```{r}
-official_locations %>% 
-  head() %>% #FIXME WHEN API IS WORKING
-  mutate(PollingPlaceAddress_API = map(PollingPlaceAddress, get_poll)) %>% # get polling places for polling places' addresses
-  filter(PollingPlaceAddress_API != PollingPlaceAddress) %>% # mismatches
-  select(Muni, ReportingUnit, PollingPlaceName, PollingPlaceAddress, PollingPlaceAddress_API) %>%
-  kablebox()
-```
+# from polling wards rmd
+upload <- read_csv(here::here("data", "VAN Polling Locations 2020-10-21.xlsx"))
 
-### Polling place addresses not returned by Google Civic's API
+names(upload) %<>% str_to_lower() %>% str_replace(" ", "_")
 
-> Until the API is working, it is all of them--just showing a few for now.
+upload %<>%
+  mutate(address = address %>% 
+           str_replace(" RD", " ROAD") %>%
+           str_replace("MT\\.", "MOUNT") %>% 
+           str_squish(),
+         polling_location = polling_location %>% 
+           str_replace(" RD", " ROAD") %>%
+           str_replace("MT\\.", "MOUNT") %>% 
+           str_squish())
 
-```{r}
-official_locations %>% 
-  head() %>% #FIXME WHEN API IS WORKING
-  anti_join(api_locations) %>% # remove ones matched with API
-  select(Muni, ReportingUnit, PollingPlaceName, PollingPlaceAddress) %>% 
-  kablebox()
-```
+api_locations <- read_csv(here("data", "GC_api_locations.csv"))
 
----
+names(api_locations) %<>% str_to_lower() %>% str_replace(" ", "_")
 
-## Combine results
-
-```{r}
-# name both official and API results to fit VAN
-api_locations %<>% rename(County = county_name)
-
-# reformat county
-official_locations %<>% 
+api_locations %<>%
   mutate_if(is.character, str_to_upper) %>% 
-  mutate(County = str_remove(County, " COUNTY") )
+  mutate(gc_polling_location = gc_polling_place %>% 
+           str_replace(" RD", " ROAD") %>%
+           str_replace("MT\\.", "MOUNT") %>% 
+           str_squish() )
 
+# join on precinct id and name 
+d <- full_join(upload, api_locations)
 
-locations <- official_locations
-
-locations %<>% full_join(api_locations)
+d %<>% select(precinct_id, 
+              precinct_name,
+              polling_location,
+              address,
+              zip,
+              gc_polling_location)
 ```
 
+Potentially different zip
+```{r}
+zips <- d %>% filter(!str_detect(gc_polling_location, as.character(zip)))
+
+zips %>% kablebox()
+```
+
+Potentially different address
+```{r}
+adds <- d %>% filter(!str_detect(gc_polling_location, address))
+
+adds %>% kablebox()
+```
+
+Potentially different polling location names
+```{r}
+locs <- d %>% filter(!str_detect(gc_polling_location, polling_location)) # %>% select(polling_location, gc_polling_location) %>% distinct()
+
+locs %>% kablebox()
+```
+
+## Diff with WEC [here](https://docs.google.com/spreadsheets/d/1cFJX0yGY91bzDpaR9ODwCeSCbzUrkWpRb1m7HwMKOA4/edit#gid=240141679)
+
+```{r, eval = FALSE}
+gc_diff <- full_join(zips, adds) %>% full_join(locs) %>% 
+  # drop missing
+  filter(!is.na(zip))
+
+# csv for github
+write_csv(gc_diff, here("data", "GC_api_WEC_diff.csv"))
+
+# google sheet 
+library(googlesheets4)
+
+ss <- googledrive::drive_get("WI polling locations") %>%
+  gs4_get() 
+
+gc_diff %>%
+  sheet_write(ss = ss,
+              sheet = paste("GC issues", Sys.Date() ))
+```
 
 # Additional Google Civic API Contents
 
